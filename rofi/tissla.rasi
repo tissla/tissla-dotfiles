@@ -1,0 +1,142 @@
+/***
+████████╗██╗███████╗███████╗██╗      █████╗ 
+╚══██╔══╝██║██╔════╝██╔════╝██║     ██╔══██╗
+   ██║   ██║███████╗███████╗██║     ███████║
+   ██║   ██║╚════██║╚════██║██║     ██╔══██║
+   ██║   ██║███████║███████║███████╗██║  ██║
+   ╚═╝   ╚═╝╚══════╝╚══════╝╚══════╝╚═╝  ╚═╝
+***/
+
+@import "../theme/theme.rasi"
+
+/***** Configuration *****/
+configuration {
+    modi:                "drun,run";
+    show-icons:          true;
+    drun-display-format: "{name}";
+}
+
+/***** Global *****/
+* {
+    font:         @font-mono;
+
+    background:   @bg;
+    background-alt:@bg-alt;
+    foreground:   @fg;
+    accent:       @primary;
+    urgent:       @error;
+
+    lines:        8;
+    columns:      1;
+    cycle:        false;
+
+    background-color: @background;
+    text-color:       @foreground;
+}
+
+/***** Window *****/
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    fullscreen:       false;
+    width:            560px;
+
+    enabled:          true;
+    border:           3px solid;
+    border-color:     @accent;
+    border-radius:    10px;
+    cursor:           "default";
+    background-color: @background;
+
+
+}
+
+/***** Layout *****/
+mainbox {
+    spacing:          0px;
+    background-color: transparent;
+
+}
+
+/***** Input bar *****/
+inputbar {
+    enabled:          true;
+    spacing:          10px;
+    margin:           10px;
+    padding:          16px 18px;
+    background-color: transparent;
+    border-radius:    10px;
+    orientation:      horizontal;
+    children:         [ "entry" ];
+}
+
+entry {
+    padding:            10px 14px;
+	background-color:   transparent;
+    cursor:             text;
+	font:				@font-search;
+    placeholder:        " Search...";
+    border-radius:      8px;
+}
+
+
+
+/***** List *****/
+listview {
+    enabled:          true;
+    columns:          @columns;
+    lines:            @lines;
+    cycle:            @cycle;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    fixed-height:     true;
+    fixed-columns:    true;
+    spacing:          8px;
+    background-color: transparent;
+    text-color:       @foreground;
+    cursor:           "default";
+
+	/*background-image: url("~/Pictures/tissla-faint-long.png", width);*/
+
+}
+
+
+/***** Elements *****/
+element {
+    enabled:          true;
+    spacing:          6px;
+    padding:          10px 16px;
+    background-color: transparent;
+    text-color:       @foreground;
+    cursor:           pointer;
+}
+
+element normal.normal {
+    background-color: inherit;
+    text-color:       inherit;
+}
+
+element selected.normal {
+    background-color: @background-alt;
+    text-color:       @foreground;
+    border:           0px;
+}
+
+element-icon {
+    background-color: transparent;
+    text-color:       inherit;
+    size:             30px;
+	padding:		  0px 16px 0px 10px;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    highlight:        inherit;
+    cursor:           inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}

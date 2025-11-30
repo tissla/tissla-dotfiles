@@ -1,0 +1,11 @@
+## setup symlinks
+ln -s ~/Dotfiles/alacritty ~/.config/alacritty
+ln -s ~/Dotfiles/rofi ~/.config/rofi
+ln -s ~/Dotfiles/waybar ~/.config/waybar
+ln -s ~/Dotfiles/hypr ~/.config/hypr
+
+## global nvim
+sudo ln -s ~/Dotfiles/nvim /etc/xdg/nvim 
+
+## theme symlink
+ln -s ~/Dotfiles/theme .config/theme

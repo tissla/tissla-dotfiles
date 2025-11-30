@@ -1,0 +1,27 @@
+[colors.primary]
+background = "0x1e1b29"
+foreground = "0xc9c7d4"
+
+[colors.normal]
+black   = "0x1e1b29"
+red     = "0xf87171"
+green   = "0x34d399"
+yellow  = "0xfbbf24"
+blue    = "0x1e3a8a"
+magenta = "0x8b5cf6"
+cyan    = "0x22d3ee"
+white   = "0xf9fafb"
+
+[colors.bright]
+black   = "0x2b263b"
+red     = "0xf87171"
+green   = "0x34d399"
+yellow  = "0xfacc15"
+blue    = "0x374151"
+magenta = "0xa78bfa"
+cyan    = "0x7dd3fc"
+white   = "0xffffff"
+
+[font.normal]
+family = "LiterationMono Nerd Font Mono"
+style = "bold"

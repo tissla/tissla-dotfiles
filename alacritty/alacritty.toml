@@ -1,0 +1,12 @@
+general.import = [
+	"../theme/theme.toml"
+]
+
+[window]
+opacity = 0.9
+decorations = "full"
+blur = true
+
+[font]
+size = 13.5
+
