@@ -11,7 +11,7 @@ strip_hash() {
 }
 
 
-mkdir theme
+mkdir -p theme
 
 ###############################################################################
 # theme.toml
@@ -23,19 +23,19 @@ foreground = "0x$(strip_hash "$CLR_FG")"
 
 [colors.normal]
 black   = "0x$(strip_hash "$CLR_BG")"
-red     = "0x$(strip_hash "$CLR_ERROR")"
-green   = "0x$(strip_hash "$CLR_SUCCESS")"
-yellow  = "0x$(strip_hash "$CLR_WARNING")"
+red     = "0xf87171"
+green   = "0x34d399"
+yellow  = "0xfbbf24"
 blue    = "0x1e3a8a"
-magenta = "0x$(strip_hash "$CLR_PRIMARY")"
+magenta = "0x8b5cf6"
 cyan    = "0x22d3ee"
 white   = "0xf9fafb"
 
 [colors.bright]
-black   = "0x2b263b"
-red     = "0x$(strip_hash "$CLR_ERROR")"
-green   = "0x$(strip_hash "$CLR_SUCCESS")"
-yellow  = "0x$(strip_hash "$CLR_ACCENT")"
+black   = "0x$(strip_hash "${CLR_PRIMARY_MUTED}")"
+red     = "0xf87171"
+green   = "0x34d399"
+yellow  = "0xfbbf24"
 blue    = "0x374151"
 magenta = "0xa78bfa"
 cyan    = "0x7dd3fc"
@@ -110,7 +110,7 @@ EOF
 # Theme.qml
 ###############################################################################
 
-mkdir quickshell
+mkdir -p quickshell
 
 ## quickshell specific
 cat > quickshell/Theme.qml <<EOF
@@ -120,15 +120,15 @@ pragma Singleton
 QtObject {
     id: theme
 
-    property color background: ${CLR_QML_BG}
-    property color backgroundAlt: ${CLR_QML_BG_ALT}
-    property color primary: ${CLR_PRIMARY}
-    property color textPrimary: ${CLR_FG}
-    property color textSecondary: ${CLR_FG_MUTED}
-    property color textMuted: ${CLR_TEXT_MUTED}
-	property color todayText: ${CLR_ACCENT}
+    property color background: "${CLR_QML_BG}"
+    property color backgroundAlt: "${CLR_QML_BG_ALT}"
+    property color primary: "${CLR_PRIMARY}"
+    property color textPrimary: "${CLR_FG}"
+    property color textSecondary: "${CLR_FG_MUTED}"
+    property color textMuted: "${CLR_TEXT_MUTED}"
+	property color todayText: "${CLR_ACCENT}"
 
-	property string fontCalendar: ${FONT_CALENDAR})
+	property string fontCalendar: "${FONT_CALENDAR}"
 }
 EOF
 

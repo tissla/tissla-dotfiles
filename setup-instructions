@@ -3,6 +3,7 @@ ln -s ~/Dotfiles/alacritty ~/.config/alacritty
 ln -s ~/Dotfiles/rofi ~/.config/rofi
 ln -s ~/Dotfiles/waybar ~/.config/waybar
 ln -s ~/Dotfiles/hypr ~/.config/hypr
+ln -s ~/Dotfiles/quickshell ~/.config/quickshell
 
 ## global nvim
 sudo ln -s ~/Dotfiles/nvim /etc/xdg/nvim 
