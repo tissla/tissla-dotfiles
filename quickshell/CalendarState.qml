@@ -1,19 +1,21 @@
-pragma Singleton
 import QtQuick
+pragma Singleton
 
 QtObject {
     id: root
+
     property bool isVisible: false
-    
+
     function toggle() {
-        isVisible = !isVisible
+        isVisible = !isVisible;
     }
-    
+
     function show() {
-        isVisible = true
+        isVisible = true;
     }
-    
+
     function hide() {
-        isVisible = false
+        isVisible = false;
     }
+
 }

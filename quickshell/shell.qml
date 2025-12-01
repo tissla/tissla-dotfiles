@@ -12,7 +12,7 @@ ShellRoot {
 
     property bool calendarVisible: false
 
-    objectName: shellRoot
+    objectName: "shellRoot"
 
     // CALENDAR
     PanelWindow {
@@ -20,7 +20,7 @@ ShellRoot {
 
         screen: Quickshell.screens[0]
         visible: CalendarState.isVisible
-        implicitWidth: 420
+        implicitWidth: 440
         implicitHeight: 420
         color: "transparent"
 
@@ -35,7 +35,12 @@ ShellRoot {
         }
 
         CalendarWidget {
+            // onRequestClose: {
+            //     CalendarState.hide();
+            // }
+
             anchors.fill: parent
+            isVisible: CalendarState.isVisible
         }
 
     }
