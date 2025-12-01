@@ -18,6 +18,7 @@ Rectangle {
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
     property string filePathBaseDir: Quickshell.env("HOME") + "/.config/quickshell/notes/"
+    property string selectedDayId: ""
 
     // function to change month/year
     function changeMonth(offset) {
@@ -256,6 +257,7 @@ Rectangle {
                                 width: 40
                                 height: 30
 
+                                // week-indicators
                                 Text {
                                     visible: index % 8 === 0
                                     anchors.fill: parent
@@ -273,6 +275,7 @@ Rectangle {
                                     verticalAlignment: Text.AlignVCenter
                                 }
 
+                                // cell that represents a day
                                 Rectangle {
                                     property int newIndex: index - ((index / 8) * 1)
                                     // current day
@@ -303,6 +306,40 @@ Rectangle {
                                     property int otherDayNumber: isLastMonth ? lastMonthNumber : nextMonthNumber
                                     property bool isSelectedDay: dayNumber == root.selectedDay && root.selectedMonth == root.displayMonth && root.selectedYear == root.displayYear
                                     property bool isHovered: false
+                                    // Which notes exist for this dayId
+                                    property var noteColors: ["orange", "blue", Theme.primary]
+                                    // day ID helpers
+                                    property int cellYear: {
+                                        if (isLastMonth)
+                                            return displayMonth === 0 ? displayYear - 1 : displayYear;
+
+                                        if (dayNumber > daysInMonth)
+                                            return displayMonth === 11 ? displayYear + 1 : displayYear;
+
+                                        return displayYear;
+                                    }
+                                    property int cellMonth: {
+                                        if (isLastMonth)
+                                            return displayMonth === 0 ? 11 : displayMonth - 1;
+
+                                        if (dayNumber > daysInMonth)
+                                            return displayMonth === 11 ? 0 : displayMonth + 1;
+
+                                        return displayMonth;
+                                    }
+                                    property int cellDay: {
+                                        if (isLastMonth)
+                                            return lastMonthNumber;
+
+                                        if (dayNumber > daysInMonth)
+                                            return nextMonthNumber;
+
+                                        return dayNumber;
+                                    }
+                                    // unique ID for cell
+                                    property string dayId: cellYear + "-" + (cellMonth + 1).toString().padStart(2, '0') + "-" + cellDay.toString().padStart(2, '0')
+                                    // check if we have a note for day
+                                    property bool hasNote: File.exists(root.filePathBaseDir + dayId + ".txt")
 
                                     visible: index % 8 !== 0
                                     anchors.fill: parent
@@ -340,11 +377,9 @@ Rectangle {
                                                 root.selectedDay = parent.dayNumber;
                                                 root.selectedMonth = root.displayMonth;
                                                 root.selectedYear = root.displayYear;
+                                                root.selectedDayId = parent.dayId;
                                                 console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
-                                                let year = selectedYear;
-                                                let month = (selectedMonth + 1).toString().padStart(2, '0');
-                                                let day = selectedDay.toString().padStart(2, '0');
-                                                const path = root.filePathBaseDir + year + "-" + month + "-" + day + ".txt";
+                                                const path = root.filePathBaseDir + parent.dayId + ".txt";
                                                 loadNotes(path);
                                             }
                                         }
@@ -365,6 +400,42 @@ Rectangle {
                                             return Theme.textPrimary;
                                         }
                                         font.weight: parent.isDayInMonth ? Font.Bold : Font.Normal
+                                    }
+
+                                    // earmark indicator
+                                    Repeater {
+                                        model: 3
+                                        anchors.top: parent.top
+                                        anchors.left: parent.left
+
+                                        Rectangle {
+                                            y: index * 6
+                                            height: 4
+                                            width: 4
+                                            color: parent.noteColors[index]
+                                            visible: true
+                                        }
+
+                                    }
+
+                                    Canvas {
+                                        id: noteIndicator
+
+                                        anchors.top: parent.top
+                                        anchors.right: parent.right
+                                        width: parent.width / 4
+                                        height: parent.height / 4
+                                        visible: parent.hasNote
+                                        onPaint: {
+                                            var ctx = getContext("2d");
+                                            ctx.fillStyle = "orange";
+                                            ctx.beginPath();
+                                            ctx.moveTo(width, 0);
+                                            ctx.lineTo(0, 0);
+                                            ctx.lineTo(width, height);
+                                            ctx.closePath();
+                                            ctx.fill();
+                                        }
                                     }
 
                                 }
@@ -398,7 +469,7 @@ Rectangle {
                         bottomMargin: 18
                     }
 
-                    // Datum header
+                    // Date header
                     Text {
                         width: parent.width
                         text: {
@@ -477,10 +548,7 @@ Rectangle {
                             repeat: false
                             onTriggered: {
                                 if (root.selectedDay !== -1 && !root.isNullOrWhiteSpace(notesEdit.text)) {
-                                    let year = selectedYear;
-                                    let month = (selectedMonth + 1).toString().padStart(2, '0');
-                                    let day = selectedDay.toString().padStart(2, '0');
-                                    const path = root.filePathBaseDir + year + "-" + month + "-" + day + ".txt";
+                                    const path = root.filePathBaseDir + selectedDayId + ".txt";
                                     saveNotesProcess.filePath = path;
                                     saveNotesProcess.noteText = notesEdit.text;
                                     saveNotesProcess.running = true;
