@@ -20,9 +20,10 @@ ShellRoot {
 
         screen: Quickshell.screens[0]
         visible: CalendarState.isVisible
-        implicitWidth: 440
+        implicitWidth: 620
         implicitHeight: 420
         color: "transparent"
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
         anchors {
             bottom: true

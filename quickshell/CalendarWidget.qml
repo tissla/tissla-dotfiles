@@ -10,6 +10,9 @@ import Quickshell.Io
 Rectangle {
     id: root
 
+    property int selectedDay: -1
+    property int selectedMonth: -1
+    property int selectedYear: -1
     property bool isVisible: false
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
@@ -32,6 +35,9 @@ Rectangle {
         now = new Date();
         displayMonth = now.getMonth();
         displayYear = now.getFullYear();
+        selectedDay = -1;
+        selectedMonth = -1;
+        selectedYear = -1;
     }
 
     // calculate week number
@@ -44,6 +50,26 @@ Rectangle {
         return Math.ceil((((d - yearStart) / 8.64e+07) + 1) / 7);
     }
 
+    // load notes
+    function getNotesFilePath() {
+        if (selectedDay === -1)
+            return "";
+
+        let year = selectedYear;
+        let month = (selectedMonth + 1).toString().padStart(2, '0');
+        let day = selectedDay.toString().padStart(2, '0');
+        return Quickshell.env("HOME") + "/.config/quickshell/notes/" + year + "-" + month + "-" + day + ".txt";
+    }
+
+    onSelectedDayChanged: {
+        if (selectedDay !== -1) {
+            if (saveTimer.running)
+                saveTimer.stop();
+
+            loadNotesProcess.filePath = getNotesFilePath();
+            loadNotesProcess.running = true;
+        }
+    }
     // update date on show
     onIsVisibleChanged: {
         if (isVisible)
@@ -101,7 +127,7 @@ Rectangle {
 
         }
 
-        // Bottom row: Calendar
+        // Bottom row: Calendar + Dayinfo
         Row {
             width: parent.width
             height: parent.height - 80 - 12 // Subtract time section height and spacing
@@ -109,7 +135,7 @@ Rectangle {
 
             // Calendar Section
             Rectangle {
-                width: parent.width // Fill remaining space
+                width: 380
                 height: parent.height
                 color: Theme.backgroundAlt
                 radius: 20
@@ -136,7 +162,7 @@ Rectangle {
                             width: 40
                             height: 30
                             text: "‹"
-                            font.pixelSize: 24
+                            font.pixelSize: 30
                             color: Theme.textPrimary
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -170,7 +196,7 @@ Rectangle {
                             width: 40
                             height: 30
                             text: "›"
-                            font.pixelSize: 24
+                            font.pixelSize: 30
                             color: Theme.textPrimary
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
@@ -187,9 +213,10 @@ Rectangle {
 
                     // Calendar grid
                     Grid {
-                        width: parent.width
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        anchors.horizontalCenterOffset: -15
                         columns: 8
-                        columnSpacing: 6
+                        columnSpacing: 4
                         rowSpacing: 5
 
                         // empty cell in top left, maybe add something?
@@ -238,8 +265,10 @@ Rectangle {
                                         return getWeekNumber(date);
                                     }
                                     font.family: Theme.fontCalendar
-                                    font.pixelSize: 13
-                                    color: Theme.todayText
+                                    font.pixelSize: 11
+                                    font.weight: Font.Bold
+                                    font.italic: true
+                                    color: Theme.bbyBlue
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
@@ -272,6 +301,8 @@ Rectangle {
                                     property int nextMonthNumber: dayNumber - daysInMonth
                                     // check if day is outside of month
                                     property int otherDayNumber: isLastMonth ? lastMonthNumber : nextMonthNumber
+                                    property bool isSelectedDay: dayNumber == root.selectedDay && root.selectedMonth == root.displayMonth && root.selectedYear == root.displayYear
+                                    property bool isHovered: false
 
                                     visible: index % 8 !== 0
                                     anchors.fill: parent
@@ -279,7 +310,15 @@ Rectangle {
                                     height: 30
                                     radius: 0
                                     border.width: 2
-                                    color: "transparent"
+                                    color: {
+                                        if (isSelectedDay)
+                                            return Theme.primary;
+
+                                        if (isHovered)
+                                            return Theme.bbyBlue;
+
+                                        return "transparent";
+                                    }
                                     border.color: {
                                         if (isDayInMonth && isCurrentDay)
                                             return Theme.primary;
@@ -291,10 +330,18 @@ Rectangle {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         onEntered: {
-                                            parent.color = Theme.primary;
+                                            parent.isHovered = true;
                                         }
                                         onExited: {
-                                            parent.color = "transparent";
+                                            parent.isHovered = false;
+                                        }
+                                        onClicked: {
+                                            if (parent.isDayInMonth) {
+                                                root.selectedDay = parent.dayNumber;
+                                                root.selectedMonth = root.displayMonth;
+                                                root.selectedYear = root.displayYear;
+                                                console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
+                                            }
                                         }
                                     }
 
@@ -327,8 +374,167 @@ Rectangle {
 
             }
 
+            // day info	section
+            Rectangle {
+                // fill remaining space, 380 is calendar and 12 for spacing
+                width: parent.width - 380 - 12
+                height: parent.height
+                color: Theme.backgroundAlt
+                radius: 20
+
+                Column {
+                    spacing: 12
+
+                    anchors {
+                        fill: parent
+                        leftMargin: 30
+                        rightMargin: 30
+                        topMargin: 12
+                        bottomMargin: 18
+                    }
+
+                    // Datum header
+                    Text {
+                        width: parent.width
+                        text: {
+                            if (root.selectedDay === -1)
+                                return "Select a day";
+
+                            return root.selectedYear + "-" + (root.selectedMonth + 1).toString().padStart(2, '0') + "-" + root.selectedDay.toString().padStart(2, '0');
+                        }
+                        font.family: Theme.fontCalendar
+                        font.pixelSize: 16
+                        font.weight: Font.Bold
+                        horizontalAlignment: Text.AlignHCenter
+                        color: Theme.textPrimary
+                    }
+
+                    // Day of week
+                    Text {
+                        text: {
+                            if (root.selectedDay === -1)
+                                return "";
+
+                            let date = new Date(root.selectedYear, root.selectedMonth, root.selectedDay);
+                            const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+                            return dayNames[date.getDay()];
+                        }
+                        font.family: "Rubik SemiBold"
+                        font.pixelSize: 15
+                        color: Theme.bbyBlue
+                    }
+
+                    // Week
+                    Text {
+                        text: {
+                            if (root.selectedDay === -1)
+                                return "";
+
+                            let date = new Date(root.selectedYear, root.selectedMonth, root.selectedDay);
+                            return "Week " + root.getWeekNumber(date);
+                        }
+                        font.pixelSize: 12
+                        color: Theme.textMuted
+                    }
+
+                    // Separator
+                    Rectangle {
+                        width: parent.width
+                        height: 1
+                        color: Theme.primary
+                    }
+
+                    // Notes area
+                    TextEdit {
+                        id: notesEdit
+
+                        visible: root.selectedDay !== -1
+                        width: parent.width
+                        height: 150
+                        text: ""
+                        color: Theme.textPrimary
+                        font.family: Theme.fontCalendar
+                        font.pixelSize: 12
+                        wrapMode: TextEdit.Wrap
+                        selectByMouse: true
+                        cursorVisible: true
+                        activeFocusOnPress: true
+                        onTextChanged: {
+                            saveTimer.restart();
+                        }
+
+                        Timer {
+                            id: saveTimer
+
+                            interval: 1000
+                            repeat: false
+                            onTriggered: {
+                                if (root.selectedDay !== -1) {
+                                    saveNotesProcess.filePath = root.getNotesFilePath();
+                                    saveNotesProcess.noteText = notesEdit.text;
+                                    saveNotesProcess.running = true;
+                                }
+                            }
+                        }
+
+                        // Placeholder
+                        Text {
+                            anchors.fill: parent
+                            text: "Add notes..."
+                            color: Theme.textMuted
+                            font: parent.font
+                            visible: parent.text === ""
+                            enabled: false
+                        }
+
+                    }
+
+                }
+
+            }
+
         }
 
+    }
+
+    // Load notes
+    Process {
+        id: loadNotesProcess
+
+        property string currentText: ""
+        property string filePath: ""
+
+        running: false
+        command: ["cat", filePath]
+        onRunningChanged: {
+            if (!running)
+                notesEdit.text = currentText;
+            else
+                currentText = "";
+        }
+
+        stdout: SplitParser {
+            onRead: (data) => {
+                loadNotesProcess.currentText += data;
+            }
+        }
+
+    }
+
+    // Save notes
+    Process {
+        id: saveNotesProcess
+
+        property string filePath: ""
+        property string noteText: ""
+
+        running: false
+        command: ["sh", "-c", "mkdir -p ~/.config/quickshell/notes && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + filePath + "'"]
+        onRunningChanged: {
+            if (!running)
+                console.log(`Saved notes ${noteText} to ${filePath}`);
+
+        }
     }
 
 }
