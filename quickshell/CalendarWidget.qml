@@ -17,6 +17,7 @@ Rectangle {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
+    property string filePathBaseDir: Quickshell.env("HOME") + "/.config/quickshell/notes/"
 
     // function to change month/year
     function changeMonth(offset) {
@@ -28,6 +29,10 @@ Rectangle {
             displayMonth = 11;
             displayYear--;
         }
+    }
+
+    function isNullOrWhiteSpace(str) {
+        return !str || str.trim().length === 0;
     }
 
     //function to reset calendar display to current month
@@ -50,15 +55,10 @@ Rectangle {
         return Math.ceil((((d - yearStart) / 8.64e+07) + 1) / 7);
     }
 
-    // load notes
-    function getNotesFilePath() {
-        if (selectedDay === -1)
-            return "";
-
-        let year = selectedYear;
-        let month = (selectedMonth + 1).toString().padStart(2, '0');
-        let day = selectedDay.toString().padStart(2, '0');
-        return Quickshell.env("HOME") + "/.config/quickshell/notes/" + year + "-" + month + "-" + day + ".txt";
+    function loadNotes(path) {
+        loadNotesProcess.exec({
+            "command": ["cat", path]
+        });
     }
 
     onSelectedDayChanged: {
@@ -66,7 +66,7 @@ Rectangle {
             if (saveTimer.running)
                 saveTimer.stop();
 
-            loadNotesProcess.filePath = getNotesFilePath();
+            currentNotesFilePath = getNotesFilePath();
             loadNotesProcess.running = true;
         }
     }
@@ -341,6 +341,11 @@ Rectangle {
                                                 root.selectedMonth = root.displayMonth;
                                                 root.selectedYear = root.displayYear;
                                                 console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
+                                                let year = selectedYear;
+                                                let month = (selectedMonth + 1).toString().padStart(2, '0');
+                                                let day = selectedDay.toString().padStart(2, '0');
+                                                const path = root.filePathBaseDir + year + "-" + month + "-" + day + ".txt";
+                                                loadNotes(path);
                                             }
                                         }
                                     }
@@ -460,7 +465,9 @@ Rectangle {
                         cursorVisible: true
                         activeFocusOnPress: true
                         onTextChanged: {
-                            saveTimer.restart();
+                            if (root.selectedDay !== -1)
+                                saveTimer.restart();
+
                         }
 
                         Timer {
@@ -469,8 +476,12 @@ Rectangle {
                             interval: 1000
                             repeat: false
                             onTriggered: {
-                                if (root.selectedDay !== -1) {
-                                    saveNotesProcess.filePath = root.getNotesFilePath();
+                                if (root.selectedDay !== -1 && !root.isNullOrWhiteSpace(notesEdit.text)) {
+                                    let year = selectedYear;
+                                    let month = (selectedMonth + 1).toString().padStart(2, '0');
+                                    let day = selectedDay.toString().padStart(2, '0');
+                                    const path = root.filePathBaseDir + year + "-" + month + "-" + day + ".txt";
+                                    saveNotesProcess.filePath = path;
                                     saveNotesProcess.noteText = notesEdit.text;
                                     saveNotesProcess.running = true;
                                 }
@@ -497,30 +508,6 @@ Rectangle {
 
     }
 
-    // Load notes
-    Process {
-        id: loadNotesProcess
-
-        property string currentText: ""
-        property string filePath: ""
-
-        running: false
-        command: ["cat", filePath]
-        onRunningChanged: {
-            if (!running)
-                notesEdit.text = currentText;
-            else
-                currentText = "";
-        }
-
-        stdout: SplitParser {
-            onRead: (data) => {
-                loadNotesProcess.currentText += data;
-            }
-        }
-
-    }
-
     // Save notes
     Process {
         id: saveNotesProcess
@@ -535,6 +522,18 @@ Rectangle {
                 console.log(`Saved notes ${noteText} to ${filePath}`);
 
         }
+    }
+
+    Process {
+        id: loadNotesProcess
+
+        stdout: StdioCollector {
+            onStreamFinished: {
+                notesEdit.text = text;
+                console.log(`Loaded text: ${notesEdit.text}`);
+            }
+        }
+
     }
 
 }
