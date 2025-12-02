@@ -36,19 +36,26 @@
       },
     },
     "custom/gpu_usage": {
-      "exec": "$HOME/Rice/Scripts/gpu-usage.sh",
+      "exec": "$HOME/.config/scripts/gpu-usage.sh",
       "interval": 2,
       "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰢮</span>     {}%",
+      "tooltip": false,
+      "on-click": "qs ipc call gpu toggle",
     },
+
     "custom/gpu_temp": {
-      "exec": "$HOME/Rice/Scripts/gpu-temp.sh",
+      "exec": "$HOME/.config/scripts/gpu-temp.sh",
       "interval": 5,
       "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰔏</span>   {}°C",
+      "tooltip": false,
+      "on-click": "qs ipc call gpu toggle",
     },
     "custom/gpu_vram": {
-      "exec": "$HOME/Rice/Scripts/gpu-vram.sh",
+      "exec": "$HOME/.config/scripts/gpu-vram.sh",
       "interval": 3,
       "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰡂</span>     {}",
+      "tooltip": false,
+      "on-click": "qs ipc call gpu toggle",
     },
     "disk": {
       "interval": 20,
@@ -110,8 +117,10 @@
     },
 
     "custom/controller": {
-      "exec": "/usr/share/scripts/xbox_controller.sh",
+      "exec": "$HOME/.config/scripts/xbox_controller.sh",
       "interval": 3,
+      "tooltip": false,
+      "on-click": "qs ipc call extdev toggle",
     },
 
     "cpu": {
@@ -122,6 +131,8 @@
     "memory": {
       "interval": 5,
       "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>      {used:0.1f}G/{total:0.1f}G ",
+      "tooltip": false,
+      "on-click": "qs ipc call cpuram toggle",
     },
 
     "temperature": {
