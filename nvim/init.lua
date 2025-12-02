@@ -205,6 +205,7 @@ require("lazy").setup({
 
 			vim.api.nvim_set_hl(0, "SnacksPickerInputSearch", { fg = "#f9e2af", bold = true })
 
+			vim.api.nvim_set_hl(0, "CurSearch", { fg = "#ff9e64", bg = "#ff9e64", bold = true })
 			vim.api.nvim_set_hl(0, "Search", { fg = "#8b5cf6", bg = "#ff9e64", bold = true })
 			vim.api.nvim_set_hl(0, "SearchCount", { fg = "#1e1b29", bold = true })
 
@@ -528,6 +529,7 @@ require("lazy").setup({
 			vim.api.nvim_set_hl(0, "NeoTreeNormal", { bg = "none" })
 			vim.api.nvim_set_hl(0, "NeoTreeNormalNC", { bg = "none" })
 			vim.api.nvim_set_hl(0, "NeoTreeEndOfBuffer", { bg = "none" })
+			vim.api.nvim_set_hl(0, "NeoTreeGitModified", { fg = "#ff9e64" })
 
 			vim.api.nvim_set_hl(0, "Search", { fg = "#1e1b29", bg = "#8b5cf6", bold = true })
 			vim.api.nvim_set_hl(0, "IncSearch", { fg = "#1e1b29", bg = "#f9e2af", bold = true })

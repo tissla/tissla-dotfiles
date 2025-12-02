@@ -109,12 +109,24 @@ Rectangle {
     }
 
     function saveNoteForDay(dayId, noteText) {
-        if (!notesData[dayId])
-            notesData[dayId] = {
-            "noteColors": []
-        };
+        // use copy
+        let newData = Object.assign({
+        }, notesData);
+        if (isNullOrWhiteSpace(noteText)) {
+            // empty = remove
+            if (newData[dayId])
+                delete newData[dayId];
 
-        notesData[dayId].notes = noteText;
+        } else {
+            if (!newData[dayId])
+                newData[dayId] = {
+                "noteColors": []
+            };
+
+            newData[dayId].notes = noteText;
+        }
+        // reference change to trigger binding update
+        notesData = newData;
         saveAllNotes();
     }
 
@@ -431,10 +443,9 @@ Rectangle {
                                         }
                                         onClicked: {
                                             if (parent.isDayInMonth) {
-                                                root.selectedDay = parent.dayNumber;
-                                                root.selectedMonth = root.displayMonth;
                                                 root.selectedYear = root.displayYear;
-                                                root.selectedDayId = parent.dayId;
+                                                root.selectedMonth = root.displayMonth;
+                                                root.selectedDay = parent.dayNumber;
                                                 console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
                                             }
                                         }
@@ -603,7 +614,7 @@ Rectangle {
                             interval: 1000
                             repeat: false
                             onTriggered: {
-                                if (root.selectedDay !== -1 && !root.isNullOrWhiteSpace(notesEdit.text))
+                                if (root.selectedDay !== -1)
                                     root.saveNoteForDay(root.selectedDayId, notesEdit.text);
 
                             }
