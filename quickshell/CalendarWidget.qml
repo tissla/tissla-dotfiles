@@ -17,8 +17,10 @@ Rectangle {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
-    property string filePathBaseDir: Quickshell.env("HOME") + "/.config/quickshell/notes/"
+    property string notesFilePath: Quickshell.env("HOME") + "/.config/quickshell/data/calendar_notes.json"
     property string selectedDayId: ""
+    property var notesData: ({
+    })
 
     // function to change month/year
     function changeMonth(offset) {
@@ -56,10 +58,64 @@ Rectangle {
         return Math.ceil((((d - yearStart) / 8.64e+07) + 1) / 7);
     }
 
-    function loadNotes(path) {
-        loadNotesProcess.exec({
-            "command": ["cat", path]
-        });
+    // note helpers
+    function loadAllNotes() {
+        loadNotesProcess.running = true;
+    }
+
+    function saveAllNotes() {
+        const jsonString = JSON.stringify(notesData, null, 2);
+        saveNotesProcess.noteText = jsonString;
+        saveNotesProcess.running = true;
+    }
+
+    function getNotesForDay(dayId) {
+        if (notesData && notesData[dayId] && notesData[dayId].notes)
+            return notesData[dayId].notes;
+
+        return "";
+    }
+
+    function getNoteColorsForDay(dayId) {
+        if (!notesData || typeof notesData !== 'object')
+            return [];
+
+        if (notesData[dayId] && notesData[dayId].noteColors)
+            return notesData[dayId].noteColors;
+
+        return [];
+    }
+
+    function hasNoteForDay(dayId) {
+        if (!notesData)
+            return false;
+
+        if (typeof notesData !== 'object')
+            return false;
+
+        if (!dayId)
+            return false;
+
+        if (!notesData[dayId])
+            return false;
+
+        if (!notesData[dayId].notes)
+            return false;
+
+        if (isNullOrWhiteSpace(notesData[dayId].notes))
+            return false;
+
+        return true;
+    }
+
+    function saveNoteForDay(dayId, noteText) {
+        if (!notesData[dayId])
+            notesData[dayId] = {
+            "noteColors": []
+        };
+
+        notesData[dayId].notes = noteText;
+        saveAllNotes();
     }
 
     onSelectedDayChanged: {
@@ -67,15 +123,17 @@ Rectangle {
             if (saveTimer.running)
                 saveTimer.stop();
 
-            currentNotesFilePath = getNotesFilePath();
-            loadNotesProcess.running = true;
+            selectedDayId = selectedYear + "-" + (selectedMonth + 1).toString().padStart(2, '0') + "-" + selectedDay.toString().padStart(2, '0');
+            // load from data
+            notesEdit.text = getNotesForDay(selectedDayId);
         }
     }
     // update date on show
     onIsVisibleChanged: {
-        if (isVisible)
+        if (isVisible) {
             resetCalendar();
-
+            loadAllNotes();
+        }
     }
     // base look
     color: Theme.background
@@ -306,8 +364,6 @@ Rectangle {
                                     property int otherDayNumber: isLastMonth ? lastMonthNumber : nextMonthNumber
                                     property bool isSelectedDay: dayNumber == root.selectedDay && root.selectedMonth == root.displayMonth && root.selectedYear == root.displayYear
                                     property bool isHovered: false
-                                    // Which notes exist for this dayId
-                                    property var noteColors: ["orange", "blue", Theme.primary]
                                     // day ID helpers
                                     property int cellYear: {
                                         if (isLastMonth)
@@ -339,7 +395,8 @@ Rectangle {
                                     // unique ID for cell
                                     property string dayId: cellYear + "-" + (cellMonth + 1).toString().padStart(2, '0') + "-" + cellDay.toString().padStart(2, '0')
                                     // check if we have a note for day
-                                    property bool hasNote: File.exists(root.filePathBaseDir + dayId + ".txt")
+                                    property bool hasNote: root.hasNoteForDay(dayId) || false
+                                    property var dayNoteColors: root.getNoteColorsForDay(dayId)
 
                                     visible: index % 8 !== 0
                                     anchors.fill: parent
@@ -379,8 +436,6 @@ Rectangle {
                                                 root.selectedYear = root.displayYear;
                                                 root.selectedDayId = parent.dayId;
                                                 console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
-                                                const path = root.filePathBaseDir + parent.dayId + ".txt";
-                                                loadNotes(path);
                                             }
                                         }
                                     }
@@ -402,9 +457,9 @@ Rectangle {
                                         font.weight: parent.isDayInMonth ? Font.Bold : Font.Normal
                                     }
 
-                                    // earmark indicator
+                                    // colored note indicators
                                     Repeater {
-                                        model: 3
+                                        model: parent.dayNoteColors
                                         anchors.top: parent.top
                                         anchors.left: parent.left
 
@@ -412,12 +467,13 @@ Rectangle {
                                             y: index * 6
                                             height: 4
                                             width: 4
-                                            color: parent.noteColors[index]
+                                            color: modelData
                                             visible: true
                                         }
 
                                     }
 
+                                    // has note earmark
                                     Canvas {
                                         id: noteIndicator
 
@@ -425,7 +481,7 @@ Rectangle {
                                         anchors.right: parent.right
                                         width: parent.width / 4
                                         height: parent.height / 4
-                                        visible: parent.hasNote
+                                        visible: root.hasNoteForDay(parent.dayId) || false
                                         onPaint: {
                                             var ctx = getContext("2d");
                                             ctx.fillStyle = "orange";
@@ -547,12 +603,9 @@ Rectangle {
                             interval: 1000
                             repeat: false
                             onTriggered: {
-                                if (root.selectedDay !== -1 && !root.isNullOrWhiteSpace(notesEdit.text)) {
-                                    const path = root.filePathBaseDir + selectedDayId + ".txt";
-                                    saveNotesProcess.filePath = path;
-                                    saveNotesProcess.noteText = notesEdit.text;
-                                    saveNotesProcess.running = true;
-                                }
+                                if (root.selectedDay !== -1 && !root.isNullOrWhiteSpace(notesEdit.text))
+                                    root.saveNoteForDay(root.selectedDayId, notesEdit.text);
+
                             }
                         }
 
@@ -576,29 +629,60 @@ Rectangle {
 
     }
 
-    // Save notes
+    // saveNotesProcess:
     Process {
         id: saveNotesProcess
 
-        property string filePath: ""
         property string noteText: ""
 
         running: false
-        command: ["sh", "-c", "mkdir -p ~/.config/quickshell/notes && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + filePath + "'"]
+        command: ["sh", "-c", "mkdir -p ~/.config/quickshell/data && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
         onRunningChanged: {
             if (!running)
-                console.log(`Saved notes ${noteText} to ${filePath}`);
+                console.log("Saved notes to JSON");
 
         }
     }
 
+    // loadNotesProcess:
     Process {
         id: loadNotesProcess
 
+        running: false
+        command: ["cat", notesFilePath]
+
         stdout: StdioCollector {
             onStreamFinished: {
-                notesEdit.text = text;
-                console.log(`Loaded text: ${notesEdit.text}`);
+                if (text && text.trim().length > 0) {
+                    try {
+                        root.notesData = JSON.parse(text);
+                        console.log("Loaded notes from JSON");
+                        // Update UI if day chosen
+                        if (root.selectedDay !== -1)
+                            notesEdit.text = root.getNotesForDay(root.selectedDayId);
+
+                    } catch (e) {
+                        console.log("Error parsing JSON:", e);
+                        root.notesData = {
+                        };
+                    }
+                } else {
+                    // Empty data
+                    root.notesData = {
+                    };
+                    console.log("No existing notes file, initialized empty data");
+                }
+            }
+        }
+
+        stderr: StdioCollector {
+            onStreamFinished: {
+                // No file handling
+                if (text.includes("No such file")) {
+                    root.notesData = {
+                    };
+                    console.log("Notes file doesn't exist yet, initialized empty data");
+                }
             }
         }
 

@@ -203,9 +203,10 @@ require("lazy").setup({
 			vim.api.nvim_set_hl(0, "NoiceCmdlinePopupBorderSearch", { fg = "#8b5cf6" })
 			vim.api.nvim_set_hl(0, "NoiceCmdlinePopupTitle", { fg = "#f9e2af", bold = true })
 
-			vim.api.nvim_set_hl(0, "SearchCount", { fg = "#8b5cf6", bg = "#41395e", bold = true })
-			vim.api.nvim_set_hl(0, "IncSearch", { fg = "#8b5cf6", bg = "#41395e", bold = true })
+			vim.api.nvim_set_hl(0, "SnacksPickerInputSearch", { fg = "#f9e2af", bold = true })
+
 			vim.api.nvim_set_hl(0, "Search", { fg = "#8b5cf6", bg = "#ff9e64", bold = true })
+			vim.api.nvim_set_hl(0, "SearchCount", { fg = "#1e1b29", bold = true })
 
 			vim.api.nvim_set_hl(0, "Pmenu", { bg = "#2b263b", fg = "#c9c7d4" })
 			vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "#1e1b29" })
@@ -384,16 +385,7 @@ require("lazy").setup({
 			})
 
 			local servers = {
-				-- qmlls
-				-- qmlls = {
-				-- 	cmd = { "qmlls" },
-				-- 	filetypes = { "qml" },
-				-- 	root_dir = function(fname)
-				-- 		local util = require("lspconfig.util")
-				-- 		return util.root_pattern(".git", ".qmlls.ini")(fname) or util.path.dirname(fname)
-				-- 	end,
-				-- },
-				--
+
 				lua_ls = {
 					settings = {
 						Lua = {
@@ -437,8 +429,11 @@ require("lazy").setup({
 			})
 			require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
 			require("mason-lspconfig").setup({
-				ensure_installed = {},
+				ensure_installed = ensure_installed,
 				automatic_installation = false,
 				handlers = {
 					function(server_name)
@@ -447,6 +442,23 @@ require("lazy").setup({
 						require("lspconfig")[server_name].setup(server)
 					end,
 				},
+			})
+
+			-- qmlls setup
+
+			local lspconfig = require("lspconfig")
+
+			lspconfig.qmlls.setup({
+				cmd = { "qmlls6", "-E" },
+				cmd_env = {
+					QMLLS_BUILD_DIRS = "/usr/lib/qt6/qml",
+					QML_IMPORT_PATH = table.concat({
+						"/usr/lib/qt6/qml",
+						vim.fn.expand("~/.config/quickshell"),
+					}, ":"),
+					QML2_IMPORT_PATH = "/usr/lib/qt6/qml",
+				},
+				capabilities = capabilities,
 			})
 		end,
 	},
