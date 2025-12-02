@@ -454,7 +454,7 @@ Rectangle {
                                     Text {
                                         anchors.centerIn: parent
                                         text: parent.isDayInMonth ? parent.dayNumber : parent.otherDayNumber
-                                        font.family: "JetBrains Nerd Font"
+                                        font.family: Theme.fontCalendar
                                         font.pixelSize: 13
                                         color: {
                                             if (parent.isDayInMonth && parent.isCurrentDay)
@@ -470,14 +470,14 @@ Rectangle {
 
                                     // colored note indicators
                                     Repeater {
-                                        model: parent.dayNoteColors
+                                        model: root.notesData[parent.dayId] ? root.notesData[parent.dayId].noteColors : []
                                         anchors.top: parent.top
                                         anchors.left: parent.left
 
                                         Rectangle {
-                                            y: index * 6
-                                            height: 4
-                                            width: 4
+                                            y: index * 10
+                                            height: 8
+                                            width: 8
                                             color: modelData
                                             visible: true
                                         }
@@ -495,7 +495,7 @@ Rectangle {
                                         visible: root.hasNoteForDay(parent.dayId) || false
                                         onPaint: {
                                             var ctx = getContext("2d");
-                                            ctx.fillStyle = "orange";
+                                            ctx.fillStyle = Theme.accent;
                                             ctx.beginPath();
                                             ctx.moveTo(width, 0);
                                             ctx.lineTo(0, 0);
@@ -533,7 +533,6 @@ Rectangle {
                         leftMargin: 30
                         rightMargin: 30
                         topMargin: 12
-                        bottomMargin: 18
                     }
 
                     // Date header
@@ -593,7 +592,7 @@ Rectangle {
 
                         visible: root.selectedDay !== -1
                         width: parent.width
-                        height: 150
+                        height: 115
                         text: ""
                         color: Theme.textPrimary
                         font.family: Theme.fontCalendar
@@ -628,6 +627,55 @@ Rectangle {
                             font: parent.font
                             visible: parent.text === ""
                             enabled: false
+                        }
+
+                    }
+
+                    Row {
+                        spacing: 10
+                        visible: root.selectedDay !== -1
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        Repeater {
+                            model: ["orange", "green", "red"]
+
+                            Rectangle {
+                                width: 30
+                                height: 30
+                                border.width: 2
+                                border.color: modelData
+                                color: {
+                                    let colors = root.getNoteColorsForDay(root.selectedDayId);
+                                    if (colors.indexOf(modelData) !== -1)
+                                        return modelData;
+                                    else
+                                        return "transparent";
+                                }
+                                radius: 6
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: {
+                                        if (!root.notesData[root.selectedDayId])
+                                            root.notesData[root.selectedDayId] = {
+                                            "notes": "",
+                                            "noteColors": []
+                                        };
+
+                                        let colors = root.notesData[root.selectedDayId].noteColors;
+                                        let index = colors.indexOf(modelData);
+                                        if (index !== -1)
+                                            colors.splice(index, 1);
+                                        else
+                                            colors.push(modelData);
+                                        root.notesData[root.selectedDayId].noteColors = colors;
+                                        root.saveAllNotes();
+                                        root.notesDataChanged();
+                                    }
+                                }
+
+                            }
+
                         }
 
                     }

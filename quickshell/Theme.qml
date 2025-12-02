@@ -10,7 +10,8 @@ QtObject {
     property color textPrimary: "#c9c7d4"
     property color textSecondary: "#9ca3af"
     property color textMuted: "#4b5564"
-	property color todayText: "#a78bfa"
-	property color bbyBlue: "#5fafd7"
-	property string fontCalendar: "JetBrains Nerd Font"
+    property color todayText: "#a78bfa"
+    property color bbyBlue: "#5fafd7"
+    property color accent: "#ff9e64"
+    property string fontCalendar: "JetBrains Nerd Font"
 }
