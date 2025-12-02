@@ -13,5 +13,6 @@ QtObject {
     property color todayText: "#a78bfa"
     property color bbyBlue: "#5fafd7"
     property color accent: "#ff9e64"
+    property color fillClr: "#41395e"
     property string fontCalendar: "JetBrains Nerd Font"
 }

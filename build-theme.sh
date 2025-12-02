@@ -128,6 +128,7 @@ QtObject {
     property color textMuted: "${CLR_TEXT_MUTED}"
 	property color todayText: "${CLR_ACCENT}"
 	property color bbyBlue: "${CLR_BBYBLUE}"
+	property color accent: "${CLR_ORANGE}"
 	property string fontCalendar: "${FONT_CALENDAR}"
 }
 EOF

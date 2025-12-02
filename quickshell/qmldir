@@ -1,3 +1,5 @@
 singleton Theme 1.0 Theme.qml
 CalendarWidget 1.0 CalendarWidget.qml
 singleton CalendarState 1.0 CalendarState.qml
+VolumeWidget 1.0 VolumeWidget.qml
+singleton VolumeState 1.0 VolumeState.qml

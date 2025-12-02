@@ -10,9 +10,37 @@ ShellRoot {
 
     id: shellRoot
 
+    property bool volumeVisible: false
     property bool calendarVisible: false
 
     objectName: "shellRoot"
+
+    // VOLUME
+    PanelWindow {
+        id: volumeWindow
+
+        screen: Quickshell.screens[0]
+        visible: VolumeState.isVisible
+        implicitWidth: 40
+        implicitHeight: 200
+        color: "transparent"
+
+        anchors {
+            bottom: true
+            right: true
+        }
+
+        margins {
+            bottom: 10
+            right: 260
+        }
+
+        VolumeWidget {
+            anchors.fill: parent
+            isVisible: VolumeState.isVisible
+        }
+
+    }
 
     // CALENDAR
     PanelWindow {
@@ -36,10 +64,6 @@ ShellRoot {
         }
 
         CalendarWidget {
-            // onRequestClose: {
-            //     CalendarState.hide();
-            // }
-
             anchors.fill: parent
             isVisible: CalendarState.isVisible
         }
@@ -63,6 +87,25 @@ ShellRoot {
         }
 
         target: "calendar"
+    }
+
+    IpcHandler {
+        function toggle() {
+            console.log("IPC: toggle volume");
+            VolumeState.toggle();
+        }
+
+        function show() {
+            console.log("IPC: show volume");
+            VolumeState.show();
+        }
+
+        function hide() {
+            console.log("IPC: hide volume");
+            VolumeState.hide();
+        }
+
+        target: "volume"
     }
 
 }

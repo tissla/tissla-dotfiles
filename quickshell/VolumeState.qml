@@ -1,4 +1,4 @@
-// CalendarState.qml
+// VolumeState.qml
 import QtQuick
 pragma Singleton
 

@@ -139,6 +139,8 @@
         "default": ["", ""],
       },
       "scroll-step": 2,
+      "tooltip": false,
+      "on-click": "qs ipc call volume toggle",
     },
 
     "clock#date": {
