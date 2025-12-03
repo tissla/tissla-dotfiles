@@ -94,7 +94,7 @@ Rectangle {
 
             Text {
                 text: Math.round(gpuWidget.gpuUsage) + "%"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -127,7 +127,7 @@ Rectangle {
 
             Text {
                 text: gpuWidget.vramUsed.toFixed(1) + "GB"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -161,7 +161,7 @@ Rectangle {
 
             Text {
                 text: Math.round(gpuWidget.gpuTemp) + "°C"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary

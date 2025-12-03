@@ -160,12 +160,12 @@ ShellRoot {
     PanelWindow {
         id: calendarWindow
 
+        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
         screen: Quickshell.screens[0]
         visible: CalendarState.isVisible
         implicitWidth: 620
         implicitHeight: 420
         color: "transparent"
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
         anchors {
             bottom: true

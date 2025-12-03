@@ -123,7 +123,7 @@ QtObject {
     property color background: "${CLR_QML_BG}"
 	property color backgroundSolid: "${CLR_BG}"
     property color backgroundAlt: "${CLR_QML_BG_ALT}"
-	property color backgroundAltSolid: "${CLG_PRIMARY_MUTED}"
+	property color backgroundAltSolid: "${CLR_PRIMARY_MUTED}"
     property color primary: "${CLR_PRIMARY}"
     property color textPrimary: "${CLR_FG}"
     property color textSecondary: "${CLR_FG_MUTED}"
@@ -134,7 +134,7 @@ QtObject {
 	property color fillClr: "${CLR_FILL}"
 	property color green: "${CLR_GREEN}"
 	property string fontMain: "${FONT_MAIN}"
-	property string fontCalendar: "${FONT_CALENDAR}"
+	property string fontMono: "${FONT_MONO2}"
 }
 EOF
 

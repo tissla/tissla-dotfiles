@@ -188,7 +188,7 @@ Rectangle {
                 Text {
                     id: timeText
 
-                    font.family: Theme.fontCalendar
+                    font.family: Theme.fontMono
                     font.pixelSize: 48
                     font.weight: Font.Bold
                     color: Theme.textPrimary
@@ -255,7 +255,7 @@ Rectangle {
                                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                                 return monthNames[root.displayMonth] + " " + root.displayYear;
                             }
-                            font.family: Theme.fontCalendar
+                            font.family: Theme.fontMono
                             font.pixelSize: 18
                             font.weight: Font.Medium
                             color: Theme.textSecondary
@@ -294,7 +294,7 @@ Rectangle {
                         // empty cell in top left, maybe add something?
                         Text {
                             text: ""
-                            font.family: Theme.fontCalendar
+                            font.family: Theme.fontMono
                             width: 40
                             height: 30
                             horizontalAlignment: Text.AlignHCenter
@@ -307,7 +307,7 @@ Rectangle {
 
                             Text {
                                 text: modelData
-                                font.family: Theme.fontCalendar
+                                font.family: Theme.fontMono
                                 font.pixelSize: 14
                                 font.weight: Font.Bold
                                 color: Theme.textPrimary
@@ -337,7 +337,7 @@ Rectangle {
                                         let date = new Date(root.displayYear, root.displayMonth, Math.floor(index / 7) * 7 + 1);
                                         return getWeekNumber(date);
                                     }
-                                    font.family: Theme.fontCalendar
+                                    font.family: Theme.fontMono
                                     font.pixelSize: 11
                                     font.weight: Font.Bold
                                     font.italic: true
@@ -455,7 +455,7 @@ Rectangle {
                                     Text {
                                         anchors.centerIn: parent
                                         text: parent.isDayInMonth ? parent.dayNumber : parent.otherDayNumber
-                                        font.family: Theme.fontCalendar
+                                        font.family: Theme.fontMono
                                         font.pixelSize: 13
                                         color: {
                                             if (parent.isDayInMonth && parent.isCurrentDay)
@@ -545,7 +545,7 @@ Rectangle {
 
                             return root.selectedYear + "-" + (root.selectedMonth + 1).toString().padStart(2, '0') + "-" + root.selectedDay.toString().padStart(2, '0');
                         }
-                        font.family: Theme.fontCalendar
+                        font.family: Theme.fontMono
                         font.pixelSize: 16
                         font.weight: Font.Bold
                         horizontalAlignment: Text.AlignHCenter
@@ -596,7 +596,7 @@ Rectangle {
                         height: 115
                         text: ""
                         color: Theme.textPrimary
-                        font.family: Theme.fontCalendar
+                        font.family: Theme.fontMono
                         font.pixelSize: 12
                         wrapMode: TextEdit.Wrap
                         selectByMouse: true

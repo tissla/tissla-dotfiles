@@ -166,7 +166,7 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.cpuUsage) + "%"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -199,7 +199,7 @@ Rectangle {
 
             Text {
                 text: cpuRamWidget.ramUsed.toFixed(1) + "GB"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -231,7 +231,7 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.pumpSpeed) + "rpm"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -265,7 +265,7 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.cpuTemp) + "°C"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary
@@ -298,7 +298,7 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.liquidTemp) + "°C"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
                 color: Theme.textPrimary

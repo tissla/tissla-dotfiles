@@ -98,7 +98,7 @@ Rectangle {
                 else
                     return "Bluetooth";
             }
-            font.family: Theme.fontCalendar
+            font.family: Theme.fontMono
             font.pixelSize: 16
             font.weight: Font.Bold
             color: Theme.textPrimary
@@ -161,7 +161,7 @@ Rectangle {
 
             Text {
                 text: usbDevWidget.controllerBattery + "%"
-                font.family: Theme.fontCalendar
+                font.family: Theme.fontMono
                 font.pixelSize: 14
                 color: Theme.textPrimary
                 anchors.verticalCenter: parent.verticalCenter
@@ -177,7 +177,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 8
         text: "🎮 Xbox Controller"
-        font.family: Theme.fontCalendar
+        font.family: Theme.fontMono
         font.pixelSize: 12
         color: Theme.textMuted
     }
