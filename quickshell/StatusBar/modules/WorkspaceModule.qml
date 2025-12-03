@@ -13,7 +13,7 @@ Row {
         Rectangle {
             property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
-            visible: modelData.monitor && modelData.monitor === workspaceModule.screen && modelData.id != -98
+            visible: modelData.monitor && modelData.monitor.name === workspaceModule.screen.name && modelData.id != -98
             width: 40
             height: 40
             radius: 15
