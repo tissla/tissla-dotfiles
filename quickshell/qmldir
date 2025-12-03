@@ -1,6 +1,13 @@
 # theme
 singleton Theme 1.0 Theme.qml
 
+# settings
+singleton SettingsManager 1.0 SettingsManager.qml
+
+# statusbar
+StatusBar 1.0 StatusBar/StatusBar.qml
+
+
 # calendar
 CalendarWidget 1.0 Calendar/CalendarWidget.qml
 singleton CalendarState 1.0 Calendar/CalendarState.qml
@@ -24,3 +31,11 @@ singleton UsbDevState 1.0 UsbDev/UsbDevState.qml
 ## resources
 GaugeWidget 1.0 Resources/GaugeWidget.qml
 ThermometerWidget 1.0 Resources/ThermometerWidget.qml
+
+### MODULES
+
+# clock
+ClockModule 1.0 StatusBar/modules/ClockModule.qml
+
+# workspaces
+WorkspaceModule 1.0 StatusBar/modules/WorkspaceModule.qml

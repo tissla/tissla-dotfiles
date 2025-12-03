@@ -4,15 +4,36 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 ShellRoot {
-    // CONTROLLER
-
     id: shellRoot
 
-    property bool volumeVisible: false
-    property bool calendarVisible: false
-    property bool cpuRamVisible: false
-
     objectName: "shellRoot"
+
+    // StatusBar
+    Variants {
+        model: Quickshell.screens
+
+        PanelWindow {
+            property var modelData
+
+            screen: modelData
+            implicitHeight: SettingsManager.barHeight
+            color: "transparent"
+
+            anchors {
+                left: true
+                right: true
+                bottom: SettingsManager.barPosition === "bottom"
+                top: SettingsManager.barPosition === "top"
+            }
+
+            StatusBar {
+                anchors.fill: parent
+                screenName: modelData.name
+            }
+
+        }
+
+    }
 
     // USB Devices Monitor
     PanelWindow {

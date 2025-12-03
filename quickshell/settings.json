@@ -1,0 +1,25 @@
+{
+  "bar": {
+    "transparentBackground": false,
+    "height": 40,
+    "position": "bottom"
+  },
+  "screens": [
+    {
+      "name": "DP-2",
+      "modules": {
+        "left": ["WorkspaceModule"],
+        "center": [],
+        "right": []
+      }
+    },
+    {
+      "name": "HDMI-A-1",
+      "modules": {
+        "left": ["WorkspaceModule"],
+        "center": ["MprisModule"],
+        "right": ["GPUModule", "CPUModule", "ClockModule"]
+      }
+    }
+  ]
+}

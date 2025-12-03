@@ -348,7 +348,7 @@ Rectangle {
 
                                 // cell that represents a day
                                 Rectangle {
-                                    property int newIndex: index - ((index / 8) * 1)
+                                    property int newIndex: index - ((index / 8))
                                     // current day
                                     property int currentDay: root.now.getDate()
                                     // Calculate what day this cell represents

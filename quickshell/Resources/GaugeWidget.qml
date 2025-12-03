@@ -2,8 +2,6 @@ import ".."
 import QtQuick
 
 Canvas {
-    // 405 degrees (270 degree span)
-
     id: gauge
 
     property real value: 0
