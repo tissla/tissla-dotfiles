@@ -22,12 +22,12 @@ QtObject {
     }
 
     function getScreenConfig(screenName) {
-        console.log("Getting config for screen:", screenName);
+        console.log("[SettingsManager] Getting config for screen:", screenName);
         if (screenConfigs && screenConfigs[screenName]) {
-            console.log("Found config for:", screenName);
+            console.log("[SettingsManager] Found config for:", screenName);
             return screenConfigs[screenName];
         } else {
-            console.log("No config found for:", screenName, "- using default");
+            console.log("[SettingsManager] No config found for:", screenName, "- using default");
             return {
                 "left": ["WorkspaceModule"],
                 "center": [],
@@ -37,7 +37,7 @@ QtObject {
     }
 
     Component.onCompleted: {
-        console.log("📝 SettingsManager initialized");
+        console.log("[SettingsManager] SettingsManager initialized");
         loadSettings();
     }
 
@@ -93,7 +93,7 @@ QtObject {
                             };
                         }
                         settings.screenConfigs = configs;
-                        console.log("📝 Loaded", Object.keys(configs).length, "screen configs");
+                        console.log("[SettingsManager] Loaded", Object.keys(configs).length, "screen configs");
                     }
                 } catch (e) {
                     console.log("❌ Error parsing settings.json:", e);

@@ -55,7 +55,7 @@ Item {
 
         Text {
             text: Math.round(gpuModule.gpuUsage) + "%"
-            font.family: Theme.fontCalendar
+            font.family: Theme.fontMono
             font.pixelSize: 14
             font.weight: Font.Bold
             color: Theme.textPrimary

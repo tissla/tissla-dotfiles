@@ -13,7 +13,7 @@ Row {
         model: Hyprland.workspaces
 
         Rectangle {
-            property bool isActive: Hyprland.focusedWorkspace.id === modelData.id
+            property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
             visible: modelData.monitor && modelData.monitor.name === workspaceModule.screenName
             width: 30
@@ -34,7 +34,7 @@ Row {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
                 onClicked: {
-                    Hyprland.dispatch("workspace", modelData.id);
+                    modelData.activate();
                 }
             }
 

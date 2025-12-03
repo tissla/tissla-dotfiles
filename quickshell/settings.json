@@ -9,8 +9,8 @@
       "name": "DP-2",
       "modules": {
         "left": ["WorkspaceModule"],
-        "center": [],
-        "right": []
+        "center": ["AudioVisualizerModule"],
+        "right": ["NetworkModule"]
       }
     },
     {
@@ -18,7 +18,7 @@
       "modules": {
         "left": ["WorkspaceModule"],
         "center": ["MprisModule"],
-        "right": ["GPUModule", "CPUModule", "ClockModule"]
+        "right": ["GPUModule", "CPUModule", "VolumeModule", "ClockModule"]
       }
     }
   ]
