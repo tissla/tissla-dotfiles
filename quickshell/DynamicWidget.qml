@@ -10,10 +10,9 @@ PanelWindow {
     required property bool isVisible
     required property int widgetWidth
     required property int widgetHeight
-    required property var targetScreen
     property int frozenX: 0
+    property var screen: WidgetManager.lastScreen || Quickshell.screens[0]
 
-    screen: targetScreen
     visible: isVisible
     implicitWidth: widgetWidth
     implicitHeight: widgetHeight
@@ -24,7 +23,7 @@ PanelWindow {
     onVisibleChanged: {
         if (visible) {
             frozenX = Math.max(10, Math.min(WidgetManager.lastMouseX - (widgetWidth / 2), screen.width - widgetWidth - 20));
-            console.log("[DynamicWidget]", widgetId, "frozen at x:", frozenX);
+            console.log("[DynamicWidget]", widgetId, "on screen:", screen.name, "at x:", frozenX);
         }
     }
 

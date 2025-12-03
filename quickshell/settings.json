@@ -10,7 +10,7 @@
       "modules": {
         "left": ["WorkspaceModule"],
         "center": [],
-        "right": ["NetworkModule"]
+        "right": ["CPUModule", "NetworkModule"]
       }
     },
     {

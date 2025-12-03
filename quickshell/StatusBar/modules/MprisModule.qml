@@ -5,7 +5,7 @@ import Quickshell.Io
 Item {
     id: mprisModule
 
-    property string screenName: ""
+    property var screen: null
     property string title: "No media playing"
     property string artist: ""
     property string status: "Stopped"
@@ -74,10 +74,10 @@ Item {
         }
 
         Text {
-            text: {
-                // if (mprisModule.artist)
-                //     display = mprisModule.artist + " - " + display;
+            // if (mprisModule.artist)
+            //     display = mprisModule.artist + " - " + display;
 
+            text: {
                 if (mprisModule.status === "Stopped")
                     return "No media";
 

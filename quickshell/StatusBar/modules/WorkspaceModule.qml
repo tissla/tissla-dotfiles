@@ -5,7 +5,7 @@ import Quickshell.Hyprland
 Row {
     id: workspaceModule
 
-    property string screenName: ""
+    property var screen: null
 
     Repeater {
         model: Hyprland.workspaces
@@ -13,7 +13,7 @@ Row {
         Rectangle {
             property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
-            visible: modelData.monitor && modelData.monitor.name === workspaceModule.screenName && modelData.id != -98
+            visible: modelData.monitor && modelData.monitor === workspaceModule.screen && modelData.id != -98
             width: 40
             height: 40
             radius: 15

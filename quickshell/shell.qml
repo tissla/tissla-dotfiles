@@ -28,7 +28,7 @@ ShellRoot {
 
             StatusBar {
                 anchors.fill: parent
-                screenName: modelData.name
+                screen: modelData
             }
 
         }
@@ -41,7 +41,6 @@ ShellRoot {
         isVisible: GpuState.isVisible
         widgetWidth: 320
         widgetHeight: 200
-        targetScreen: Quickshell.screens[0]
 
         widgetComponent: Component {
             GpuWidget {
@@ -57,7 +56,6 @@ ShellRoot {
         isVisible: CpuRamState.isVisible
         widgetWidth: 450
         widgetHeight: 200
-        targetScreen: Quickshell.screens[0]
 
         widgetComponent: Component {
             CpuRamWidget {
@@ -73,7 +71,6 @@ ShellRoot {
         isVisible: VolumeState.isVisible
         widgetWidth: 40
         widgetHeight: 200
-        targetScreen: Quickshell.screens[0]
 
         widgetComponent: Component {
             VolumeWidget {
@@ -89,7 +86,6 @@ ShellRoot {
         isVisible: UsbDevState.isVisible
         widgetWidth: 200
         widgetHeight: 180
-        targetScreen: Quickshell.screens[0]
 
         widgetComponent: Component {
             UsbDevWidget {

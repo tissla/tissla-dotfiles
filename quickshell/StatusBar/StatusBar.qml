@@ -4,12 +4,12 @@ import QtQuick
 Item {
     id: statusBar
 
-    property string screenName: ""
-    property var config: SettingsManager.getScreenConfig(screenName)
+    property var screen: null
+    property var config: SettingsManager.getScreenConfig(screen.name)
 
     Component.onCompleted: {
         console.log("=== StatusBar Created ===");
-        console.log("Screen name:", screenName);
+        console.log("Screen name:", screen.name);
     }
 
     Rectangle {
@@ -43,9 +43,9 @@ Item {
 
                     Loader {
                         source: "modules/" + modelData + ".qml"
-                        // pass screenName to the module
+                        // pass screen to the module
                         onLoaded: {
-                            item.screenName = statusBar.screenName;
+                            item.screen = statusBar.screen;
                         }
                     }
 
@@ -71,6 +71,9 @@ Item {
 
                     Loader {
                         source: "modules/" + modelData + ".qml"
+                        onLoaded: {
+                            item.screen = statusBar.screen;
+                        }
                     }
 
                 }
@@ -105,6 +108,9 @@ Item {
 
                     Loader {
                         source: "modules/" + modelData + ".qml"
+                        onLoaded: {
+                            item.screen = statusBar.screen;
+                        }
                     }
 
                 }

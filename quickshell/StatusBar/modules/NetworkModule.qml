@@ -5,7 +5,7 @@ import Quickshell.Io
 Item {
     id: networkModule
 
-    property string screenName: ""
+    property var screen: null
     property string nwInterface: ""
     property real downloadSpeed: 0
     property real uploadSpeed: 0
@@ -29,7 +29,7 @@ Item {
 
     // Detect active network interface
     Process {
-        // Get default route interface (most reliable)
+        // Get default route interface
 
         id: detectInterfaceProcess
 

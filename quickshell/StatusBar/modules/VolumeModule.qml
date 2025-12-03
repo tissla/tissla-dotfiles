@@ -5,7 +5,7 @@ import Quickshell.Io
 Item {
     id: volumeModule
 
-    property string screenName: ""
+    property var screen: null
     property int volume: 50
     property bool isMuted: false
 
@@ -29,7 +29,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
             let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x);
+            WidgetManager.setMousePosition(globalPos.x, volumeModule.screen);
             VolumeState.toggle();
         }
     }

@@ -5,6 +5,7 @@ import Quickshell
 Item {
     id: clockModule
 
+    property var screen: null
     property bool showDate: false
 
     width: clockText.width + 40
@@ -23,7 +24,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
             let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x);
+            WidgetManager.setMousePosition(globalPos.x, clockModule.screen);
             CalendarState.toggle();
         }
     }

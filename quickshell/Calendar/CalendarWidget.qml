@@ -171,7 +171,7 @@ Rectangle {
 
             width: parent.width
             height: 80
-            color: Theme.backgroundAlt
+            color: Theme.backgroundAltSolid
             radius: 20
 
             // Function to time display based on current settings
@@ -458,6 +458,9 @@ Rectangle {
                                         font.family: Theme.fontMono
                                         font.pixelSize: 13
                                         color: {
+                                            if (parent.isSelectedDay)
+                                                return Theme.accent;
+
                                             if (parent.isDayInMonth && parent.isCurrentDay)
                                                 return Theme.todayText;
 
@@ -523,7 +526,7 @@ Rectangle {
                 // fill remaining space, 380 is calendar and 12 for spacing
                 width: parent.width - 380 - 12
                 height: parent.height
-                color: Theme.backgroundAlt
+                color: Theme.backgroundAltSolid
                 radius: 20
 
                 Column {

@@ -5,7 +5,7 @@ import Quickshell.Io
 Item {
     id: cpuModule
 
-    property string screenName: ""
+    property var screen: null
     property real cpuUsage: 0
     property var prevCpuTimes: ({
         "user": 0,
@@ -60,13 +60,14 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
             let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x);
+            WidgetManager.setMousePosition(globalPos.x, cpuModule.screen);
             CpuRamState.toggle();
         }
     }
 
     Timer {
-        interval: 2000
+        // 5 sec updates is enough for a statusbar
+        interval: 5000
         running: true
         repeat: true
         triggeredOnStart: true

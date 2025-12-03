@@ -5,7 +5,7 @@ import QtQuick
 Item {
     id: usbModule
 
-    property string screenName: ""
+    property var screen: null
 
     width: usbRow.width + 16
     height: 30
@@ -17,7 +17,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
             let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x);
+            WidgetManager.setMousePosition(globalPos.x, usbModule.screen);
             UsbDevState.toggle();
         }
     }

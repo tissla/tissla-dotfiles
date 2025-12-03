@@ -59,14 +59,6 @@ QtObject {
             if (!running && buffer !== "") {
                 try {
                     const json = JSON.parse(buffer);
-                    if (json.general) {
-                        if (json.general.clockFormat24hr !== undefined)
-                            settings.clockFormat24hr = json.general.clockFormat24hr;
-
-                        if (json.general.showSeconds !== undefined)
-                            settings.showSeconds = json.general.showSeconds;
-
-                    }
                     if (json.bar) {
                         if (json.bar.transparentBackground !== undefined)
                             settings.barTransparentBackground = json.bar.transparentBackground;

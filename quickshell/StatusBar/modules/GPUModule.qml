@@ -5,7 +5,7 @@ import Quickshell.Io
 Item {
     id: gpuModule
 
-    property string screenName: ""
+    property var screen: null
     property real gpuUsage: 0
 
     width: gpuRow.width + 16
@@ -45,7 +45,7 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onClicked: (mouse) => {
             let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x);
+            WidgetManager.setMousePosition(globalPos.x, gpuModule.screen);
             GpuState.toggle();
         }
     }
