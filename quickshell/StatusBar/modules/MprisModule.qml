@@ -75,18 +75,19 @@ Item {
 
         Text {
             text: {
+                // if (mprisModule.artist)
+                //     display = mprisModule.artist + " - " + display;
+
                 if (mprisModule.status === "Stopped")
                     return "No media";
 
                 let display = mprisModule.title;
-                if (mprisModule.artist)
-                    display = mprisModule.artist + " - " + display;
-
                 return display;
             }
             font.family: Theme.fontMain
-            font.pixelSize: 14
-            color: Theme.textPrimary
+            font.pixelSize: 15
+            color: Theme.textSecondary
+            font.italic: mprisModule.status !== "Playing"
             anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1

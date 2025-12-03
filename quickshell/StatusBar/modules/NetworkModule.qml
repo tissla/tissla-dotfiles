@@ -120,11 +120,13 @@ Item {
         anchors.centerIn: parent
         spacing: 8
 
+        // TODO: add functionality to show wifi/ethernet icon dynamically 󰖩󰖩󰖩
         Text {
             text: networkModule.connected ? "󰖩" : "󰖪"
             font.pixelSize: 20
             color: networkModule.connected ? Theme.primary : Theme.accent
             anchors.verticalCenter: parent.verticalCenter
+            font.family: Theme.fontMono
         }
 
         Row {
@@ -135,32 +137,38 @@ Item {
             Text {
                 text: networkModule.formatSpeed(networkModule.downloadSpeed)
                 font.family: Theme.fontMono
-                font.pixelSize: 13
+                font.pixelSize: 15
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.textSecondary
+                width: 80
+                horizontalAlignment: Text.AlignRight
                 anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
                 text: "↓"
-                font.pixelSize: 16
+                font.pixelSize: 20
                 color: Theme.primary
+                font.weight: Font.Bold
                 anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
                 text: networkModule.formatSpeed(networkModule.uploadSpeed)
                 font.family: Theme.fontMono
-                font.pixelSize: 13
+                font.pixelSize: 15
+                width: 80
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                horizontalAlignment: Text.AlignRight
+                color: Theme.textSecondary
                 anchors.verticalCenter: parent.verticalCenter
             }
 
             Text {
                 text: "↑"
-                font.pixelSize: 16
+                font.pixelSize: 20
                 color: Theme.primary
+                font.weight: Font.Bold
                 anchors.verticalCenter: parent.verticalCenter
             }
 

@@ -34,8 +34,9 @@ Item {
             text: Qt.formatDateTime(clock.date, "hh:mm")
             font.family: Theme.fontMono
             font.pixelSize: 15
+            width: 30
             font.weight: Font.Bold
-            color: Theme.textPrimary
+            color: Theme.textSecondary
             anchors.verticalCenter: parent.verticalCenter
         }
 

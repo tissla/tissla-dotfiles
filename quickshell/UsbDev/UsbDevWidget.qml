@@ -9,9 +9,9 @@ Rectangle {
     property bool isVisible: false
     // Device status
     property bool controllerConnected: false
-    property bool controllerWired: false // USB vs Bluetooth
-    property int controllerBattery: 0 // 0-100%
-    property string controllerIcon: "󰖻" // Disconnected icon
+    property bool controllerWired: false
+    property int controllerBattery: 0
+    property string controllerIcon: "󰖻"
 
     anchors.fill: parent
     color: Theme.background
@@ -19,7 +19,6 @@ Rectangle {
     border.width: 3
     border.color: Theme.primary
 
-    // Timer - uppdatera var 3:e sekund (samma som waybar)
     Timer {
         id: updateTimer
 

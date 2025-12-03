@@ -4,4 +4,4 @@ URL="$1"
 
 shift
 
-exec setsid google-chrome-stable --app="$URL" "$@"
+exec setsid firefox --app="$URL" "$@"

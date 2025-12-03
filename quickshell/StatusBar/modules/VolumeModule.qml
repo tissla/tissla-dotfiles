@@ -68,7 +68,8 @@ Item {
             text: volumeModule.isMuted ? "mute" : volumeModule.volume + "%"
             font.family: Theme.fontMono
             font.pixelSize: 14
-            color: Theme.textPrimary
+            color: Theme.textSecondary
+            width: 30
             font.weight: Font.Bold
             anchors.verticalCenter: parent.verticalCenter
         }

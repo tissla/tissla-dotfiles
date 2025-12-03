@@ -209,7 +209,7 @@ Rectangle {
             Rectangle {
                 width: 380
                 height: parent.height
-                color: Theme.backgroundAlt
+                color: Theme.backgroundAltSolid
                 radius: 20
 
                 Column {

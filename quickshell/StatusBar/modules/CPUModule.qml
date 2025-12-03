@@ -98,7 +98,8 @@ Item {
             font.family: Theme.fontMono
             font.pixelSize: 14
             font.weight: Font.Bold
-            color: Theme.textPrimary
+            width: 30
+            color: Theme.textSecondary
             anchors.verticalCenter: parent.verticalCenter
         }
 

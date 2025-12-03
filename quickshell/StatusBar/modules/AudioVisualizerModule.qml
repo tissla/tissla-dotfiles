@@ -1,5 +1,4 @@
 import "../.."
-import QtQuick
 import Quickshell
 import Quickshell.Io
 
@@ -41,7 +40,6 @@ Item {
             onStreamFinished: {
                 let playing = text.trim() === "1";
                 audioModule.isPlaying = playing;
-                console.log("🎵 Audio playing:", playing);
             }
         }
 
