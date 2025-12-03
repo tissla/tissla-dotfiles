@@ -14,14 +14,58 @@ ShellRoot {
 
     objectName: "shellRoot"
 
+    // USB Devices Monitor
+    PanelWindow {
+        id: usbDevWindow
+
+        screen: Quickshell.screens[0]
+        visible: UsbDevState.isVisible
+        implicitWidth: 200
+        implicitHeight: 180
+        color: "transparent"
+
+        anchors {
+            bottom: true
+            right: true
+        }
+
+        margins {
+            bottom: 10
+            right: 220
+        }
+
+        UsbDevWidget {
+            anchors.fill: parent
+            isVisible: UsbDevState.isVisible
+        }
+
+    }
+
+    IpcHandler {
+        function toggle() {
+            console.log("IPC: toggle usbdev");
+            UsbDevState.toggle();
+        }
+
+        function show() {
+            UsbDevState.show();
+        }
+
+        function hide() {
+            UsbDevState.hide();
+        }
+
+        target: "usbdev"
+    }
+
     // GPU WIDGET
     PanelWindow {
         id: gpuWindow
 
-        screen: Quickshell.screens[1]
+        screen: Quickshell.screens[0]
         visible: GpuState.isVisible
         implicitWidth: 320
-        implicitHeight: 160
+        implicitHeight: 200
         color: "transparent"
 
         anchors {
@@ -31,7 +75,7 @@ ShellRoot {
 
         margins {
             bottom: 20
-            right: 600
+            right: 800
         }
 
         GpuWidget {

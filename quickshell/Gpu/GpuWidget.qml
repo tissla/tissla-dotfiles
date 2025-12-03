@@ -1,3 +1,4 @@
+import ".."
 import QtQuick
 import Quickshell.Io
 
@@ -49,7 +50,6 @@ Rectangle {
                     vramUsed = values[2] / 1024; // MB to GB
                     vramTotal = values[3] / 1024;
                     vramUsage = (values[2] / values[3]) * 100;
-                    console.log("GPU:", gpuUsage + "%, " + gpuTemp + "°C, VRAM: " + vramUsed.toFixed(1) + "/" + vramTotal.toFixed(1) + "GB");
                 }
             }
         }
@@ -67,6 +67,7 @@ Rectangle {
     // UI Layout
     Row {
         anchors.centerIn: parent
+        anchors.margins: 20
         spacing: 16
 
         // GPU Usage Gauge
@@ -88,7 +89,7 @@ Rectangle {
                 width: 80
                 height: 80
                 value: gpuWidget.gpuUsage
-                gaugeColor: "#76b900" // NVIDIA greecn
+                gaugeColor: Theme.green
             }
 
             Text {
@@ -121,7 +122,7 @@ Rectangle {
                 width: 80
                 height: 80
                 value: gpuWidget.vramUsage
-                gaugeColor: "#76b900"
+                gaugeColor: Theme.green
             }
 
             Text {
@@ -155,7 +156,7 @@ Rectangle {
                 height: 80
                 temperature: gpuWidget.gpuTemp
                 maxTemp: 90
-                thermoColor: "#76b900"
+                thermoColor: Theme.green
             }
 
             Text {

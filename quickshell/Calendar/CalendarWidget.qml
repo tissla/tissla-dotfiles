@@ -1,7 +1,8 @@
-// Original by bgibson72
+// inspiration and original by bgibson72
 // source: github.com/bgibson72/yahr-quickshell
 // modified by tissla
 
+import ".."
 import QtQuick
 import Quickshell
 import Quickshell.Io

@@ -8,9 +8,8 @@
     "modules-left": ["hyprland/workspaces"],
     "modules-center": ["cava"],
     "modules-right": [
-      "custom/gpu_usage",
-      "custom/gpu_temp",
-      "custom/gpu_vram",
+      // "custom/gpu_temp",
+      // "custom/gpu_vram",
       "disk",
       "disk#bigspace",
       "network",
@@ -34,29 +33,22 @@
       "actions": {
         "on-click-right": "mode",
       },
-    },
-    "custom/gpu_usage": {
-      "exec": "$HOME/.config/scripts/gpu-usage.sh",
-      "interval": 2,
-      "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰢮</span>     {}%",
       "tooltip": false,
-      "on-click": "qs ipc call gpu toggle",
     },
-
-    "custom/gpu_temp": {
-      "exec": "$HOME/.config/scripts/gpu-temp.sh",
-      "interval": 5,
-      "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰔏</span>   {}°C",
-      "tooltip": false,
-      "on-click": "qs ipc call gpu toggle",
-    },
-    "custom/gpu_vram": {
-      "exec": "$HOME/.config/scripts/gpu-vram.sh",
-      "interval": 3,
-      "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰡂</span>     {}",
-      "tooltip": false,
-      "on-click": "qs ipc call gpu toggle",
-    },
+    // "custom/gpu_temp": {
+    //   "exec": "$HOME/.config/scripts/gpu-temp.sh",
+    //   "interval": 5,
+    //   "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰔏</span>   {}°C",
+    //   "tooltip": false,
+    //   "on-click": "qs ipc call gpu toggle",
+    // },
+    // "custom/gpu_vram": {
+    //   "exec": "$HOME/.config/scripts/gpu-vram.sh",
+    //   "interval": 3,
+    //   "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰡂</span>     {}",
+    //   "tooltip": false,
+    //   "on-click": "qs ipc call gpu toggle",
+    // },
     "disk": {
       "interval": 20,
       "path": "/",
@@ -91,9 +83,10 @@
     "modules-center": ["mpris"],
     "modules-right": [
       "custom/controller",
+      "custom/gpu_usage",
       "cpu",
-      "memory",
-      "temperature",
+      // "memory",
+      // "temperature",
       "pulseaudio",
       "clock#date",
       "clock#time",
@@ -120,30 +113,41 @@
       "exec": "$HOME/.config/scripts/xbox_controller.sh",
       "interval": 3,
       "tooltip": false,
-      "on-click": "qs ipc call extdev toggle",
+      "on-click": "qs ipc call usbdev toggle",
+    },
+    "custom/gpu_usage": {
+      "exec": "$HOME/.config/scripts/gpu-usage.sh",
+      "interval": 2,
+      "format": "<span foreground=\"#8b5cf6\" size=\"140%\">󰢮</span>     {}%",
+      "tooltip": false,
+      "on-click": "qs ipc call gpu toggle",
     },
 
     "cpu": {
       "interval": 2,
       "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>     {usage}% ",
-    },
-
-    "memory": {
-      "interval": 5,
-      "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>      {used:0.1f}G/{total:0.1f}G ",
-      "tooltip": false,
       "on-click": "qs ipc call cpuram toggle",
+      "tooltip": false,
     },
-
-    "temperature": {
-      "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
-      "critical-threshold": 85,
-      "interval": 5,
-      "format": " <span foreground=\"#8b5cf6\" size=\"140%\">󰔏</span> {temperatureC}°C ",
-    },
+    //
+    // "memory": {
+    //   "interval": 5,
+    //   "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>      {used:0.1f}G/{total:0.1f}G ",
+    //   "tooltip": false,
+    //   "on-click": "qs ipc call cpuram toggle",
+    // },
+    //
+    // "temperature": {
+    //   "hwmon-path": "/sys/class/hwmon/hwmon2/temp1_input",
+    //   "critical-threshold": 85,
+    //   "interval": 5,
+    //   "format": " <span foreground=\"#8b5cf6\" size=\"140%\">󰔏</span> {temperatureC}°C ",
+    // "tooltip": false,
+    // "on-click": "qs ipc call cpuram toggle",
+    // },
 
     "pulseaudio": {
-      "format": " <span foreground=\"#8b5cf6\" size=\"140%\">{icon}</span>   <span rise=\"1500\">{volume}%</span> ",
+      "format": " <span foreground=\"#8b5cf6\" size=\"140%\">{icon}</span>     <span rise=\"1500\">{volume}%</span> ",
       "format-muted": " <span foreground=\"#f87171\" size=\"140%\">󰝟</span> mute ",
       "format-icons": {
         "headphones": ["󰋋"],
@@ -156,7 +160,7 @@
 
     "clock#date": {
       "interval": 30,
-      "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>     {:%a %d/%m}",
+      "format": " <span foreground=\"#8b5cf6\" size=\"140%\"></span>    {:%a %d/%m}",
       "on-click": "qs ipc call calendar toggle",
       "tooltip": false,
     },

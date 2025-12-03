@@ -1,12 +1,26 @@
+# theme
 singleton Theme 1.0 Theme.qml
-CalendarWidget 1.0 CalendarWidget.qml
-singleton CalendarState 1.0 CalendarState.qml
-VolumeWidget 1.0 VolumeWidget.qml
-singleton VolumeState 1.0 VolumeState.qml
-CpuRamWidget 1.0 CpuRamWidget.qml
-singleton CpuRamState 1.0 CpuRamState.qml
-GpuWidget 1.0 GpuWidget.qml
-singleton GpuState 1.0 GpuState.qml
 
-GaugeWidget 1.0 GaugeWidget.qml
-ThermometerWidget 1.0 ThermometerWidget.qml
+# calendar
+CalendarWidget 1.0 Calendar/CalendarWidget.qml
+singleton CalendarState 1.0 Calendar/CalendarState.qml
+
+# volume 
+VolumeWidget 1.0 Volume/VolumeWidget.qml
+singleton VolumeState 1.0 Volume/VolumeState.qml
+
+# cpu + ram
+CpuRamWidget 1.0 CpuRam/CpuRamWidget.qml
+singleton CpuRamState 1.0 CpuRam/CpuRamState.qml
+
+# gpu
+GpuWidget 1.0 Gpu/GpuWidget.qml
+singleton GpuState 1.0 Gpu/GpuState.qml
+
+# usb devices
+UsbDevWidget 1.0 UsbDev/UsbDevWidget.qml
+singleton UsbDevState 1.0 UsbDev/UsbDevState.qml
+
+## resources
+GaugeWidget 1.0 Resources/GaugeWidget.qml
+ThermometerWidget 1.0 Resources/ThermometerWidget.qml
