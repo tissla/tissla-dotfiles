@@ -1,17 +1,11 @@
 import ".."
+// UsbDev/UsbDevWidget.qml
 import QtQuick
-import Quickshell
-import Quickshell.Io
 
 Rectangle {
     id: usbDevWidget
 
     property bool isVisible: false
-    // Device status
-    property bool controllerConnected: false
-    property bool controllerWired: false
-    property int controllerBattery: 0
-    property string controllerIcon: "󰖻"
 
     anchors.fill: parent
     color: Theme.background
@@ -19,63 +13,15 @@ Rectangle {
     border.width: 3
     border.color: Theme.primary
 
-    Timer {
-        id: updateTimer
-
-        interval: 3000
-        running: usbDevWidget.isVisible
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            checkControllerProcess.running = true;
-        }
-    }
-
-    // Check controller status
-    Process {
-        id: checkControllerProcess
-
-        running: false
-        command: ["sh", "-c", "if lsusb | grep -qi 'Xbox'; then " + "  echo 'WIRED'; " + "else " + "  bt_info=$(bluetoothctl info); " + "  if echo \"$bt_info\" | grep -q Xbox; then " + "    battery=$(echo \"$bt_info\" | grep 'Battery Percentage:' | awk -F'[()]' '{ print $2 }'); " + "    echo \"BLUETOOTH:$battery\"; " + "  else " + "    echo 'DISCONNECTED'; " + "  fi; " + "fi"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let status = text.trim();
-                if (status === "WIRED") {
-                    controllerConnected = true;
-                    controllerWired = true;
-                    controllerBattery = 100;
-                    controllerIcon = "󰖺"; // Connected icon
-                    console.log("Controller: Wired");
-                } else if (status.startsWith("BLUETOOTH:")) {
-                    let battery = status.split(":")[1];
-                    controllerConnected = true;
-                    controllerWired = false;
-                    controllerBattery = parseInt(battery) || 0;
-                    controllerIcon = "󰖺";
-                    console.log("Controller: Bluetooth", controllerBattery + "%");
-                } else {
-                    controllerConnected = false;
-                    controllerWired = false;
-                    controllerBattery = 0;
-                    controllerIcon = "󰖻"; // Disconnected icon
-                    console.log("Controller: Disconnected");
-                }
-            }
-        }
-
-    }
-
-    // UI Layout
     Column {
         anchors.centerIn: parent
         spacing: 12
 
         // Controller Icon
         Text {
-            text: usbDevWidget.controllerIcon
+            text: UsbDevState.controllerIcon
             font.pixelSize: 64
-            color: usbDevWidget.controllerConnected ? Theme.primary : Theme.textMuted
+            color: UsbDevState.controllerConnected ? Theme.primary : Theme.textMuted
             anchors.horizontalCenter: parent.horizontalCenter
 
             Behavior on color {
@@ -90,9 +36,9 @@ Rectangle {
         // Status Text
         Text {
             text: {
-                if (!usbDevWidget.controllerConnected)
+                if (!UsbDevState.controllerConnected)
                     return "Disconnected";
-                else if (usbDevWidget.controllerWired)
+                else if (UsbDevState.controllerWired)
                     return "Wired";
                 else
                     return "Bluetooth";
@@ -106,7 +52,7 @@ Rectangle {
 
         // Battery info (only for Bluetooth)
         Row {
-            visible: usbDevWidget.controllerConnected && !usbDevWidget.controllerWired
+            visible: UsbDevState.controllerConnected && !UsbDevState.controllerWired
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 8
 
@@ -132,15 +78,15 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.margins: 2
-                    width: Math.max(0, (parent.width - 4) * (usbDevWidget.controllerBattery / 100))
+                    width: Math.max(0, (parent.width - 4) * (UsbDevState.controllerBattery / 100))
                     height: parent.height - 4
                     radius: 4
                     color: {
-                        if (usbDevWidget.controllerBattery > 50)
+                        if (UsbDevState.controllerBattery > 50)
                             return "#4ade80";
 
                         // Green
-                        if (usbDevWidget.controllerBattery > 20)
+                        if (UsbDevState.controllerBattery > 20)
                             return "#fbbf24";
 
                         // Yellow
@@ -159,10 +105,11 @@ Rectangle {
             }
 
             Text {
-                text: usbDevWidget.controllerBattery + "%"
+                text: UsbDevState.controllerBattery + "%"
                 font.family: Theme.fontMono
                 font.pixelSize: 14
                 color: Theme.textPrimary
+                font.weight: Font.Bold
                 anchors.verticalCenter: parent.verticalCenter
             }
 

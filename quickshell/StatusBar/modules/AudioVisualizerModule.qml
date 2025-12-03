@@ -1,5 +1,5 @@
 import "../.."
-import Quickshell
+import QtQuick
 import Quickshell.Io
 
 Item {
@@ -59,7 +59,7 @@ Item {
         }
     }
 
-    // Debug Rectangle (så vi ser att modulen finns)
+    // Debug Rectangle
     Rectangle {
         anchors.fill: parent
         color: "transparent"

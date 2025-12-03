@@ -38,6 +38,18 @@ Item {
 
     }
 
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
+            WidgetManager.setMousePosition(globalPos.x);
+            GpuState.toggle();
+        }
+    }
+
     Row {
         id: gpuRow
 
@@ -49,7 +61,6 @@ Item {
             font.pixelSize: 20
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -2
         }
 
         Text {
@@ -62,14 +73,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            GpuState.toggle();
-        }
     }
 
 }

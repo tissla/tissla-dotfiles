@@ -32,6 +32,12 @@ singleton UsbDevState 1.0 UsbDev/UsbDevState.qml
 GaugeWidget 1.0 Resources/GaugeWidget.qml
 ThermometerWidget 1.0 Resources/ThermometerWidget.qml
 
+## manager
+singleton WidgetManager 1.0 WidgetManager.qml
+
+## dynamicwidget
+DynamicWidget 1.0 DynamicWidget.qml
+
 ### MODULES
 
 # clock

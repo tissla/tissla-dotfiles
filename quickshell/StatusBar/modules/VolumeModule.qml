@@ -22,6 +22,18 @@ Item {
         }
     }
 
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
+            WidgetManager.setMousePosition(globalPos.x);
+            VolumeState.toggle();
+        }
+    }
+
     Process {
         id: getVolumeProcess
 
@@ -74,14 +86,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            VolumeState.toggle();
-        }
     }
 
 }

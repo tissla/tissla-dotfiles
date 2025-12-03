@@ -16,6 +16,18 @@ Item {
         precision: SystemClock.Minutes
     }
 
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
+            WidgetManager.setMousePosition(globalPos.x);
+            CalendarState.toggle();
+        }
+    }
+
     Row {
         anchors.centerIn: parent
         spacing: 8
@@ -40,12 +52,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: CalendarState.toggle()
     }
 
 }

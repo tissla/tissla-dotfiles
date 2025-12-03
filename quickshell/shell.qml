@@ -35,144 +35,66 @@ ShellRoot {
 
     }
 
-    // USB Devices Monitor
-    PanelWindow {
-        id: usbDevWindow
+    // GPU Widget - Dynamic positioning
+    DynamicWidget {
+        widgetId: "gpu"
+        isVisible: GpuState.isVisible
+        widgetWidth: 320
+        widgetHeight: 200
+        targetScreen: Quickshell.screens[0]
 
-        screen: Quickshell.screens[0]
-        visible: UsbDevState.isVisible
-        implicitWidth: 200
-        implicitHeight: 180
-        color: "transparent"
+        widgetComponent: Component {
+            GpuWidget {
+            }
 
-        anchors {
-            bottom: true
-            right: true
-        }
-
-        margins {
-            bottom: 10
-            right: 220
-        }
-
-        UsbDevWidget {
-            anchors.fill: parent
-            isVisible: UsbDevState.isVisible
         }
 
     }
 
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle usbdev");
-            UsbDevState.toggle();
-        }
+    // CPU/RAM Widget - Dynamic positioning
+    DynamicWidget {
+        widgetId: "cpuram"
+        isVisible: CpuRamState.isVisible
+        widgetWidth: 450
+        widgetHeight: 200
+        targetScreen: Quickshell.screens[0]
 
-        function show() {
-            UsbDevState.show();
-        }
+        widgetComponent: Component {
+            CpuRamWidget {
+            }
 
-        function hide() {
-            UsbDevState.hide();
-        }
-
-        target: "usbdev"
-    }
-
-    // GPU WIDGET
-    PanelWindow {
-        id: gpuWindow
-
-        screen: Quickshell.screens[0]
-        visible: GpuState.isVisible
-        implicitWidth: 320
-        implicitHeight: 200
-        color: "transparent"
-
-        anchors {
-            bottom: true
-            right: true
-        }
-
-        margins {
-            bottom: 20
-            right: 800
-        }
-
-        GpuWidget {
-            anchors.fill: parent
-            isVisible: GpuState.isVisible
         }
 
     }
 
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle gpu");
-            GpuState.toggle();
-        }
+    // Volume Widget - Dynamic positioning
+    DynamicWidget {
+        widgetId: "volume"
+        isVisible: VolumeState.isVisible
+        widgetWidth: 40
+        widgetHeight: 200
+        targetScreen: Quickshell.screens[0]
 
-        function show() {
-            GpuState.show();
-        }
+        widgetComponent: Component {
+            VolumeWidget {
+            }
 
-        function hide() {
-            GpuState.hide();
-        }
-
-        target: "gpu"
-    }
-
-    // CPURAM WIDGET
-    PanelWindow {
-        id: cpuRamWindow
-
-        screen: Quickshell.screens[0]
-        visible: CpuRamState.isVisible
-        implicitWidth: 450
-        implicitHeight: 200
-        color: "transparent"
-
-        anchors {
-            bottom: true
-            right: true
-        }
-
-        margins {
-            bottom: 20
-            right: 300
-        }
-
-        CpuRamWidget {
-            anchors.fill: parent
-            isVisible: CpuRamState.isVisible
         }
 
     }
 
-    // VOLUME
-    PanelWindow {
-        id: volumeWindow
+    // USB Device Widget - Dynamic positioning
+    DynamicWidget {
+        widgetId: "usbdev"
+        isVisible: UsbDevState.isVisible
+        widgetWidth: 200
+        widgetHeight: 180
+        targetScreen: Quickshell.screens[0]
 
-        screen: Quickshell.screens[0]
-        visible: VolumeState.isVisible
-        implicitWidth: 40
-        implicitHeight: 200
-        color: "transparent"
+        widgetComponent: Component {
+            UsbDevWidget {
+            }
 
-        anchors {
-            bottom: true
-            right: true
-        }
-
-        margins {
-            bottom: 20
-            right: 260
-        }
-
-        VolumeWidget {
-            anchors.fill: parent
-            isVisible: VolumeState.isVisible
         }
 
     }
@@ -203,6 +125,23 @@ ShellRoot {
             isVisible: CalendarState.isVisible
         }
 
+    }
+
+    IpcHandler {
+        function toggle() {
+            console.log("IPC: toggle usbdev");
+            UsbDevState.toggle();
+        }
+
+        function show() {
+            UsbDevState.show();
+        }
+
+        function hide() {
+            UsbDevState.hide();
+        }
+
+        target: "usbdev"
     }
 
     IpcHandler {

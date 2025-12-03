@@ -1,6 +1,5 @@
 import "../.."
 import QtQuick
-import Quickshell
 import Quickshell.Io
 
 Item {
@@ -54,6 +53,18 @@ Item {
     width: cpuRow.width + 16
     height: 30
 
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
+            WidgetManager.setMousePosition(globalPos.x);
+            CpuRamState.toggle();
+        }
+    }
+
     Timer {
         interval: 2000
         running: true
@@ -89,8 +100,6 @@ Item {
             font.pixelSize: 20
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
-            // centering offset
-            anchors.verticalCenterOffset: -2
         }
 
         Text {
@@ -103,14 +112,6 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            CpuRamState.toggle();
-        }
     }
 
 }
