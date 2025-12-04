@@ -29,9 +29,9 @@ QtObject {
         } else {
             console.log("[SettingsManager] No config found for:", screenName, "- using default");
             return {
-                "left": ["WorkspaceModule"],
+                "left": ["workspaces"],
                 "center": [],
-                "right": ["ClockModule"]
+                "right": ["clock"]
             };
         }
     }

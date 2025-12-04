@@ -8,23 +8,17 @@
     {
       "name": "DP-2",
       "modules": {
-        "left": ["WorkspaceModule"],
+        "left": ["workspaces"],
         "center": [],
-        "right": ["CPUModule", "NetworkModule"]
+        "right": ["cpu", "network"]
       }
     },
     {
       "name": "HDMI-A-1",
       "modules": {
-        "left": ["WorkspaceModule"],
-        "center": ["MprisModule"],
-        "right": [
-          "UsbDeviceModule",
-          "GPUModule",
-          "CPUModule",
-          "VolumeModule",
-          "ClockModule"
-        ]
+        "left": ["workspaces"],
+        "center": ["mpris"],
+        "right": ["devices", "gpu", "cpu", "volume", "clock"]
       }
     }
   ]

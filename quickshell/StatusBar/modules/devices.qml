@@ -1,5 +1,5 @@
 import "../.."
-// StatusBar/modules/UsbDeviceModule.qml
+// StatusBar/modules/devices.qml
 import QtQuick
 
 Item {

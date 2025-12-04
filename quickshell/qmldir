@@ -40,8 +40,3 @@ DynamicWidget 1.0 DynamicWidget.qml
 
 ### MODULES
 
-# clock
-ClockModule 1.0 StatusBar/modules/ClockModule.qml
-
-# workspaces
-WorkspaceModule 1.0 StatusBar/modules/WorkspaceModule.qml
