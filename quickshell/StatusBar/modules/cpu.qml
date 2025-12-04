@@ -2,10 +2,9 @@ import "../.."
 import QtQuick
 import Quickshell.Io
 
-Item {
+BaseModule {
     id: cpuModule
 
-    property var screen: null
     property real cpuUsage: 0
     property var prevCpuTimes: ({
         "user": 0,
@@ -50,20 +49,12 @@ Item {
         }
     }
 
-    width: cpuRow.width + 16
-    height: 30
-
-    MouseArea {
-        id: mouseArea
-
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: (mouse) => {
-            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x, cpuModule.screen);
-            CpuRamState.toggle();
-        }
+    Component.onCompleted: {
+        WidgetManager.registerModule(widgetId, this);
     }
+    widgetId: "cpu"
+    moduleIcon: ""
+    moduleText: Math.round(cpuModule.cpuUsage) + "%"
 
     Timer {
         // 5 sec updates is enough for a statusbar
@@ -86,31 +77,6 @@ Item {
             onStreamFinished: {
                 parseCpuUsage(text.trim());
             }
-        }
-
-    }
-
-    Row {
-        id: cpuRow
-
-        anchors.centerIn: parent
-        spacing: 8
-
-        Text {
-            text: ""
-            font.pixelSize: 20
-            color: Theme.primary
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: Math.round(cpuModule.cpuUsage) + "%"
-            font.family: Theme.fontMono
-            font.pixelSize: 14
-            font.weight: Font.Bold
-            width: 30
-            color: Theme.textSecondary
-            anchors.verticalCenter: parent.verticalCenter
         }
 
     }

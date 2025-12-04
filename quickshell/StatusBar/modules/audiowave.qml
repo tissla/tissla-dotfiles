@@ -5,13 +5,10 @@ import Quickshell.Io
 Item {
     id: audioModule
 
-    property string screenName: ""
     property bool isPlaying: false
     property real amplitude: 0.2
     property real phase: 0
 
-    width: 200
-    height: 30
     Component.onCompleted: {
         console.log("🎵 AudioVisualizer created");
     }

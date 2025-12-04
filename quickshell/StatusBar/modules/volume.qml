@@ -2,17 +2,31 @@ import "../.."
 import QtQuick
 import Quickshell.Io
 
-Item {
+BaseModule {
     id: volumeModule
 
-    property var screen: null
     property int volume: 50
     property bool isMuted: false
 
-    width: volumeRow.width + 16
-    height: 30
-    // Initial load
-    Component.onCompleted: getVolumeProcess.running = true
+    widgetId: "volume"
+    Component.onCompleted: {
+        WidgetManager.registerModule(widgetId, this);
+        // on initial load
+        getVolumeProcess.running = true;
+    }
+    moduleIcon: {
+        if (volumeModule.isMuted)
+            return "󰝟";
+
+        if (volumeModule.volume > 50)
+            return "";
+
+        if (volumeModule.volume > 0)
+            return "";
+
+        return "󰝟";
+    }
+    moduleText: volumeModule.isMuted ? "mute" : volumeModule.volume + "%"
 
     Process {
         id: volumeEvents
@@ -44,55 +58,6 @@ Item {
             }
         }
 
-    }
-
-    Row {
-        id: volumeRow
-
-        anchors.centerIn: parent
-        spacing: 8
-
-        Text {
-            text: {
-                if (volumeModule.isMuted)
-                    return "󰝟";
-
-                if (volumeModule.volume > 50)
-                    return "";
-
-                if (volumeModule.volume > 0)
-                    return "";
-
-                return "󰝟";
-            }
-            width: 30
-            font.pixelSize: 20
-            color: volumeModule.isMuted ? Theme.accent : Theme.primary
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: volumeModule.isMuted ? "mute" : volumeModule.volume + "%"
-            font.family: Theme.fontMono
-            font.pixelSize: 14
-            color: Theme.textSecondary
-            width: 30
-            font.weight: Font.Bold
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-    }
-
-    MouseArea {
-        id: mouseArea
-
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: (mouse) => {
-            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x, volumeModule.screen);
-            VolumeState.toggle();
-        }
     }
 
 }

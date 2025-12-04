@@ -38,9 +38,11 @@ ShellRoot {
     // GPU Widget - Dynamic positioning
     DynamicWidget {
         widgetId: "gpu"
-        isVisible: GpuState.isVisible
         widgetWidth: 320
         widgetHeight: 200
+        Component.onCompleted: {
+            WidgetManager.registerWidget("gpu", this);
+        }
 
         widgetComponent: Component {
             GpuWidget {
@@ -53,9 +55,11 @@ ShellRoot {
     // CPU/RAM Widget - Dynamic positioning
     DynamicWidget {
         widgetId: "cpuram"
-        isVisible: CpuRamState.isVisible
         widgetWidth: 450
         widgetHeight: 200
+        Component.onCompleted: {
+            WidgetManager.registerWidget("cpu", this);
+        }
 
         widgetComponent: Component {
             CpuRamWidget {
@@ -68,9 +72,11 @@ ShellRoot {
     // Volume Widget - Dynamic positioning
     DynamicWidget {
         widgetId: "volume"
-        isVisible: VolumeState.isVisible
         widgetWidth: 40
         widgetHeight: 200
+        Component.onCompleted: {
+            WidgetManager.registerWidget("volume", this);
+        }
 
         widgetComponent: Component {
             VolumeWidget {
@@ -82,13 +88,15 @@ ShellRoot {
 
     // USB Device Widget - Dynamic positioning
     DynamicWidget {
-        widgetId: "usbdev"
-        isVisible: UsbDevState.isVisible
+        widgetId: "devices"
         widgetWidth: 200
         widgetHeight: 180
+        Component.onCompleted: {
+            WidgetManager.registerWidget("devices", this);
+        }
 
         widgetComponent: Component {
-            UsbDevWidget {
+            DevicesWidget {
             }
 
         }
@@ -98,9 +106,11 @@ ShellRoot {
     // calendar
     DynamicWidget {
         widgetId: "calendar"
-        isVisible: CalendarState.isVisible
         widgetWidth: 620
         widgetHeight: 420
+        Component.onCompleted: {
+            WidgetManager.registerWidget("calendar", this);
+        }
 
         widgetComponent: Component {
             CalendarWidget {
@@ -108,80 +118,6 @@ ShellRoot {
 
         }
 
-    }
-
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle usbdev");
-            UsbDevState.toggle();
-        }
-
-        function show() {
-            UsbDevState.show();
-        }
-
-        function hide() {
-            UsbDevState.hide();
-        }
-
-        target: "usbdev"
-    }
-
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle calendar");
-            CalendarState.toggle();
-        }
-
-        function show() {
-            console.log("IPC: show calendar");
-            CalendarState.show();
-        }
-
-        function hide() {
-            console.log("IPC: hide calendar");
-            CalendarState.hide();
-        }
-
-        target: "calendar"
-    }
-
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle volume");
-            VolumeState.toggle();
-        }
-
-        function show() {
-            console.log("IPC: show volume");
-            VolumeState.show();
-        }
-
-        function hide() {
-            console.log("IPC: hide volume");
-            VolumeState.hide();
-        }
-
-        target: "volume"
-    }
-
-    IpcHandler {
-        function toggle() {
-            console.log("IPC: toggle cpuram");
-            CpuRamState.toggle();
-        }
-
-        function show() {
-            console.log("IPC: show cpuram");
-            CpuRamState.show();
-        }
-
-        function hide() {
-            console.log("IPC: hide cpuram");
-            CpuRamState.hide();
-        }
-
-        target: "cpuram"
     }
 
 }

@@ -6,6 +6,12 @@ pragma Singleton
 QtObject {
     id: widgetManager
 
+    // widget registry
+    property var widgets: ({
+    })
+    // module registry
+    property var moduleRegistry: ({
+    })
     property var lastScreen: null
     // Track last mouse click position
     property int lastMouseX: 0
@@ -28,6 +34,39 @@ QtObject {
         }
         lastMouseX = x + previousScreenX;
         console.log("[WidgetManager] Mouse X position:", x);
+    }
+
+    function registerWidget(widgetId, widgetRef) {
+        widgets[widgetId] = widgetRef;
+        console.log("[WidgetManager] Registered widget:", widgetId);
+    }
+
+    function registerModule(widgetId, moduleRef) {
+        moduleRegistry[widgetId] = moduleRef;
+        console.log("[WidgetManager] Registered module for widget:", widgetId);
+        // Link module to widget if widget exists
+        if (widgets[widgetId])
+            widgets[widgetId].ownerModule = moduleRef;
+
+    }
+
+    function toggleWidget(widgetId) {
+        if (widgets[widgetId])
+            widgets[widgetId].isVisible = !widgets[widgetId].isVisible;
+        else
+            console.log("[WidgetManager] Widget not found:", widgetId);
+    }
+
+    function showWidget(widgetId) {
+        if (widgets[widgetId])
+            widgets[widgetId].isVisible = true;
+
+    }
+
+    function hideWidget(widgetId) {
+        if (widgets[widgetId])
+            widgets[widgetId].isVisible = false;
+
     }
 
 }

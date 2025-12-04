@@ -1,5 +1,5 @@
 import ".."
-// UsbDev/UsbDevWidget.qml
+// Devices/DevicesWidget.qml
 import QtQuick
 
 Rectangle {
@@ -19,9 +19,9 @@ Rectangle {
 
         // Controller Icon
         Text {
-            text: UsbDevState.controllerIcon
+            text: DevicesState.controllerIcon
             font.pixelSize: 64
-            color: UsbDevState.controllerConnected ? Theme.primary : Theme.textMuted
+            color: DevicesState.controllerConnected ? Theme.primary : Theme.textMuted
             anchors.horizontalCenter: parent.horizontalCenter
 
             Behavior on color {
@@ -36,9 +36,9 @@ Rectangle {
         // Status Text
         Text {
             text: {
-                if (!UsbDevState.controllerConnected)
+                if (!DevicesState.controllerConnected)
                     return "Disconnected";
-                else if (UsbDevState.controllerWired)
+                else if (DevicesState.controllerWired)
                     return "Wired";
                 else
                     return "Bluetooth";
@@ -52,7 +52,7 @@ Rectangle {
 
         // Battery info (only for Bluetooth)
         Row {
-            visible: UsbDevState.controllerConnected && !UsbDevState.controllerWired
+            visible: DevicesState.controllerConnected && !DevicesState.controllerWired
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 8
 
@@ -78,15 +78,15 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.verticalCenter: parent.verticalCenter
                     anchors.margins: 2
-                    width: Math.max(0, (parent.width - 4) * (UsbDevState.controllerBattery / 100))
+                    width: Math.max(0, (parent.width - 4) * (DevicesState.controllerBattery / 100))
                     height: parent.height - 4
                     radius: 4
                     color: {
-                        if (UsbDevState.controllerBattery > 50)
+                        if (DevicesState.controllerBattery > 50)
                             return "#4ade80";
 
                         // Green
-                        if (UsbDevState.controllerBattery > 20)
+                        if (DevicesState.controllerBattery > 20)
                             return "#fbbf24";
 
                         // Yellow
@@ -105,7 +105,7 @@ Rectangle {
             }
 
             Text {
-                text: UsbDevState.controllerBattery + "%"
+                text: DevicesState.controllerBattery + "%"
                 font.family: Theme.fontMono
                 font.pixelSize: 14
                 color: Theme.textPrimary

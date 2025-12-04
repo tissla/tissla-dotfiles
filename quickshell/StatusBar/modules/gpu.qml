@@ -2,14 +2,17 @@ import "../.."
 import QtQuick
 import Quickshell.Io
 
-Item {
+BaseModule {
     id: gpuModule
 
-    property var screen: null
     property real gpuUsage: 0
 
-    width: gpuRow.width + 16
-    height: 30
+    widgetId: "gpu"
+    moduleIcon: "󰢮"
+    moduleText: Math.round(gpuModule.gpuUsage) + "%"
+    Component.onCompleted: {
+        WidgetManager.registerModule(widgetId, this);
+    }
 
     Timer {
         interval: 2000
@@ -34,43 +37,6 @@ Item {
                     gpuModule.gpuUsage = usage;
 
             }
-        }
-
-    }
-
-    MouseArea {
-        id: mouseArea
-
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: (mouse) => {
-            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x, gpuModule.screen);
-            GpuState.toggle();
-        }
-    }
-
-    Row {
-        id: gpuRow
-
-        anchors.centerIn: parent
-        spacing: 8
-
-        Text {
-            text: "󰢮"
-            font.pixelSize: 20
-            color: Theme.primary
-            anchors.verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            text: Math.round(gpuModule.gpuUsage) + "%"
-            font.family: Theme.fontMono
-            font.pixelSize: 14
-            font.weight: Font.Bold
-            width: 30
-            color: Theme.textSecondary
-            anchors.verticalCenter: parent.verticalCenter
         }
 
     }
