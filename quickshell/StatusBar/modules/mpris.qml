@@ -1,62 +1,58 @@
 import "../.."
 import QtQuick
-import Quickshell.Io
+import Quickshell.Services.Mpris
 
 Item {
     id: mprisModule
 
-    property var screen: null
-    property string title: "No media"
-    property string artist: ""
-    property string status: "Stopped"
+	property var screen: null
 
-    width: mprisRow.width + 16
-    height: 30
+	readonly property list<MprisPlayer> availablePlayers: Mpris.players.values
+    property MprisPlayer player: availablePlayers.find(p => p.isPlaying) ?? availablePlayers.find(p => p.canControl && p.canPlay) ?? null
 
-    Process {
-        id: mprisFollow
 
-        running: true
-        command: ["playerctl", "metadata", "--follow", "--format", "{{status}}|||{{artist}}|||{{title}}"]
+    property string moduleIcon: {
+        if (!player)
+            return "⏸";
 
-        stdout: SplitParser {
-            onRead: (line) => {
-                let parts = line.trim().split("|||");
-                if (parts.length >= 3) {
-                    mprisModule.status = parts[0];
-                    mprisModule.artist = parts[1];
-                    mprisModule.title = parts[2];
-                }
-            }
-        }
+        if (player.playbackState === MprisPlaybackState.Playing)
+            return "▶";
 
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.includes("No players found")) {
-                    mprisModule.status = "Stopped";
-                    mprisModule.title = "No media";
-                    mprisModule.artist = "";
-                }
-            }
-        }
+        if (player.playbackState === MprisPlaybackState.Paused)
+            return "⏸";
 
+        return "⏹";
+    }
+    property string moduleText: {
+        if (!player)
+            return "No media";
+
+        let title = player.trackTitle || "Unknown";
+        let artist = player.trackArtist || "";
+        if (artist && title)
+            return artist + " - " + title;
+
+        return title;
     }
 
-    Row {
+    width: Math.min(mprisRow.width + 16, 400)
+    height: 40
+
+	Row {
         id: mprisRow
 
         anchors.centerIn: parent
         spacing: 8
 
         Text {
-            text: mprisModule.status === "Playing" ? "▶" : "⏸"
+            text: mprisModule.moduleIcon
             font.pixelSize: 20
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
-            text: mprisModule.status === "Stopped" ? "No media" : mprisModule.title
+            text: mprisModule.moduleText
             font.family: Theme.fontMain
             font.pixelSize: 15
             color: Theme.textSecondary
@@ -70,14 +66,16 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: playPauseProcess.running = true
-    }
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        onClicked: (mouse) => {
+            if (!mprisModule.player)
+                return ;
 
-    Process {
-        id: playPauseProcess
-
-        running: false
-        command: ["playerctl", "play-pause"]
+            if (mouse.button === Qt.RightButton && mprisModule.player.canGoNext)
+                mprisModule.player.next();
+            else if (mouse.button === Qt.LeftButton && mprisModule.player.canTogglePlaying)
+                mprisModule.player.togglePlaying();
+        }
     }
 
 }

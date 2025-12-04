@@ -1,5 +1,6 @@
 import "../.."
 import QtQuick
+import Quickshell
 import Quickshell.Io
 
 BaseModule {
@@ -58,6 +59,17 @@ BaseModule {
             }
         }
 
+    }
+
+    // test
+    MouseArea {
+        cursorShape: Qt.PointingHandCursor
+        hoverEnabled: true
+        onEntered: console.log("hejhej")
+        onWheel: (wheel) => {
+            let delta = wheel.angleDelta.y > 0 ? 5 : -5;
+            Quickshell.execDetached("pactl", ["set-sink-volume", "@DEFAULT_SINK@", (delta > 0 ? "+" : "") + delta + "%"]);
+        }
     }
 
 }

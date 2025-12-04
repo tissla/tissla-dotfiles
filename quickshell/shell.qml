@@ -58,7 +58,7 @@ ShellRoot {
         widgetWidth: 450
         widgetHeight: 200
         Component.onCompleted: {
-            WidgetManager.registerWidget("cpu", this);
+            WidgetManager.registerWidget("cpuram", this);
         }
 
         widgetComponent: Component {

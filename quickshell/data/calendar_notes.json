@@ -1,44 +1,13 @@
 {
-  "2025-12-11": {
+  "2025-12-26": {
     "notes": "",
     "noteColors": []
   },
-  "2025-12-24": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-27": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-06": {
-    "notes": "",
+  "2025-12-07": {
+    "notes": "ge",
     "noteColors": [
-      "red"
+      "green",
+      "orange"
     ]
-  },
-  "2025-12-10": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-09": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-02": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-03": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-19": {
-    "notes": "",
-    "noteColors": []
-  },
-  "2025-12-18": {
-    "notes": "",
-    "noteColors": []
   }
 }

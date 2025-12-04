@@ -1,6 +1,7 @@
 // StatusBar/modules/BaseModule.qml
 import "../.."
 import QtQuick
+import Quickshell.Hyprland
 
 Item {
     id: baseModule
@@ -22,7 +23,6 @@ Item {
         widgetActive = visible;
     }
 
-    // static width for now
     width: moduleWidth
     height: 30
 
@@ -31,10 +31,10 @@ Item {
         anchors.fill: parent
         radius: 10
         color: {
-            if (isPressed)
+            if (baseModule.isPressed)
                 return Theme.primary;
 
-            if (isHovered)
+            if (mouseArea.containsMouse)
                 return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.2);
 
             return "transparent";
@@ -84,6 +84,7 @@ Item {
     MouseArea {
         id: mouseArea
 
+        preventStealing: true
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
@@ -95,6 +96,9 @@ Item {
                 WidgetManager.setMousePosition(globalPos.x, baseModule.screen);
                 // Toggle via WidgetManager instead of direct state
                 WidgetManager.toggleWidget(widgetId);
+                mouseArea.enabled = true;
+                console.log("MouseArea enabled:", mouseArea.enabled);
+                console.log("Hover enabled:", mouseArea.hoverEnabled);
             }
         }
     }

@@ -1,68 +1,17 @@
+// Widgets/GpuWidget.qml
 import ".."
 import QtQuick
-import Quickshell.Io
 
 Rectangle {
     id: gpuWidget
 
     property bool isVisible: false
-    // Data properties
-    property real gpuUsage: 0
-    property real gpuTemp: 0
-    property real vramUsed: 0
-    property real vramTotal: 0
-    property real vramUsage: 0
 
     anchors.fill: parent
     color: Theme.backgroundSolid
     radius: 20
     border.width: 3
     border.color: Theme.primary
-
-    // Timer
-    Timer {
-        id: updateTimer
-
-        interval: 1000
-        running: gpuWidget.isVisible
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            getAllGpuDataProcess.running = true;
-        }
-    }
-
-    // All GPU data in one process
-    Process {
-        id: getAllGpuDataProcess
-
-        running: false
-        command: ["sh", "-c", "nvidia-smi --query-gpu=utilization.gpu,temperature.gpu,memory.used,memory.total --format=csv,noheader,nounits"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let values = text.trim().split(",").map((v) => {
-                    return parseFloat(v.trim());
-                });
-                if (values.length >= 4) {
-                    gpuUsage = values[0];
-                    gpuTemp = values[1];
-                    vramUsed = values[2] / 1024; // MB to GB
-                    vramTotal = values[3] / 1024;
-                    vramUsage = (values[2] / values[3]) * 100;
-                }
-            }
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.length > 0)
-                    console.log("GPU error:", text);
-
-            }
-        }
-
-    }
 
     // UI Layout
     Row {
@@ -88,12 +37,12 @@ Rectangle {
 
                 width: 80
                 height: 80
-                value: gpuWidget.gpuUsage
+                value: GpuDataProvider.gpuUsage
                 gaugeColor: Theme.green
             }
 
             Text {
-                text: Math.round(gpuWidget.gpuUsage) + "%"
+                text: Math.round(GpuDataProvider.gpuUsage) + "%"
                 font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
@@ -121,12 +70,12 @@ Rectangle {
 
                 width: 80
                 height: 80
-                value: gpuWidget.vramUsage
+                value: GpuDataProvider.vramUsage
                 gaugeColor: Theme.green
             }
 
             Text {
-                text: gpuWidget.vramUsed.toFixed(1) + "GB"
+                text: GpuDataProvider.vramUsed.toFixed(1) + "GB"
                 font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
@@ -154,13 +103,13 @@ Rectangle {
 
                 width: 40
                 height: 80
-                temperature: gpuWidget.gpuTemp
+                temperature: GpuDataProvider.gpuTemp
                 maxTemp: 90
                 thermoColor: Theme.green
             }
 
             Text {
-                text: Math.round(gpuWidget.gpuTemp) + "°C"
+                text: Math.round(GpuDataProvider.gpuTemp) + "°C"
                 font.family: Theme.fontMono
                 font.pixelSize: 16
                 font.weight: Font.Bold
@@ -170,6 +119,29 @@ Rectangle {
 
         }
 
+    }
+
+    // GPU vendor badge
+    Text {
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottomMargin: 12
+        text: {
+            if (GpuDataProvider.gpuVendor === "nvidia")
+                return "NVIDIA";
+
+            if (GpuDataProvider.gpuVendor === "amd")
+                return "AMD Radeon";
+
+            if (GpuDataProvider.gpuVendor === "intel")
+                return "Intel";
+
+            return "Unknown GPU";
+        }
+        font.family: Theme.fontMono
+        font.weight: Font.Bold
+        font.pixelSize: 14
+        color: Theme.textPrimary
     }
 
 }

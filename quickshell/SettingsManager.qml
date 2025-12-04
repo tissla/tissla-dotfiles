@@ -31,7 +31,7 @@ QtObject {
             return {
                 "left": ["workspaces"],
                 "center": [],
-                "right": ["clock"]
+                "right": [""]
             };
         }
     }

@@ -16,6 +16,7 @@ QtObject {
     // Track last mouse click position
     property int lastMouseX: 0
 
+    // decides the X-coordinate in which the widget will appear
     function setMousePosition(x, screen) {
         if (!screen) {
             console.log("[WidgetManager] screen is null, returning");
@@ -42,8 +43,11 @@ QtObject {
     }
 
     function registerModule(widgetId, moduleRef) {
-        moduleRegistry[widgetId] = moduleRef;
-        console.log("[WidgetManager] Registered module for widget:", widgetId);
+        if (!moduleRegistry[widgetId])
+            moduleRegistry[widgetId] = [];
+
+        moduleRegistry[widgetId].push(moduleRef);
+        console.log("[WidgetManager] Registered module for widget:", widgetId, "| Total modules:", moduleRegistry[widgetId].length);
         // Link module to widget if widget exists
         if (widgets[widgetId])
             widgets[widgetId].ownerModule = moduleRef;
@@ -52,20 +56,20 @@ QtObject {
 
     function toggleWidget(widgetId) {
         if (widgets[widgetId])
-            widgets[widgetId].isVisible = !widgets[widgetId].isVisible;
+            widgets[widgetId].visible = !widgets[widgetId].visible;
         else
             console.log("[WidgetManager] Widget not found:", widgetId);
     }
 
     function showWidget(widgetId) {
         if (widgets[widgetId])
-            widgets[widgetId].isVisible = true;
+            widgets[widgetId].visible = true;
 
     }
 
     function hideWidget(widgetId) {
         if (widgets[widgetId])
-            widgets[widgetId].isVisible = false;
+            widgets[widgetId].visible = false;
 
     }
 

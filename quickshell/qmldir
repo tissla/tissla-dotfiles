@@ -7,7 +7,6 @@ singleton SettingsManager 1.0 SettingsManager.qml
 # statusbar
 StatusBar 1.0 StatusBar/StatusBar.qml
 
-
 # calendar
 CalendarWidget 1.0 Calendar/CalendarWidget.qml
 
@@ -19,6 +18,7 @@ CpuRamWidget 1.0 CpuRam/CpuRamWidget.qml
 
 # gpu
 GpuWidget 1.0 Gpu/GpuWidget.qml
+singleton GpuDataProvider 1.0 Gpu/GpuDataProvider.qml
 
 # usb devices
 DevicesWidget 1.0 Devices/DevicesWidget.qml

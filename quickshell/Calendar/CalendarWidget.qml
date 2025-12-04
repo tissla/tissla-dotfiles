@@ -131,6 +131,12 @@ Rectangle {
         saveAllNotes();
     }
 
+    Component.onCompleted: {
+        if (visible) {
+            resetCalendar();
+            loadAllNotes();
+        }
+    }
     onSelectedDayChanged: {
         if (selectedDay !== -1) {
             if (saveTimer.running)
@@ -143,7 +149,7 @@ Rectangle {
     }
     // update date on show
     onIsVisibleChanged: {
-        if (isVisible) {
+        if (visible) {
             resetCalendar();
             loadAllNotes();
         }

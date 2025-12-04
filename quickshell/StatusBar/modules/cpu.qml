@@ -49,12 +49,12 @@ BaseModule {
         }
     }
 
+    moduleIcon: ""
+    moduleText: Math.round(cpuModule.cpuUsage) + "%"
+    widgetId: "cpuram"
     Component.onCompleted: {
         WidgetManager.registerModule(widgetId, this);
     }
-    widgetId: "cpu"
-    moduleIcon: ""
-    moduleText: Math.round(cpuModule.cpuUsage) + "%"
 
     Timer {
         // 5 sec updates is enough for a statusbar

@@ -97,7 +97,7 @@ Rectangle {
         id: updateTimer
 
         interval: 1000
-        running: cpuRamWidget.isVisible
+        running: cpuRamWidget.visible
         repeat: true
         triggeredOnStart: true
         onTriggered: {
