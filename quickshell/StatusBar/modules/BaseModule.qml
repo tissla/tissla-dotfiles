@@ -14,13 +14,16 @@ Item {
     // Visual state
     property bool isPressed: widgetActive
     property bool isHovered: false
+    // default
+    property int moduleWidth: contentRow.width + 16
 
     // Callback for when widget visibility changes
     function onWidgetVisibilityChanged(visible) {
         widgetActive = visible;
     }
 
-    width: contentRow.width + 16
+    // static width for now
+    width: moduleWidth
     height: 30
 
     // Standard content container with visual feedback
@@ -42,12 +45,15 @@ Item {
 
             anchors.centerIn: parent
             spacing: 8
+            anchors.leftMargin: 8
+            anchors.rightMargin: 8
 
             Text {
                 visible: baseModule.moduleIcon !== ""
                 text: baseModule.moduleIcon
                 font.pixelSize: 20
                 font.family: Theme.fontMono
+                width: 20
                 color: baseModule.isPressed ? Theme.backgroundSolid : Theme.primary
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -55,6 +61,7 @@ Item {
             Text {
                 visible: baseModule.moduleText !== ""
                 text: baseModule.moduleText
+                width: 50
                 font.family: Theme.fontMono
                 font.pixelSize: 15
                 font.weight: Font.Bold

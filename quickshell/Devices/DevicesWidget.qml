@@ -8,7 +8,7 @@ Rectangle {
     property bool isVisible: false
 
     anchors.fill: parent
-    color: Theme.background
+    color: Theme.backgroundSolid
     radius: 20
     border.width: 3
     border.color: Theme.primary

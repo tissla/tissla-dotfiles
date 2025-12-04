@@ -22,9 +22,9 @@ Item {
             id: leftContainer
 
             anchors.left: parent.left
-            anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            width: leftRow.width + 10
+            anchors.leftMargin: 10
+            width: leftRow.width
             height: parent.height
             color: Theme.backgroundAltSolid
             radius: 15
@@ -34,8 +34,6 @@ Item {
                 id: leftRow
 
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.left: parent.left
-                anchors.leftMargin: 5
                 spacing: 4
 
                 Repeater {
@@ -89,7 +87,8 @@ Item {
             anchors.right: parent.right
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            width: rightRow.width + 20
+            // space for 5 padding on either side
+            width: rightRow.width + 10
             height: parent.height
             color: Theme.backgroundAltSolid
             radius: 15
@@ -100,7 +99,8 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 15
+                anchors.rightMargin: 5
+                anchors.leftMargin: 5
                 spacing: 4
 
                 Repeater {
