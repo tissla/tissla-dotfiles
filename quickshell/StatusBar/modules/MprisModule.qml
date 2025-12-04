@@ -6,44 +6,26 @@ Item {
     id: mprisModule
 
     property var screen: null
-    property string title: "No media playing"
+    property string title: "No media"
     property string artist: ""
     property string status: "Stopped"
-    property string playerIcon: ""
 
-    width: Math.min(mprisRow.width + 16, 400)
+    width: mprisRow.width + 16
     height: 30
 
-    Timer {
-        interval: 1000
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            getMprisProcess.running = true;
-        }
-    }
-
     Process {
-        id: getMprisProcess
+        id: mprisFollow
 
-        running: false
-        command: ["playerctl", "metadata", "--format", "{{status}}|||{{artist}}|||{{title}}|||{{playerName}}"]
+        running: true
+        command: ["playerctl", "metadata", "--follow", "--format", "{{status}}|||{{artist}}|||{{title}}"]
 
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let parts = text.trim().split("|||");
-                if (parts.length >= 4) {
+        stdout: SplitParser {
+            onRead: (line) => {
+                let parts = line.trim().split("|||");
+                if (parts.length >= 3) {
                     mprisModule.status = parts[0];
                     mprisModule.artist = parts[1];
                     mprisModule.title = parts[2];
-                    let player = parts[3].toLowerCase();
-                    if (player.includes("spotify"))
-                        mprisModule.playerIcon = "󰓇";
-                    else if (player.includes("firefox") || player.includes("chrome"))
-                        mprisModule.playerIcon = "";
-                    else
-                        mprisModule.playerIcon = "▶";
                 }
             }
         }
@@ -51,9 +33,9 @@ Item {
         stderr: StdioCollector {
             onStreamFinished: {
                 if (text.includes("No players found")) {
+                    mprisModule.status = "Stopped";
                     mprisModule.title = "No media";
                     mprisModule.artist = "";
-                    mprisModule.status = "Stopped";
                 }
             }
         }
@@ -67,30 +49,20 @@ Item {
         spacing: 8
 
         Text {
-            text: mprisModule.status === "Playing" ? mprisModule.playerIcon : "⏸"
+            text: mprisModule.status === "Playing" ? "▶" : "⏸"
             font.pixelSize: 20
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Text {
-            // if (mprisModule.artist)
-            //     display = mprisModule.artist + " - " + display;
-
-            text: {
-                if (mprisModule.status === "Stopped")
-                    return "No media";
-
-                let display = mprisModule.title;
-                return display;
-            }
+            text: mprisModule.status === "Stopped" ? "No media" : mprisModule.title
             font.family: Theme.fontMain
             font.pixelSize: 15
             color: Theme.textSecondary
-            font.italic: mprisModule.status !== "Playing"
-            anchors.verticalCenter: parent.verticalCenter
             elide: Text.ElideRight
             maximumLineCount: 1
+            anchors.verticalCenter: parent.verticalCenter
         }
 
     }
@@ -98,9 +70,7 @@ Item {
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
-        onClicked: {
-            playPauseProcess.running = true;
-        }
+        onClicked: playPauseProcess.running = true
     }
 
     Process {

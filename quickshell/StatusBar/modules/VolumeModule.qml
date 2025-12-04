@@ -11,27 +11,21 @@ Item {
 
     width: volumeRow.width + 16
     height: 30
+    // Initial load
+    Component.onCompleted: getVolumeProcess.running = true
 
-    Timer {
-        interval: 1000
+    Process {
+        id: volumeEvents
+
         running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            getVolumeProcess.running = true;
-        }
-    }
+        command: ["sh", "-c", "pactl subscribe | grep --line-buffered 'sink'"]
 
-    MouseArea {
-        id: mouseArea
-
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        onClicked: (mouse) => {
-            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-            WidgetManager.setMousePosition(globalPos.x, volumeModule.screen);
-            VolumeState.toggle();
+        stdout: SplitParser {
+            onRead: (line) => {
+                getVolumeProcess.running = true;
+            }
         }
+
     }
 
     Process {
@@ -42,10 +36,10 @@ Item {
 
         stdout: StdioCollector {
             onStreamFinished: {
-                let lines = text.trim().split("\n");
+                let lines = text.trim().split('\n');
                 if (lines.length >= 2) {
                     volumeModule.volume = parseInt(lines[0]) || 50;
-                    volumeModule.isMuted = lines[1] === "muted";
+                    volumeModule.isMuted = (lines[1] === "muted");
                 }
             }
         }
@@ -71,6 +65,7 @@ Item {
 
                 return "󰝟";
             }
+            width: 30
             font.pixelSize: 20
             color: volumeModule.isMuted ? Theme.accent : Theme.primary
             anchors.verticalCenter: parent.verticalCenter
@@ -86,6 +81,18 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
         }
 
+    }
+
+    MouseArea {
+        id: mouseArea
+
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        onClicked: (mouse) => {
+            let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
+            WidgetManager.setMousePosition(globalPos.x, volumeModule.screen);
+            VolumeState.toggle();
+        }
     }
 
 }

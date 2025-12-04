@@ -11,6 +11,7 @@ Row {
         model: Hyprland.workspaces
 
         Rectangle {
+            // hyprland binding
             property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
             visible: modelData.monitor && modelData.monitor.name === workspaceModule.screen.name && modelData.id != -98
