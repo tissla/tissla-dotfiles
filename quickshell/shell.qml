@@ -95,30 +95,17 @@ ShellRoot {
 
     }
 
-    // CALENDAR
-    PanelWindow {
-        id: calendarWindow
+    // calendar
+    DynamicWidget {
+        widgetId: "calendar"
+        isVisible: CalendarState.isVisible
+        widgetWidth: 620
+        widgetHeight: 420
 
-        WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-        screen: Quickshell.screens[0]
-        visible: CalendarState.isVisible
-        implicitWidth: 620
-        implicitHeight: 420
-        color: "transparent"
+        widgetComponent: Component {
+            CalendarWidget {
+            }
 
-        anchors {
-            bottom: true
-            right: true
-        }
-
-        margins {
-            bottom: 20
-            right: 20
-        }
-
-        CalendarWidget {
-            anchors.fill: parent
-            isVisible: CalendarState.isVisible
         }
 
     }
