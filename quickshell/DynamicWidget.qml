@@ -53,6 +53,7 @@ PanelWindow {
         }
     }
 
+    // dragging functionality
     Rectangle {
         id: dragHandle
 
