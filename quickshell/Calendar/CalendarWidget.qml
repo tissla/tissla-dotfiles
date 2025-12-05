@@ -18,7 +18,9 @@ Rectangle {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
-    property string notesFilePath: Quickshell.env("HOME") + "/.config/quickshell/data/calendar_notes.json"
+    property bool useObsidian: Theme.noteDirectory && Theme.noteDirectory !== ""
+    property string noteFileExtension: useObsidian ? ".md" : ".json"
+    property string notesFilePath: Theme.noteDirectory || Quickshell.env("HOME") + "/.config/quickshell/data/calendar_notes.json"
     property string selectedDayId: ""
     property var notesData: ({
     })
@@ -59,17 +61,44 @@ Rectangle {
         return Math.ceil((((d - yearStart) / 8.64e+07) + 1) / 7);
     }
 
-    // note helpers
-    function loadAllNotes() {
-        loadNotesProcess.running = true;
-    }
-
+    // save notes
     function saveAllNotes() {
-        const jsonString = JSON.stringify(notesData, null, 2);
-        saveNotesProcess.noteText = jsonString;
-        saveNotesProcess.running = true;
+        if (useObsidian) {
+            let filename = selectedDayId + ".md";
+            let filepath = notesFilePath + "/" + filename;
+            // colors
+            let colors = getNoteColorsForDay(selectedDayId);
+            // ✅ Fixa optional chaining
+            let noteContent = (notesData[selectedDayId] && notesData[selectedDayId].notes) || "";
+            // frontmatter
+            let fullContent = noteContent;
+            if (colors.length > 0) {
+                let frontmatter = "---\ncolors: [" + colors.map((c) => {
+                    return '"' + c + '"';
+                }).join(", ") + "]\n---\n";
+                fullContent = frontmatter + noteContent;
+            }
+            // start
+            saveObsidianProcess.noteText = fullContent;
+            saveObsidianProcess.filepath = filepath;
+            saveObsidianProcess.running = true;
+        } else {
+            const jsonString = JSON.stringify(notesData, null, 2);
+            saveNotesProcess.noteText = jsonString;
+            saveNotesProcess.running = true;
+        }
     }
 
+    function loadAllNotes() {
+        if (useObsidian) {
+            listObsidianNotesProcess.running = true;
+            loadNotesProcess.Running = true;
+        } else {
+            loadNotesProcess.running = true;
+        }
+    }
+
+    // get notes
     function getNotesForDay(dayId) {
         if (notesData && notesData[dayId] && notesData[dayId].notes)
             return notesData[dayId].notes;
@@ -91,14 +120,14 @@ Rectangle {
         if (!notesData)
             return false;
 
-        if (typeof notesData !== 'object')
-            return false;
-
         if (!dayId)
             return false;
 
         if (!notesData[dayId])
             return false;
+
+        if (useObsidian && notesData[dayId].hasFile)
+            return true;
 
         if (!notesData[dayId].notes)
             return false;
@@ -144,7 +173,14 @@ Rectangle {
 
             selectedDayId = selectedYear + "-" + (selectedMonth + 1).toString().padStart(2, '0') + "-" + selectedDay.toString().padStart(2, '0');
             // load from data
-            notesEdit.text = getNotesForDay(selectedDayId);
+            if (useObsidian) {
+                let filename = selectedDayId + ".md";
+                let filepath = notesFilePath + "/" + filename;
+                loadObsidianProcess.filepath = filepath;
+                loadObsidianProcess.running = true;
+            } else {
+                notesEdit.text = getNotesForDay(selectedDayId);
+            }
         }
     }
     // update date on show
@@ -696,63 +732,174 @@ Rectangle {
 
         }
 
-    }
+        Process {
+            id: loadObsidianProcess
 
-    // saveNotesProcess:
-    Process {
-        id: saveNotesProcess
+            property string filepath: ""
 
-        property string noteText: ""
+            running: false
+            command: ["cat", filepath]
 
-        running: false
-        command: ["sh", "-c", "mkdir -p ~/.config/quickshell/data && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
-        onRunningChanged: {
-            if (!running)
-                console.log("Saved notes to JSON");
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (text && text.trim().length > 0) {
+                        let colors = [];
+                        let noteContent = text;
+                        if (text.startsWith("---\n")) {
+                            let parts = text.split("---\n");
+                            if (parts.length >= 3) {
+                                let frontmatter = parts[1];
+                                noteContent = parts.slice(2).join("---\n").trim();
+                                let colorMatch = frontmatter.match(/colors:\s*\[(.*?)\]/);
+                                if (colorMatch) {
+                                    let colorStr = colorMatch[1];
+                                    colors = colorStr.split(",").map((c) => {
+                                        return c.trim().replace(/["']/g, "");
+                                    });
+                                }
+                            }
+                        }
+                        let newData = Object.assign({
+                        }, root.notesData);
+                        newData[root.selectedDayId] = {
+                            "notes": noteContent,
+                            "noteColors": colors,
+                            "hasFile": true
+                        };
+                        root.notesData = newData;
+                        notesEdit.text = noteContent;
+                    } else {
+                        notesEdit.text = "";
+                    }
+                }
+            }
+
+            stderr: StdioCollector {
+                onStreamFinished: {
+                    if (text.includes("No such file"))
+                        notesEdit.text = "";
+
+                }
+            }
 
         }
-    }
 
-    // loadNotesProcess:
-    Process {
-        id: loadNotesProcess
+        // lists the obsidian calendar notes in folder
+        Process {
+            id: listObsidianNotesProcess
 
-        running: false
-        command: ["cat", notesFilePath]
+            running: false
+            command: ["sh", "-c", "cd '" + notesFilePath + "' 2>/dev/null && " + "for f in *.md; do " + "if [[ $f =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.md$ ]]; then " + "echo \"FILE:${f%.md}\"; " + "grep -m 1 'colors:' \"$f\" 2>/dev/null || echo 'colors: []'; " + "fi; " + "done"]
 
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0) {
-                    try {
-                        root.notesData = JSON.parse(text);
-                        console.log("Loaded notes from JSON");
-                        // Update UI if day chosen
-                        if (root.selectedDay !== -1)
-                            notesEdit.text = root.getNotesForDay(root.selectedDayId);
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (text && text.trim().length > 0) {
+                        let lines = text.trim().split("\n");
+                        let newData = {
+                        };
+                        let currentFile = "";
+                        for (let line of lines) {
+                            if (line.startsWith("FILE:")) {
+                                currentFile = line.substring(5);
+                                newData[currentFile] = {
+                                    "notes": "",
+                                    "noteColors": [],
+                                    "hasFile": true
+                                };
+                            } else if (line.includes("colors:") && currentFile) {
+                                let colorMatch = line.match(/colors:\s*\[(.*?)\]/);
+                                if (colorMatch) {
+                                    let colorStr = colorMatch[1];
+                                    let colors = colorStr.split(",").map((c) => {
+                                        return c.trim().replace(/["'\s]/g, "");
+                                    }).filter((c) => {
+                                        return c.length > 0;
+                                    });
+                                    newData[currentFile].noteColors = colors;
+                                }
+                            }
+                        }
+                        root.notesData = newData;
+                        console.log("Loaded", Object.keys(newData).length, "Obsidian notes");
+                    }
+                }
+            }
 
-                    } catch (e) {
-                        console.log("Error parsing JSON:", e);
+        }
+
+        // save notes in obsidian format
+        Process {
+            id: saveObsidianProcess
+
+            property string noteText: ""
+            property string filepath: ""
+
+            running: false
+            command: ["sh", "-c", "mkdir -p '" + notesFilePath + "' && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + filepath + "'"]
+            onRunningChanged: {
+                if (!running)
+                    console.log("Saved Obsidian note:", filepath);
+
+            }
+        }
+
+        // default json save note process
+        Process {
+            id: saveNotesProcess
+
+            property string noteText: ""
+
+            running: false
+            command: ["sh", "-c", "mkdir -p ~/.config/quickshell/data && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
+            onRunningChanged: {
+                if (!running)
+                    console.log("Saved notes to JSON");
+
+            }
+        }
+
+        // default json loadNotesProcess
+        Process {
+            id: loadNotesProcess
+
+            running: false
+            command: ["cat", notesFilePath]
+
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (text && text.trim().length > 0) {
+                        try {
+                            root.notesData = JSON.parse(text);
+                            console.log("Loaded notes from JSON");
+                            // Update UI if day chosen
+                            if (root.selectedDay !== -1)
+                                notesEdit.text = root.getNotesForDay(root.selectedDayId);
+
+                        } catch (e) {
+                            console.log("Error parsing JSON:", e);
+                            root.notesData = {
+                            };
+                        }
+                    } else {
+                        // Empty data
                         root.notesData = {
                         };
+                        console.log("No existing notes file, initialized empty data");
                     }
-                } else {
-                    // Empty data
-                    root.notesData = {
-                    };
-                    console.log("No existing notes file, initialized empty data");
                 }
             }
-        }
 
-        stderr: StdioCollector {
-            onStreamFinished: {
-                // No file handling
-                if (text.includes("No such file")) {
-                    root.notesData = {
-                    };
-                    console.log("Notes file doesn't exist yet, initialized empty data");
+            stderr: StdioCollector {
+                onStreamFinished: {
+                    // No file handling
+                    if (text.includes("No such file")) {
+                        root.notesData = {
+                        };
+                        console.log("Notes file doesn't exist yet, initialized empty data");
+                    }
                 }
             }
+
         }
 
     }

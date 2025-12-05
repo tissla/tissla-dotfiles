@@ -133,6 +133,7 @@ QtObject {
 	property color accent: "${CLR_ORANGE}"
 	property color fillClr: "${CLR_FILL}"
 	property color green: "${CLR_GREEN}"
+	property string noteDirectory: "${DIR_OBSIDIAN}"
 	property string fontMain: "${FONT_MAIN}"
 	property string fontMono: "${FONT_MONO2}"
 }
