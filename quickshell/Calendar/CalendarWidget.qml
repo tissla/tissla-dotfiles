@@ -1,6 +1,7 @@
 // inspiration and original by bgibson72
 // source: github.com/bgibson72/yahr-quickshell
 // modified by tissla
+// TODO: Refactor this monstrosity
 
 import ".."
 import QtQuick
