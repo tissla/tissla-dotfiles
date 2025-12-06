@@ -1,7 +1,6 @@
 // StatusBar/modules/BaseModule.qml
 import "../.."
 import QtQuick
-import Quickshell.Hyprland
 
 Item {
     id: baseModule
@@ -29,7 +28,7 @@ Item {
     // Standard content container with visual feedback
     Rectangle {
         anchors.fill: parent
-        radius: 10
+        radius: Theme.radiusAlt
         color: {
             if (baseModule.isPressed)
                 return Theme.primary;
@@ -52,7 +51,7 @@ Item {
                 visible: baseModule.moduleIcon !== ""
                 text: baseModule.moduleIcon
                 font.pixelSize: 20
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 width: 20
                 color: baseModule.isPressed ? Theme.backgroundSolid : Theme.primary
                 anchors.verticalCenter: parent.verticalCenter
@@ -62,10 +61,10 @@ Item {
                 visible: baseModule.moduleText !== ""
                 text: baseModule.moduleText
                 width: 50
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 15
                 font.weight: Font.Bold
-                color: baseModule.isPressed ? Theme.backgroundSolid : Theme.textSecondary
+                color: baseModule.isPressed ? Theme.backgroundSolid : Theme.foregroundAlt
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -93,12 +92,10 @@ Item {
         onClicked: (mouse) => {
             if (widgetId) {
                 let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-                WidgetManager.setMousePosition(globalPos.x, baseModule.screen);
+                WidgetManager.setMousePosition(globalPos, baseModule.screen);
                 // Toggle via WidgetManager instead of direct state
                 WidgetManager.toggleWidget(widgetId);
                 mouseArea.enabled = true;
-                console.log("MouseArea enabled:", mouseArea.enabled);
-                console.log("Hover enabled:", mouseArea.hoverEnabled);
             }
         }
     }

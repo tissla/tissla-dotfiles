@@ -9,7 +9,7 @@ Rectangle {
 
     anchors.fill: parent
     color: Theme.backgroundSolid
-    radius: 20
+    radius: Theme.radius
     border.width: 3
     border.color: Theme.primary
 
@@ -21,7 +21,7 @@ Rectangle {
         Text {
             text: DevicesState.controllerIcon
             font.pixelSize: 64
-            color: DevicesState.controllerConnected ? Theme.primary : Theme.textMuted
+            color: DevicesState.controllerConnected ? Theme.primary : Theme.inactive
             anchors.horizontalCenter: parent.horizontalCenter
 
             Behavior on color {
@@ -43,10 +43,10 @@ Rectangle {
                 else
                     return "Bluetooth";
             }
-            font.family: Theme.fontMono
+            font.family: Theme.fontMain
             font.pixelSize: 16
             font.weight: Font.Bold
-            color: Theme.textPrimary
+            color: Theme.foreground
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -106,9 +106,9 @@ Rectangle {
 
             Text {
                 text: DevicesState.controllerBattery + "%"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 14
-                color: Theme.textPrimary
+                color: Theme.foreground
                 font.weight: Font.Bold
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -123,9 +123,9 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: 8
         text: "🎮 Xbox Controller"
-        font.family: Theme.fontMono
+        font.family: Theme.fontMain
         font.pixelSize: 12
-        color: Theme.textMuted
+        color: Theme.inactive
     }
 
 }

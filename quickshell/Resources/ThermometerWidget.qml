@@ -6,7 +6,7 @@ Item {
 
     property real temperature: 0
     property real maxTemp: 100
-    property color thermoColor: Theme.bbyBlue
+    property color thermoColor: Theme.info
     property color bgColor: Theme.backgroundAltSolid
 
     width: 40
@@ -78,7 +78,7 @@ Item {
             Rectangle {
                 width: 4
                 height: 1
-                color: Theme.textMuted
+                color: Theme.inactive
             }
 
         }

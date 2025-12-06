@@ -37,4 +37,7 @@ DynamicWidget 1.0 DynamicWidget.qml
 ## basemodule
 BaseModule 1.0 StatusBar/modules/BaseModule.qml
 
+## cursorpos
+singleton GlobalMouse 1.0 GlobalMouse.qml
+
 

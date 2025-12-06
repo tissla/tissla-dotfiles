@@ -18,6 +18,32 @@ QtObject {
     property bool isRunning: false
     // Processes as properties (inte children!)
     property Process detectProcess
+    property Timer updateTimer
+    property Process nvidiaProcess
+    property Process amdProcess
+
+    function detectGpuVendor() {
+        detectProcess.running = true;
+    }
+
+    function startPolling() {
+        if (!isDetected) {
+            console.log("⚠️ [GpuDataProvider] GPU not detected, cannot start polling");
+            return ;
+        }
+        isRunning = true;
+        updateTimer.start();
+    }
+
+    function stopPolling() {
+        isRunning = false;
+        updateTimer.stop();
+    }
+
+    Component.onCompleted: {
+        console.log("[GpuDataProvider] Initializing...");
+        detectGpuVendor();
+    }
 
     detectProcess: Process {
         running: false
@@ -29,17 +55,17 @@ QtObject {
                 if (output.includes("nvidia")) {
                     gpuData.gpuVendor = "nvidia";
                     gpuData.isDetected = true;
-                    console.log("✅ [GpuDataProvider] Detected NVIDIA GPU");
+                    console.log("[GpuDataProvider] Detected NVIDIA GPU");
                 } else if (output.includes("amd") || output.includes("radeon")) {
                     gpuData.gpuVendor = "amd";
                     gpuData.isDetected = true;
-                    console.log("✅ [GpuDataProvider] Detected AMD GPU");
+                    console.log("[GpuDataProvider] Detected AMD GPU");
                 } else if (output.includes("intel")) {
                     gpuData.gpuVendor = "intel";
                     gpuData.isDetected = true;
-                    console.log("✅ [GpuDataProvider] Detected Intel GPU");
+                    console.log("[GpuDataProvider] Detected Intel GPU");
                 } else {
-                    console.log("⚠️ [GpuDataProvider] Unknown GPU vendor");
+                    console.log("[GpuDataProvider] Unknown GPU vendor");
                 }
                 if (gpuData.isDetected)
                     startPolling();
@@ -48,8 +74,6 @@ QtObject {
         }
 
     }
-
-    property Timer updateTimer
 
     updateTimer: Timer {
         interval: 2000
@@ -63,8 +87,6 @@ QtObject {
                 amdProcess.running = true;
         }
     }
-
-    property Process nvidiaProcess
 
     nvidiaProcess: Process {
         running: false
@@ -88,14 +110,12 @@ QtObject {
         stderr: StdioCollector {
             onStreamFinished: {
                 if (text.length > 0)
-                    console.log("❌ [GpuDataProvider] NVIDIA error:", text);
+                    console.log("[GpuDataProvider] NVIDIA error:", text);
 
             }
         }
 
     }
-
-    property Process amdProcess
 
     amdProcess: Process {
         running: false
@@ -129,26 +149,4 @@ QtObject {
 
     }
 
-    function detectGpuVendor() {
-        detectProcess.running = true;
-    }
-
-    function startPolling() {
-        if (!isDetected) {
-            console.log("⚠️ [GpuDataProvider] GPU not detected, cannot start polling");
-            return ;
-        }
-        isRunning = true;
-        updateTimer.start();
-    }
-
-    function stopPolling() {
-        isRunning = false;
-        updateTimer.stop();
-    }
-
-    Component.onCompleted: {
-        console.log("[GpuDataProvider] Initializing...");
-        detectGpuVendor();
-    }
 }

@@ -5,7 +5,6 @@ import Quickshell.Io
 Rectangle {
     id: cpuRamWidget
 
-    property bool isVisible: false
     // Data properties
     property real cpuUsage: 0
     property real cpuTemp: 0
@@ -88,7 +87,7 @@ Rectangle {
 
     anchors.fill: parent
     color: Theme.backgroundSolid
-    radius: 20
+    radius: Theme.radius
     border.width: 3
     border.color: Theme.primary
 
@@ -140,11 +139,11 @@ Rectangle {
         // center contents
         anchors.centerIn: parent
         anchors.margins: 20
-        spacing: 16
+        spacing: 30
 
         // CPU Gauge
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "CPU%"
@@ -166,10 +165,10 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.cpuUsage) + "%"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -177,7 +176,7 @@ Rectangle {
 
         // RAM Gauge
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "RAM"
@@ -199,17 +198,17 @@ Rectangle {
 
             Text {
                 text: cpuRamWidget.ramUsed.toFixed(1) + "GB"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
         }
 
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "AIO"
@@ -226,15 +225,15 @@ Rectangle {
                 width: 80
                 height: 80
                 value: (cpuRamWidget.pumpSpeed / 2500) * 100
-                gaugeColor: Theme.bbyBlue
+                gaugeColor: Theme.info
             }
 
             Text {
                 text: Math.round(cpuRamWidget.pumpSpeed) + "rpm"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -242,7 +241,7 @@ Rectangle {
 
         // CPU Temp thermometer
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "CPU°"
@@ -265,10 +264,10 @@ Rectangle {
 
             Text {
                 text: Math.round(cpuRamWidget.cpuTemp) + "°C"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -276,13 +275,14 @@ Rectangle {
 
         // Liquid Temp thermometer
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "LIQ 💧"
                 font.family: Theme.fontMain
                 font.pixelSize: 16
                 color: Theme.primary
+                font.weight: Font.Bold
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -293,15 +293,15 @@ Rectangle {
                 height: 80
                 temperature: cpuRamWidget.liquidTemp
                 maxTemp: 60
-                thermoColor: Theme.bbyBlue
+                thermoColor: Theme.info
             }
 
             Text {
                 text: Math.round(cpuRamWidget.liquidTemp) + "°C"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 

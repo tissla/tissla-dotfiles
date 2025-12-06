@@ -15,14 +15,16 @@ QtObject {
     property var lastScreen: null
     // Track last mouse click position
     property int lastMouseX: 0
+    property int lastMouseY: 0
 
     // decides the X-coordinate in which the widget will appear
-    function setMousePosition(x, screen) {
+    function setMousePosition(globalPos, screen) {
         if (!screen) {
             console.log("[WidgetManager] screen is null, returning");
             return ;
         }
-        lastMouseX = x;
+        lastMouseX = globalPos.x;
+        lastMouseY = globalPos.y;
         lastScreen = screen;
         // calculate previous screens widths
         let previousScreenX = 0;
@@ -33,8 +35,8 @@ QtObject {
             previousScreenX += Quickshell.screens[i].width;
             console.log("[WidgetManager] checked screen", Quickshell.screens[i].name, "with width", Quickshell.screens[i].width);
         }
-        lastMouseX = x + previousScreenX;
-        console.log("[WidgetManager] Mouse X position:", x);
+        lastMouseX = globalPos.x + previousScreenX;
+        console.log("[WidgetManager] Mouse X | Y position:", globalPos.x, " | ", globalPos.y);
     }
 
     function registerWidget(widgetId, widgetRef) {

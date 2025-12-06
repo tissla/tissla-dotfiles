@@ -5,11 +5,9 @@ import QtQuick
 Rectangle {
     id: gpuWidget
 
-    property bool isVisible: false
-
     anchors.fill: parent
     color: Theme.backgroundSolid
-    radius: 20
+    radius: Theme.radius
     border.width: 3
     border.color: Theme.primary
 
@@ -17,11 +15,11 @@ Rectangle {
     Row {
         anchors.centerIn: parent
         anchors.margins: 20
-        spacing: 16
+        spacing: 30
 
         // GPU Usage Gauge
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "GPU%"
@@ -38,15 +36,15 @@ Rectangle {
                 width: 80
                 height: 80
                 value: GpuDataProvider.gpuUsage
-                gaugeColor: Theme.green
+                gaugeColor: Theme.active
             }
 
             Text {
                 text: Math.round(GpuDataProvider.gpuUsage) + "%"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -54,7 +52,7 @@ Rectangle {
 
         // VRAM Gauge
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "VRAM"
@@ -71,15 +69,15 @@ Rectangle {
                 width: 80
                 height: 80
                 value: GpuDataProvider.vramUsage
-                gaugeColor: Theme.green
+                gaugeColor: Theme.active
             }
 
             Text {
                 text: GpuDataProvider.vramUsed.toFixed(1) + "GB"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -87,7 +85,7 @@ Rectangle {
 
         // GPU Temp thermometer
         Column {
-            spacing: 4
+            spacing: 10
 
             Text {
                 text: "GPU°"
@@ -105,15 +103,15 @@ Rectangle {
                 height: 80
                 temperature: GpuDataProvider.gpuTemp
                 maxTemp: 90
-                thermoColor: Theme.green
+                thermoColor: Theme.active
             }
 
             Text {
                 text: Math.round(GpuDataProvider.gpuTemp) + "°C"
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.textPrimary
+                color: Theme.foreground
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -138,10 +136,10 @@ Rectangle {
 
             return "Unknown GPU";
         }
-        font.family: Theme.fontMono
+        font.family: Theme.fontMain
         font.weight: Font.Bold
         font.pixelSize: 14
-        color: Theme.textPrimary
+        color: Theme.info
     }
 
 }

@@ -126,7 +126,7 @@ Item {
             font.pixelSize: 20
             color: networkModule.connected ? Theme.primary : Theme.accent
             anchors.verticalCenter: parent.verticalCenter
-            font.family: Theme.fontMono
+            font.family: Theme.fontMain
         }
 
         Row {
@@ -136,10 +136,10 @@ Item {
 
             Text {
                 text: networkModule.formatSpeed(networkModule.downloadSpeed)
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 15
                 font.weight: Font.Bold
-                color: Theme.textSecondary
+                color: Theme.foregroundAlt
                 width: 80
                 horizontalAlignment: Text.AlignRight
                 anchors.verticalCenter: parent.verticalCenter
@@ -155,12 +155,12 @@ Item {
 
             Text {
                 text: networkModule.formatSpeed(networkModule.uploadSpeed)
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 15
                 width: 80
                 font.weight: Font.Bold
                 horizontalAlignment: Text.AlignRight
-                color: Theme.textSecondary
+                color: Theme.foregroundAlt
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -177,7 +177,7 @@ Item {
         Text {
             visible: !networkModule.connected
             text: "down"
-            font.family: Theme.fontMono
+            font.family: Theme.fontMain
             font.pixelSize: 13
             font.weight: Font.Bold
             color: Theme.accent

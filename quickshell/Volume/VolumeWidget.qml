@@ -38,7 +38,7 @@ Rectangle {
                 anchors.margins: 6
                 width: parent.width - 12
                 height: (parent.height - 12) * (volumeWidget.volume / 100)
-                color: Theme.fillClr
+                color: Theme.surface
                 radius: 20
 
                 Rectangle {

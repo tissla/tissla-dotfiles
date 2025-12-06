@@ -4,13 +4,8 @@
     fg:        #c9c7d4;
     primary:   #8b5cf6;
     secondary: #2b1a3d;
-    accent:    #a78bfa;
     muted:     #342e4a;
-    border:    #374151;
-    success:   #34d399;
-    warning:   #fbbf24;
-    error:     #f87171;
 
-	font-mono: "LiterationMono Nerd Font Mono Bold 12";
+	font-mono: "JetBrains Nerd Font Bold 12";
 	font-search: "JetBrainsMono Nerd Font 14";
 }

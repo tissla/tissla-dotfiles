@@ -55,7 +55,7 @@ Item {
             text: mprisModule.moduleText
             font.family: Theme.fontMain
             font.pixelSize: 15
-            color: Theme.textSecondary
+            color: Theme.foregroundAlt
             elide: Text.ElideRight
             maximumLineCount: 1
             anchors.verticalCenter: parent.verticalCenter

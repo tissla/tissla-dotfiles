@@ -16,30 +16,31 @@ PanelWindow {
     // size params
     required property int widgetWidth
     required property int widgetHeight
-    // position data (xpos and screen)
-    property int xPos: 0
+    // position data
     property var screen: WidgetManager.lastScreen || Quickshell.screens[0]
     //movement props
     property bool isDragging: false
-    property int bottomMargin: 20
-    property int dragStartX: 0
-    property int dragStartY: 0
+    property int xPos: 0
+    property int yPos: 20
+    // drag state
+    property int globalStartX: 0
+    property int globalStartY: 0
     property int widgetStartX: 0
-    property int widgetStartBottom: 0
+    property int widgetStartY: 0
 
-    focusable: true
     visible: isVisible
+    focusable: true
     implicitWidth: widgetWidth
     implicitHeight: widgetHeight
     color: "transparent"
     // set position
     onVisibleChanged: {
-        // only use WidgetManagers x pos if we dont already have one in memory
-        if (visible && xPos === 0) {
+        if (visible) {
             xPos = Math.max(10, Math.min(WidgetManager.lastMouseX - (widgetWidth / 2), screen.width - widgetWidth - 20));
             console.log("[DynamicWidget]", widgetId, "on screen:", screen.name, "at x:", xPos);
-        } else if (visible) {
-            console.log("[DynamicWidget]", widgetId, "on screen:", screen.name, "at x:", xPos);
+        } else {
+            // reset position on invisible
+            yPos = 20;
         }
         // notify owner(s) about visibility change
         let modules = WidgetManager.moduleRegistry[widgetId];
@@ -61,7 +62,8 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         height: 30
-        color: "transparent"
+        //debug color
+        color: "orange"
         z: 100
 
         MouseArea {
@@ -72,23 +74,30 @@ PanelWindow {
             anchors.fill: parent
             hoverEnabled: true
             onPressed: (mouse) => {
-                dynamicWidget.isDragging = true;
-                dynamicWidget.dragStartX = mouse.x;
-                dynamicWidget.dragStartY = mouse.y;
-                dynamicWidget.widgetStartX = dynamicWidget.xPos;
-                dynamicWidget.widgetStartBottom = dynamicWidget.bottomMargin;
+                GlobalMouse.requestPosition(function(p) {
+                    dynamicWidget.isDragging = true;
+                    widgetStartX = xPos;
+                    widgetStartY = yPos;
+                    globalStartX = p.x;
+                    globalStartY = p.y;
+                    console.log("[DynamicWidget] MousePos: X:", p.x, "| Y:", p.y);
+                    console.log("[DynamicWidget] StartDrag: X:", xPos, "| Y:", yPos);
+                });
             }
             onPositionChanged: (mouse) => {
                 if (!dynamicWidget.isDragging)
                     return ;
 
-                let dx = mouse.x - dynamicWidget.dragStartX;
-                let dy = mouse.y - dynamicWidget.dragStartY;
-                dynamicWidget.xPos = dynamicWidget.widgetStartX + dx;
-                dynamicWidget.bottomMargin = dynamicWidget.widgetStartBottom - dy;
+                GlobalMouse.requestPosition(function(p) {
+                    const dx = p.x - globalStartX;
+                    const dy = p.y - globalStartY;
+                    xPos = widgetStartX + dx;
+                    yPos = widgetStartY - dy;
+                });
             }
             onReleased: (mouse) => {
                 dynamicWidget.isDragging = false;
+                console.log("[DynamicWidget] StopDrag: X:", xPos, "| Y:", yPos);
             }
         }
 
@@ -102,10 +111,11 @@ PanelWindow {
     // position from left, static on bottom
     // TODO: make dynamic (for example if bar and modules are on top)
     margins {
-        bottom: bottomMargin
+        bottom: yPos
         left: xPos
     }
 
+    // actual component
     Loader {
         anchors.fill: parent
         sourceComponent: widgetComponent

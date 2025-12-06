@@ -23,5 +23,5 @@ cyan    = "0x7dd3fc"
 white   = "0xffffff"
 
 [font.normal]
-family = "LiterationMono Nerd Font Mono"
+family = "JetBrainsMono Nerd Font"
 style = "bold"

@@ -1,7 +1,5 @@
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 
 ShellRoot {
     id: shellRoot
@@ -35,11 +33,11 @@ ShellRoot {
 
     }
 
-    // GPU Widget - Dynamic positioning
+    // GPU Widget
     DynamicWidget {
         widgetId: "gpu"
-        widgetWidth: 320
-        widgetHeight: 200
+        widgetWidth: 340
+        widgetHeight: 220
         Component.onCompleted: {
             WidgetManager.registerWidget("gpu", this);
         }
@@ -52,11 +50,11 @@ ShellRoot {
 
     }
 
-    // CPU/RAM Widget - Dynamic positioning
+    // CPU/RAM Widget
     DynamicWidget {
         widgetId: "cpuram"
-        widgetWidth: 450
-        widgetHeight: 200
+        widgetWidth: 500
+        widgetHeight: 220
         Component.onCompleted: {
             WidgetManager.registerWidget("cpuram", this);
         }
@@ -69,7 +67,7 @@ ShellRoot {
 
     }
 
-    // Volume Widget - Dynamic positioning
+    // Volume Widget
     DynamicWidget {
         widgetId: "volume"
         widgetWidth: 40
@@ -86,7 +84,7 @@ ShellRoot {
 
     }
 
-    // USB Device Widget - Dynamic positioning
+    // USB Device Widget
     DynamicWidget {
         widgetId: "devices"
         widgetWidth: 200

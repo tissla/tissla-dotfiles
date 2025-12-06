@@ -17,16 +17,16 @@ Row {
             visible: modelData.monitor && modelData.monitor.name === workspaceModule.screen.name && modelData.id != -98
             width: 40
             height: 40
-            radius: 15
+            radius: Theme.radius
             color: isActive ? Theme.primary : "transparent"
 
             Text {
                 anchors.centerIn: parent
                 text: modelData.id
-                font.family: Theme.fontMono
+                font.family: Theme.fontMain
                 font.pixelSize: 15
                 font.weight: 700
-                color: isActive ? Theme.backgroundSolid : Theme.textSecondary
+                color: isActive ? Theme.backgroundSolid : Theme.foregroundAlt
             }
 
             MouseArea {

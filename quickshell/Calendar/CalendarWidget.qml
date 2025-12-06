@@ -15,7 +15,6 @@ Rectangle {
     property int selectedDay: -1
     property int selectedMonth: -1
     property int selectedYear: -1
-    property bool isVisible: false
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
@@ -91,12 +90,10 @@ Rectangle {
     }
 
     function loadAllNotes() {
-        if (useObsidian) {
+        if (useObsidian)
             listObsidianNotesProcess.running = true;
-            loadNotesProcess.Running = true;
-        } else {
+        else
             loadNotesProcess.running = true;
-        }
     }
 
     // get notes
@@ -161,6 +158,28 @@ Rectangle {
         saveAllNotes();
     }
 
+    function cleanupEmptyNotes() {
+        console.log("cleanupEmptyNotes: before =", Object.keys(notesData));
+        let newData = {
+        };
+        for (let dayId in notesData) {
+            if (!notesData.hasOwnProperty(dayId))
+                continue;
+
+            const entry = notesData[dayId] || {
+            };
+            const hasNotes = entry.notes && !isNullOrWhiteSpace(entry.notes);
+            const hasColors = entry.noteColors && entry.noteColors.length > 0;
+            const hasFile = useObsidian && entry.hasFile === true;
+            if (hasNotes || hasColors || hasFile)
+                newData[dayId] = entry;
+            else
+                console.log("cleanupEmptyNotes: removed empty entry for", dayId);
+        }
+        notesData = newData;
+        console.log("cleanupEmptyNotes: after  =", Object.keys(notesData));
+    }
+
     Component.onCompleted: {
         if (visible) {
             resetCalendar();
@@ -185,21 +204,26 @@ Rectangle {
         }
     }
     // update date on show
-    onIsVisibleChanged: {
+    onVisibleChanged: {
         if (visible) {
             resetCalendar();
             loadAllNotes();
+        } else {
+            cleanupEmptyNotes();
         }
     }
     // base look
     color: Theme.background
-    radius: 20
+    radius: Theme.radius
     border.width: 3
     border.color: Theme.primary
     antialiasing: true
 
     // Main content - use Column since Grid doesn't support colspan
     Column {
+        // save notes in obsidian format
+        // empty file cleanup
+
         spacing: 12
 
         anchors {
@@ -215,7 +239,7 @@ Rectangle {
             width: parent.width
             height: 80
             color: Theme.backgroundAltSolid
-            radius: 20
+            radius: Theme.radius
 
             // Function to time display based on current settings
             SystemClock {
@@ -231,10 +255,10 @@ Rectangle {
                 Text {
                     id: timeText
 
-                    font.family: Theme.fontMono
+                    font.family: Theme.fontMain
                     font.pixelSize: 48
                     font.weight: Font.Bold
-                    color: Theme.textPrimary
+                    color: Theme.foreground
                     text: Qt.formatDateTime(clock.date, "hh:mm:ss")
                 }
 
@@ -253,7 +277,7 @@ Rectangle {
                 width: 380
                 height: parent.height
                 color: Theme.backgroundAltSolid
-                radius: 20
+                radius: Theme.radius
 
                 Column {
                     spacing: 6
@@ -278,7 +302,7 @@ Rectangle {
                             height: 30
                             text: "‹"
                             font.pixelSize: 30
-                            color: Theme.textPrimary
+                            color: Theme.foreground
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
 
@@ -298,10 +322,10 @@ Rectangle {
                                 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
                                 return monthNames[root.displayMonth] + " " + root.displayYear;
                             }
-                            font.family: Theme.fontMono
+                            font.family: Theme.fontMain
                             font.pixelSize: 18
                             font.weight: Font.Medium
-                            color: Theme.textSecondary
+                            color: Theme.foregroundAlt
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                         }
@@ -312,7 +336,7 @@ Rectangle {
                             height: 30
                             text: "›"
                             font.pixelSize: 30
-                            color: Theme.textPrimary
+                            color: Theme.foreground
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
 
@@ -337,7 +361,7 @@ Rectangle {
                         // empty cell in top left, maybe add something?
                         Text {
                             text: ""
-                            font.family: Theme.fontMono
+                            font.family: Theme.fontMain
                             width: 40
                             height: 30
                             horizontalAlignment: Text.AlignHCenter
@@ -350,10 +374,10 @@ Rectangle {
 
                             Text {
                                 text: modelData
-                                font.family: Theme.fontMono
+                                font.family: Theme.fontMain
                                 font.pixelSize: 14
                                 font.weight: Font.Bold
-                                color: Theme.textPrimary
+                                color: Theme.foreground
                                 width: 40
                                 height: 24
                                 horizontalAlignment: Text.AlignHCenter
@@ -380,11 +404,11 @@ Rectangle {
                                         let date = new Date(root.displayYear, root.displayMonth, Math.floor(index / 7) * 7 + 1);
                                         return getWeekNumber(date);
                                     }
-                                    font.family: Theme.fontMono
+                                    font.family: Theme.fontMain
                                     font.pixelSize: 11
                                     font.weight: Font.Bold
                                     font.italic: true
-                                    color: Theme.bbyBlue
+                                    color: Theme.info
                                     horizontalAlignment: Text.AlignHCenter
                                     verticalAlignment: Text.AlignVCenter
                                 }
@@ -458,14 +482,14 @@ Rectangle {
                                     anchors.fill: parent
                                     width: 40
                                     height: 30
-                                    radius: 0
+                                    radius: Theme.radiusAlt
                                     border.width: 2
                                     color: {
                                         if (isSelectedDay)
-                                            return Theme.primary;
+                                            return Theme.inactive;
 
                                         if (isHovered)
-                                            return Theme.bbyBlue;
+                                            return Theme.primary;
 
                                         return "transparent";
                                     }
@@ -478,6 +502,7 @@ Rectangle {
 
                                     MouseArea {
                                         anchors.fill: parent
+                                        cursorShape: parent.isSelectedDay ? Qt.ArrowCursor : Qt.PointingHandCursor
                                         hoverEnabled: true
                                         onEntered: {
                                             parent.isHovered = true;
@@ -498,19 +523,19 @@ Rectangle {
                                     Text {
                                         anchors.centerIn: parent
                                         text: parent.isDayInMonth ? parent.dayNumber : parent.otherDayNumber
-                                        font.family: Theme.fontMono
+                                        font.family: Theme.fontMain
                                         font.pixelSize: 13
                                         color: {
                                             if (parent.isSelectedDay)
-                                                return Theme.accent;
+                                                return Theme.foreground;
 
                                             if (parent.isDayInMonth && parent.isCurrentDay)
-                                                return Theme.todayText;
+                                                return Theme.active;
 
                                             if (!parent.isDayInMonth)
-                                                return Theme.textMuted;
+                                                return Theme.inactive;
 
-                                            return Theme.textPrimary;
+                                            return Theme.foreground;
                                         }
                                         font.weight: parent.isDayInMonth ? Font.Bold : Font.Normal
                                     }
@@ -570,7 +595,7 @@ Rectangle {
                 width: parent.width - 380 - 12
                 height: parent.height
                 color: Theme.backgroundAltSolid
-                radius: 20
+                radius: Theme.radius
 
                 Column {
                     spacing: 12
@@ -591,11 +616,11 @@ Rectangle {
 
                             return root.selectedYear + "-" + (root.selectedMonth + 1).toString().padStart(2, '0') + "-" + root.selectedDay.toString().padStart(2, '0');
                         }
-                        font.family: Theme.fontMono
+                        font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
                         horizontalAlignment: Text.AlignHCenter
-                        color: Theme.textPrimary
+                        color: Theme.foreground
                     }
 
                     // Day of week
@@ -610,7 +635,7 @@ Rectangle {
                         }
                         font.family: "Rubik SemiBold"
                         font.pixelSize: 15
-                        color: Theme.bbyBlue
+                        color: Theme.info
                     }
 
                     // Week
@@ -623,7 +648,7 @@ Rectangle {
                             return "Week " + root.getWeekNumber(date);
                         }
                         font.pixelSize: 12
-                        color: Theme.textMuted
+                        color: Theme.inactive
                     }
 
                     // Separator
@@ -641,8 +666,8 @@ Rectangle {
                         width: parent.width
                         height: 115
                         text: ""
-                        color: Theme.textPrimary
-                        font.family: Theme.fontMono
+                        color: Theme.foreground
+                        font.family: Theme.fontMain
                         font.pixelSize: 12
                         wrapMode: TextEdit.Wrap
                         selectByMouse: true
@@ -670,7 +695,7 @@ Rectangle {
                         Text {
                             anchors.fill: parent
                             text: "Add notes..."
-                            color: Theme.textMuted
+                            color: Theme.inactive
                             font: parent.font
                             visible: parent.text === ""
                             enabled: false
@@ -698,7 +723,7 @@ Rectangle {
                                     else
                                         return "transparent";
                                 }
-                                radius: 6
+                                radius: Theme.radiusAlt
 
                                 MouseArea {
                                     anchors.fill: parent
@@ -768,7 +793,9 @@ Rectangle {
                             "hasFile": true
                         };
                         root.notesData = newData;
-                        notesEdit.text = noteContent;
+                        if (!isNullOrWhiteSpace(noteContent))
+                            notesEdit.text = noteContent;
+
                     } else {
                         notesEdit.text = "";
                     }
@@ -828,7 +855,37 @@ Rectangle {
 
         }
 
-        // save notes in obsidian format
+        Process {
+            id: deleteFileProcess
+
+            property string filepath: ""
+
+            running: false
+            command: ["sh", "-c", "[ -f '" + filepath + "' ] && [ ! -s '" + filepath + "' ] && rm '" + filepath + "'"]
+            onRunningChanged: {
+                if (running)
+                    console.log("deleteFileProcess running for:", filepath);
+
+            }
+
+            stdout: StdioCollector {
+                onStreamFinished: {
+                    if (text && text.trim().length > 0)
+                        console.log("deleteFile stdout:", text);
+
+                }
+            }
+
+            stderr: StdioCollector {
+                onStreamFinished: {
+                    if (text && text.trim().length > 0)
+                        console.log("deleteFile stderr:", text);
+
+                }
+            }
+
+        }
+
         Process {
             id: saveObsidianProcess
 
@@ -885,7 +942,7 @@ Rectangle {
                         // Empty data
                         root.notesData = {
                         };
-                        console.log("No existing notes file, initialized empty data");
+                        console.log("[Calendar] No existing notes file, initialized empty data");
                     }
                 }
             }
