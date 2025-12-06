@@ -1,56 +1,69 @@
 import "../.."
 import QtQuick
 import Quickshell.Io
+import Quickshell.Services.Pipewire
 
 Item {
-    id: audioModule
+    // Animate phase
 
+    id: audiowaveModule
+
+    property var screen: null
     property bool isPlaying: false
     property real amplitude: 0.2
     property real phase: 0
+    property real rawLevel: linkTracker[0].audio.volume
 
-    Component.onCompleted: {
-        console.log("🎵 AudioVisualizer created");
-    }
     onIsPlayingChanged: {
-        amplitude = isPlaying ? 0.8 : 0.2;
+        amplitude = isPlaying ? amplitude : 0.2;
     }
-
-    // Check audio
-    Timer {
-        interval: 500
-        running: true
-        repeat: true
-        triggeredOnStart: true
-        onTriggered: {
-            checkAudioProcess.running = true;
+    onRawLevelChanged: {
+        isPlaying = rawLevel > 0.01;
+        // mappa volym → amplitude, t.ex. 0.1–1.0
+        console.log("Raw Level:", rawLevel);
+        amplitude = isPlaying ? Math.min(1, 0.1 + rawLevel * 1.5) : 0.2;
+    }
+    width: 600
+    height: 40
+    Component.onCompleted: {
+        console.log("=== Pipewire Debug ===");
+        console.log("Default sink:", Pipewire.preferredDefaultAudioSink);
+        console.log("Sink properties:", Object.keys(Pipewire.preferredDefaultAudioSink));
+        if (Pipewire.defaultAudioSink) {
+            console.log("Sink volume:", Pipewire.defaultAudioSink.volume);
+            console.log("Sink channelVolumes:", Pipewire.preferredDfaultAudioSink.channelVolumes);
+            console.log("Sink isMuted:", Pipewire.preferredDefaultAudioSink.isMuted);
         }
     }
 
-    Process {
-        id: checkAudioProcess
+    // Lyssna direkt på defaultAudioSink
+    Connections {
+        function onVolumeChanged() {
+            console.log("Volume changed:", Pipewire.preferredDefaultAudioSink.volume);
+            audiowaveModule.rawLevel = Pipewire.preferredDefaultAudioSink.volume || 0;
+        }
 
-        running: false
-        command: ["sh", "-c", "pactl list sink-inputs | grep -q 'State: RUNNING' && echo 1 || echo 0"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let playing = text.trim() === "1";
-                audioModule.isPlaying = playing;
+        function onChannelVolumesChanged() {
+            if (Pipewire.preferredDefaultAudioSink.channelVolumes && Pipewire.preferredDefaultAudioSink.channelVolumes.length > 0) {
+                let avgVol = Pipewire.preferredDefaultAudioSink.channelVolumes.reduce((a, b) => {
+                    return a + b;
+                }) / Pipewire.preferredDefaultAudioSink.channelVolumes.length;
+                console.log("Channel volumes changed, avg:", avgVol);
+                audiowaveModule.rawLevel = avgVol;
             }
         }
 
+        target: Pipewire.preferredDefaultAudioSink
     }
 
-    // Animate phase
     Timer {
         interval: 50
         running: true // Always running for smooth animation
         repeat: true
         onTriggered: {
-            audioModule.phase += audioModule.isPlaying ? 0.2 : 0.05;
-            if (audioModule.phase > Math.PI * 2)
-                audioModule.phase -= Math.PI * 2;
+            audiowaveModule.phase += audiowaveModule.isPlaying ? 0.2 : 0.05;
+            if (audiowaveModule.phase > Math.PI * 2)
+                audiowaveModule.phase -= Math.PI * 2;
 
             canvas.requestPaint();
         }
@@ -76,7 +89,7 @@ Item {
         onPaint: {
             var ctx = getContext("2d");
             if (!ctx) {
-                console.log("❌ No canvas context!");
+                console.log("No canvas context!");
                 return ;
             }
             ctx.clearRect(0, 0, width, height);
@@ -88,7 +101,7 @@ Item {
             ctx.lineWidth = 2;
             ctx.lineCap = "round";
             for (let x = 0; x <= width; x += 2) {
-                let y = centerY + Math.sin((x * 0.05) + audioModule.phase) * maxHeight * audioModule.amplitude;
+                let y = centerY + Math.sin((x * 0.05) + audiowaveModule.phase) * maxHeight * audiowaveModule.amplitude;
                 if (x === 0)
                     ctx.moveTo(x, y);
                 else
@@ -100,7 +113,7 @@ Item {
             ctx.strokeStyle = Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3);
             ctx.lineWidth = 1.5;
             for (let x = 0; x <= width; x += 2) {
-                let y = centerY + Math.sin((x * 0.07) + audioModule.phase + Math.PI) * maxHeight * audioModule.amplitude * 0.7;
+                let y = centerY + Math.sin((x * 0.07) + audiowaveModule.phase + Math.PI) * maxHeight * audiowaveModule.amplitude * 0.7;
                 if (x === 0)
                     ctx.moveTo(x, y);
                 else
@@ -108,16 +121,6 @@ Item {
             }
             ctx.stroke();
         }
-    }
-
-    // Debug text
-    Text {
-        anchors.centerIn: parent
-        text: audioModule.isPlaying ? "♪" : "○"
-        font.pixelSize: 16
-        color: Theme.primary
-        opacity: 0.3
-        z: -1
     }
 
     Behavior on amplitude {

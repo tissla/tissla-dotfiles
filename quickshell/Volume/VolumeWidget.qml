@@ -5,7 +5,6 @@ import Quickshell.Io
 Rectangle {
     id: volumeWidget
 
-    property bool isVisible: false
     property int volume: 50
     property bool isMuted: false
 
@@ -14,8 +13,8 @@ Rectangle {
     radius: 20
     border.width: 3
     border.color: Theme.primary
-    onIsVisibleChanged: {
-        if (isVisible)
+    onVisibleChanged: {
+        if (visible)
             getVolumeProcess.running = true;
 
     }

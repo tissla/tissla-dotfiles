@@ -1,6 +1,7 @@
 // StatusBar/modules/BaseModule.qml
 import "../.."
 import QtQuick
+import Quickshell.Hyprland
 
 Item {
     id: baseModule
@@ -93,9 +94,9 @@ Item {
             if (widgetId) {
                 let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
                 WidgetManager.setMousePosition(globalPos, baseModule.screen);
-                // Toggle via WidgetManager instead of direct state
-                WidgetManager.toggleWidget(widgetId);
-                mouseArea.enabled = true;
+                Qt.callLater(() => {
+                    WidgetManager.toggleWidget(widgetId);
+                });
             }
         }
     }

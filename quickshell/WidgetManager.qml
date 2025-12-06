@@ -18,6 +18,7 @@ QtObject {
     property int lastMouseY: 0
 
     // decides the X-coordinate in which the widget will appear
+    // TODO: Use GlobalMouse.qml instead
     function setMousePosition(globalPos, screen) {
         if (!screen) {
             console.log("[WidgetManager] screen is null, returning");

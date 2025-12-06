@@ -1,4 +1,3 @@
-// DynamicWidget.qml
 import QtQuick
 import Quickshell
 
@@ -11,8 +10,6 @@ PanelWindow {
     required property string widgetId
     // the actual widget component
     required property Component widgetComponent
-    // visibility
-    required property bool isVisible
     // size params
     required property int widgetWidth
     required property int widgetHeight
@@ -28,7 +25,7 @@ PanelWindow {
     property int widgetStartX: 0
     property int widgetStartY: 0
 
-    visible: isVisible
+    visible: false
     focusable: true
     implicitWidth: widgetWidth
     implicitHeight: widgetHeight
@@ -62,8 +59,7 @@ PanelWindow {
         anchors.left: parent.left
         anchors.right: parent.right
         height: 30
-        //debug color
-        color: "orange"
+        color: "transparent"
         z: 100
 
         MouseArea {

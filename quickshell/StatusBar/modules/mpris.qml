@@ -48,13 +48,15 @@ Item {
             text: mprisModule.moduleIcon
             font.pixelSize: 20
             color: Theme.primary
-            anchors.verticalCenter: parent.verticalCenter
+			anchors.verticalCenter: parent.verticalCenter
+			font.weight: Font.Bold
         }
 
         Text {
             text: mprisModule.moduleText
             font.family: Theme.fontMain
-            font.pixelSize: 15
+			font.pixelSize: 15
+			font.weight: Font.Bold
             color: Theme.foregroundAlt
             elide: Text.ElideRight
             maximumLineCount: 1

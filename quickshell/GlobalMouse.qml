@@ -32,7 +32,7 @@ Process {
                     cb(globalMouse.pos);
                 }
             } catch (e) {
-                console.error("Failed to parse cursorpos:", e, text);
+                console.error("[GlobalMouse] Failed to parse cursorpos:", e, text);
                 if (globalMouse._pendingCallback) {
                     const cb = globalMouse._pendingCallback;
                     globalMouse._pendingCallback = null;

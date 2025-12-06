@@ -9,7 +9,7 @@
       "name": "DP-2",
       "modules": {
         "left": ["workspaces"],
-        "center": [],
+        "center": ["audiowave"],
         "right": ["cpu", "network"]
       }
     },
