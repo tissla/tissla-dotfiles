@@ -1,4 +1,3 @@
-// Widgets/GpuWidget.qml
 import ".."
 import QtQuick
 

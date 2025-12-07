@@ -3,7 +3,7 @@ import Quickshell.Io
 pragma Singleton
 
 QtObject {
-    id: state
+    id: devicesData
 
     property bool isVisible: false
     property bool controllerConnected: false
@@ -44,21 +44,21 @@ QtObject {
             onStreamFinished: {
                 let status = text.trim();
                 if (status === "WIRED") {
-                    state.controllerConnected = true;
-                    state.controllerWired = true;
-                    state.controllerBattery = 100;
-                    state.controllerIcon = "󰖺";
+                    controllerConnected = true;
+                    controllerWired = true;
+                    controllerBattery = 100;
+                    controllerIcon = "󰖺";
                 } else if (status.startsWith("BLUETOOTH:")) {
                     let battery = status.split(":")[1];
-                    state.controllerConnected = true;
-                    state.controllerWired = false;
-                    state.controllerBattery = parseInt(battery) || 0;
-                    state.controllerIcon = "󰖺";
+                    controllerConnected = true;
+                    controllerWired = false;
+                    controllerBattery = parseInt(battery) || 0;
+                    controllerIcon = "󰖺";
                 } else {
-                    state.controllerConnected = false;
-                    state.controllerWired = false;
-                    state.controllerBattery = 0;
-                    state.controllerIcon = "󰖻";
+                    controllerConnected = false;
+                    controllerWired = false;
+                    controllerBattery = 0;
+                    controllerIcon = "󰖻";
                 }
             }
         }

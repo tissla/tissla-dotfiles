@@ -84,7 +84,7 @@ Item {
         anchors.fill: parent
         visible: true
         Component.onCompleted: {
-            console.log("Canvas created, size:", width, "x", height);
+            console.log("[audiowaveModule] Canvas created, size:", width, "x", height);
         }
         onPaint: {
             var ctx = getContext("2d");
