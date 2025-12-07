@@ -39,7 +39,7 @@ ShellRoot {
         Loader {
             property var modelData
 
-            source: modelData + "/" + modelData + "Widget.qml"
+            source: "Widgets/" + modelData + "Widget.qml"
             onLoaded: {
                 console.log("Loaded:", modelData);
             }

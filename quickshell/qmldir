@@ -7,22 +7,17 @@ singleton SettingsManager 1.0 SettingsManager.qml
 # statusbar
 StatusBar 1.0 StatusBar/StatusBar.qml
 
-# calendar
-CalendarWidget 1.0 Calendar/CalendarWidget.qml
-
 # volume 
 singleton VolumeProvider 1.0 Providers/VolumeProvider.qml
 
 
 # gpu
-GpuWidget 1.0 Gpu/GpuWidget.qml
 singleton GpuDataProvider 1.0 Providers/GpuDataProvider.qml
 
 # usb devices
-DevicesWidget 1.0 Devices/DevicesWidget.qml
 singleton DevicesDataProvider 1.0 Providers/DevicesDataProvider.qml
 
-## resources
+# resources
 GaugeWidget 1.0 Resources/GaugeWidget.qml
 ThermometerWidget 1.0 Resources/ThermometerWidget.qml
 
@@ -30,9 +25,9 @@ ThermometerWidget 1.0 Resources/ThermometerWidget.qml
 singleton WidgetManager 1.0 WidgetManager.qml
 
 ## basewidget
-BaseWidget 1.0 BaseWidget.qml
+BaseWidget 1.0 Widgets/BaseWidget.qml
 
-## basemodule
+# modules
 BaseModule 1.0 StatusBar/modules/BaseModule.qml
 
 ## cursorpos
