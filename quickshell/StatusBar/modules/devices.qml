@@ -9,6 +9,6 @@ BaseModule {
     Component.onCompleted: {
         WidgetManager.registerModule(widgetId, this);
     }
-    moduleIcon: DevicesState.controllerIcon
-    moduleText: (!DevicesState.controllerWired && DevicesState.controllerConnected) ? (DevicesState.controllerBattery + "%") : ""
+    moduleIcon: DevicesDataProvider.controllerIcon
+    moduleText: (!DevicesDataProvider.controllerWired && DevicesState.controllerConnected) ? (DevicesDataProvider.controllerBattery + "%") : ""
 }

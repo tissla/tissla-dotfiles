@@ -2,130 +2,134 @@ import ".."
 // Devices/DevicesWidget.qml
 import QtQuick
 
-Rectangle {
+BaseWidget {
     id: usbDevWidget
 
-    property bool isVisible: false
+    widgetId: "devices"
+    widgetWidth: 200
+    widgetHeight: 180
 
-    anchors.fill: parent
-    color: Theme.backgroundSolid
-    radius: Theme.radius
-    border.width: 3
-    border.color: Theme.primary
+    widgetComponent: Rectangle {
+        color: Theme.backgroundSolid
+        radius: Theme.radius
+        border.width: 3
+        border.color: Theme.primary
 
-    Column {
-        anchors.centerIn: parent
-        spacing: 12
+        Column {
+            anchors.centerIn: parent
+            spacing: 12
 
-        // Controller Icon
-        Text {
-            text: DevicesState.controllerIcon
-            font.pixelSize: 64
-            color: DevicesState.controllerConnected ? Theme.primary : Theme.inactive
-            anchors.horizontalCenter: parent.horizontalCenter
+            // Controller Icon
+            Text {
+                text: DevicesDataProvider.controllerIcon
+                font.pixelSize: 64
+                color: DevicesDataProvider.controllerConnected ? Theme.primary : Theme.inactive
+                anchors.horizontalCenter: parent.horizontalCenter
 
-            Behavior on color {
-                ColorAnimation {
-                    duration: 300
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                    }
+
                 }
 
             }
 
-        }
-
-        // Status Text
-        Text {
-            text: {
-                if (!DevicesState.controllerConnected)
-                    return "Disconnected";
-                else if (DevicesState.controllerWired)
-                    return "Wired";
-                else
-                    return "Bluetooth";
-            }
-            font.family: Theme.fontMain
-            font.pixelSize: 16
-            font.weight: Font.Bold
-            color: Theme.foreground
-            anchors.horizontalCenter: parent.horizontalCenter
-        }
-
-        // Battery info (only for Bluetooth)
-        Row {
-            visible: DevicesState.controllerConnected && !DevicesState.controllerWired
-            anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 8
-
+            // Status Text
             Text {
-                text: "🔋"
-                font.pixelSize: 20
-                anchors.verticalCenter: parent.verticalCenter
+                text: {
+                    if (!DevicesDataProvider.controllerConnected)
+                        return "Disconnected";
+                    else if (DevicesDataProvider.controllerWired)
+                        return "Wired";
+                    else
+                        return "Bluetooth";
+                }
+                font.family: Theme.fontMain
+                font.pixelSize: 16
+                font.weight: Font.Bold
+                color: Theme.foreground
+                anchors.horizontalCenter: parent.horizontalCenter
             }
 
-            // Battery bar
-            Rectangle {
-                width: 100
-                height: 12
-                color: Theme.backgroundAlt
-                radius: 6
-                border.width: 2
-                border.color: Theme.primary
-                anchors.verticalCenter: parent.verticalCenter
+            // Battery info (only for Bluetooth)
+            Row {
+                visible: DevicesDataProvider.controllerConnected && !DevicesDataProvider.controllerWired
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 8
 
-                Rectangle {
-                    // Red
-
-                    anchors.left: parent.left
+                Text {
+                    text: "🔋"
+                    font.pixelSize: 20
                     anchors.verticalCenter: parent.verticalCenter
-                    anchors.margins: 2
-                    width: Math.max(0, (parent.width - 4) * (DevicesState.controllerBattery / 100))
-                    height: parent.height - 4
-                    radius: 4
-                    color: {
-                        if (DevicesState.controllerBattery > 50)
-                            return "#4ade80";
+                }
 
-                        // Green
-                        if (DevicesState.controllerBattery > 20)
-                            return "#fbbf24";
+                // Battery bar
+                Rectangle {
+                    width: 100
+                    height: 12
+                    color: Theme.backgroundAlt
+                    radius: 6
+                    border.width: 2
+                    border.color: Theme.primary
+                    anchors.verticalCenter: parent.verticalCenter
 
-                        // Yellow
-                        return "#ef4444";
-                    }
+                    Rectangle {
+                        // Red
 
-                    Behavior on width {
-                        NumberAnimation {
-                            duration: 300
+                        anchors.left: parent.left
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.margins: 2
+                        width: Math.max(0, (parent.width - 4) * (DevicesDataProvider.controllerBattery / 100))
+                        height: parent.height - 4
+                        radius: 4
+                        color: {
+                            if (DevicesDataProvider.controllerBattery > 50)
+                                return "#4ade80";
+
+                            // Green
+                            if (DevicesDataProvider.controllerBattery > 20)
+                                return "#fbbf24";
+
+                            // Yellow
+                            return "#ef4444";
+                        }
+
+                        Behavior on width {
+                            NumberAnimation {
+                                duration: 300
+                            }
+
                         }
 
                     }
 
                 }
 
-            }
+                Text {
+                    text: DevicesDataProvider.controllerBattery + "%"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 14
+                    color: Theme.foreground
+                    font.weight: Font.Bold
+                    anchors.verticalCenter: parent.verticalCenter
+                }
 
-            Text {
-                text: DevicesState.controllerBattery + "%"
-                font.family: Theme.fontMain
-                font.pixelSize: 14
-                color: Theme.foreground
-                font.weight: Font.Bold
-                anchors.verticalCenter: parent.verticalCenter
             }
 
         }
 
-    }
+        // Device name at bottom
+        Text {
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottomMargin: 8
+            text: "🎮 Xbox Controller"
+            font.family: Theme.fontMain
+            font.pixelSize: 12
+            color: Theme.inactive
+        }
 
-    // Device name at bottom
-    Text {
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 8
-        text: "🎮 Xbox Controller"
-        font.family: Theme.fontMain
-        font.pixelSize: 12
-        color: Theme.inactive
     }
 
 }

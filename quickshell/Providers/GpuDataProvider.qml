@@ -16,7 +16,6 @@ QtObject {
     // Detection state
     property bool isDetected: false
     property bool isRunning: false
-    // Processes as properties (inte children!)
     property Process detectProcess
     property Timer updateTimer
     property Process nvidiaProcess
@@ -28,7 +27,7 @@ QtObject {
 
     function startPolling() {
         if (!isDetected) {
-            console.log("⚠️ [GpuDataProvider] GPU not detected, cannot start polling");
+            console.log("[GpuDataProvider] GPU not detected, cannot start polling");
             return ;
         }
         isRunning = true;

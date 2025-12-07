@@ -8,13 +8,13 @@ Item {
     property var config: SettingsManager.getScreenConfig(screen.name)
 
     Component.onCompleted: {
-        console.log("=== StatusBar Created ===");
-        console.log("Screen name:", screen.name);
+        console.log("[StatusBar] === StatusBar Created ===");
+        console.log("[StatusBar] Screen name:", screen.name);
     }
 
     Rectangle {
         anchors.fill: parent
-        // change to variable
+        // TODO: change to variable
         color: Qt.rgba(0.118, 0.106, 0.161, 0.5)
 
         // Left modules container

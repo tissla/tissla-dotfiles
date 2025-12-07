@@ -105,7 +105,7 @@ QtObject {
         stderr: StdioCollector {
             onStreamFinished: {
                 if (text.includes("No such file"))
-                    console.log("⚠️ settings.json not found");
+                    console.log("[SettingsManager] settings.json not found");
 
             }
         }

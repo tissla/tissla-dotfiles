@@ -11,18 +11,16 @@ StatusBar 1.0 StatusBar/StatusBar.qml
 CalendarWidget 1.0 Calendar/CalendarWidget.qml
 
 # volume 
-VolumeWidget 1.0 Volume/VolumeWidget.qml
+singleton VolumeProvider 1.0 Providers/VolumeProvider.qml
 
-# cpu + ram
-CpuRamWidget 1.0 CpuRam/CpuRamWidget.qml
 
 # gpu
 GpuWidget 1.0 Gpu/GpuWidget.qml
-singleton GpuDataProvider 1.0 Gpu/GpuDataProvider.qml
+singleton GpuDataProvider 1.0 Providers/GpuDataProvider.qml
 
 # usb devices
 DevicesWidget 1.0 Devices/DevicesWidget.qml
-singleton DevicesState 1.0 Devices/DevicesState.qml
+singleton DevicesDataProvider 1.0 Providers/DevicesDataProvider.qml
 
 ## resources
 GaugeWidget 1.0 Resources/GaugeWidget.qml
@@ -31,8 +29,8 @@ ThermometerWidget 1.0 Resources/ThermometerWidget.qml
 ## manager
 singleton WidgetManager 1.0 WidgetManager.qml
 
-## dynamicwidget
-DynamicWidget 1.0 DynamicWidget.qml
+## basewidget
+BaseWidget 1.0 BaseWidget.qml
 
 ## basemodule
 BaseModule 1.0 StatusBar/modules/BaseModule.qml

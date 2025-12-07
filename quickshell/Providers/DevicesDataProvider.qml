@@ -1,6 +1,5 @@
 import QtQuick
 import Quickshell.Io
-// UsbDev/UsbDevState.qml
 pragma Singleton
 
 QtObject {
@@ -36,6 +35,7 @@ QtObject {
         }
     }
 
+    // TODO: make dynamic
     checkControllerProcess: Process {
         running: false
         command: ["sh", "-c", "if lsusb | grep -qi 'Xbox'; then " + "  echo 'WIRED'; " + "else " + "  bt_info=$(bluetoothctl info); " + "  if echo \"$bt_info\" | grep -q Xbox; then " + "    battery=$(echo \"$bt_info\" | grep 'Battery Percentage:' | awk -F'[()]' '{ print $2 }'); " + "    echo \"BLUETOOTH:$battery\"; " + "  else " + "    echo 'DISCONNECTED'; " + "  fi; " + "fi"]

@@ -48,6 +48,8 @@ ln -sfn "$USER_HOME/Dotfiles/hypr"       "$USER_CONFIG/hypr"
 ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
 ln -sfn "$USER_HOME/Dotfiles/nvim"       "$USER_CONFIG/nvim"
 ln -sfn "$USER_HOME/Dotfiles/theme"      "$USER_CONFIG/theme"
+
+
 # Setup sddm
 USER_NAME="${SUDO_USER:-$USER}"
 CONFIG_DIR="/etc/sddm.conf.d"

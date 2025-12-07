@@ -2,7 +2,7 @@ import ".."
 import QtQuick
 import Quickshell.Io
 
-Rectangle {
+BaseWidget {
     id: cpuRamWidget
 
     // Data properties
@@ -85,11 +85,9 @@ Rectangle {
 
     }
 
-    anchors.fill: parent
-    color: Theme.backgroundSolid
-    radius: Theme.radius
-    border.width: 3
-    border.color: Theme.primary
+    widgetId: "cpuram"
+    widgetWidth: 500
+    widgetHeight: 220
 
     // Single timer
     Timer {
@@ -135,174 +133,182 @@ Rectangle {
 
     }
 
-    Row {
-        // center contents
-        anchors.centerIn: parent
-        anchors.margins: 20
-        spacing: 30
+    widgetComponent: Rectangle {
+        color: Theme.backgroundSolid
+        radius: Theme.radius
+        border.width: 3
+        border.color: Theme.primary
 
-        // CPU Gauge
-        Column {
-            spacing: 10
+        Row {
+            // center contents
+            anchors.centerIn: parent
+            anchors.margins: 20
+            spacing: 30
 
-            Text {
-                text: "CPU%"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                color: Theme.primary
-                font.weight: Font.Bold
-                anchors.horizontalCenter: parent.horizontalCenter
+            // CPU Gauge
+            Column {
+                spacing: 10
+
+                Text {
+                    text: "CPU%"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    color: Theme.primary
+                    font.weight: Font.Bold
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                GaugeWidget {
+                    id: cpuGauge
+
+                    width: 80
+                    height: 80
+                    value: cpuRamWidget.cpuUsage
+                    gaugeColor: Theme.primary
+                }
+
+                Text {
+                    text: Math.round(cpuRamWidget.cpuUsage) + "%"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.foreground
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
             }
 
-            GaugeWidget {
-                id: cpuGauge
+            // RAM Gauge
+            Column {
+                spacing: 10
 
-                width: 80
-                height: 80
-                value: cpuRamWidget.cpuUsage
-                gaugeColor: Theme.primary
+                Text {
+                    text: "RAM"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    color: Theme.primary
+                    font.weight: Font.Bold
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                GaugeWidget {
+                    id: ramGauge
+
+                    width: 80
+                    height: 80
+                    value: cpuRamWidget.ramUsage
+                    gaugeColor: Theme.accent
+                }
+
+                Text {
+                    text: cpuRamWidget.ramUsed.toFixed(1) + "GB"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.foreground
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
             }
 
-            Text {
-                text: Math.round(cpuRamWidget.cpuUsage) + "%"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.foreground
-                anchors.horizontalCenter: parent.horizontalCenter
+            Column {
+                spacing: 10
+
+                Text {
+                    text: "AIO"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.primary
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
+                GaugeWidget {
+                    id: pumpGauge
+
+                    width: 80
+                    height: 80
+                    value: (cpuRamWidget.pumpSpeed / 2500) * 100
+                    gaugeColor: Theme.info
+                }
+
+                Text {
+                    text: Math.round(cpuRamWidget.pumpSpeed) + "rpm"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.foreground
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
             }
 
-        }
+            // CPU Temp thermometer
+            Column {
+                spacing: 10
 
-        // RAM Gauge
-        Column {
-            spacing: 10
+                Text {
+                    text: "CPU°"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.primary
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
 
-            Text {
-                text: "RAM"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                color: Theme.primary
-                font.weight: Font.Bold
-                anchors.horizontalCenter: parent.horizontalCenter
+                ThermometerWidget {
+                    id: cpuThermo
+
+                    width: 40
+                    height: 80
+                    temperature: cpuRamWidget.cpuTemp
+                    maxTemp: 100
+                    thermoColor: Theme.accent
+                }
+
+                Text {
+                    text: Math.round(cpuRamWidget.cpuTemp) + "°C"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.foreground
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
+
             }
 
-            GaugeWidget {
-                id: ramGauge
+            // Liquid Temp thermometer
+            Column {
+                spacing: 10
 
-                width: 80
-                height: 80
-                value: cpuRamWidget.ramUsage
-                gaugeColor: Theme.accent
-            }
+                Text {
+                    text: "LIQ 💧"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    color: Theme.primary
+                    font.weight: Font.Bold
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
 
-            Text {
-                text: cpuRamWidget.ramUsed.toFixed(1) + "GB"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.foreground
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
+                ThermometerWidget {
+                    id: liquidThermo
 
-        }
+                    width: 40
+                    height: 80
+                    temperature: cpuRamWidget.liquidTemp
+                    maxTemp: 60
+                    thermoColor: Theme.info
+                }
 
-        Column {
-            spacing: 10
+                Text {
+                    text: Math.round(cpuRamWidget.liquidTemp) + "°C"
+                    font.family: Theme.fontMain
+                    font.pixelSize: 16
+                    font.weight: Font.Bold
+                    color: Theme.foreground
+                    anchors.horizontalCenter: parent.horizontalCenter
+                }
 
-            Text {
-                text: "AIO"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.primary
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            GaugeWidget {
-                id: pumpGauge
-
-                width: 80
-                height: 80
-                value: (cpuRamWidget.pumpSpeed / 2500) * 100
-                gaugeColor: Theme.info
-            }
-
-            Text {
-                text: Math.round(cpuRamWidget.pumpSpeed) + "rpm"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.foreground
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-        }
-
-        // CPU Temp thermometer
-        Column {
-            spacing: 10
-
-            Text {
-                text: "CPU°"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.primary
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            ThermometerWidget {
-                id: cpuThermo
-
-                width: 40
-                height: 80
-                temperature: cpuRamWidget.cpuTemp
-                maxTemp: 100
-                thermoColor: Theme.accent
-            }
-
-            Text {
-                text: Math.round(cpuRamWidget.cpuTemp) + "°C"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.foreground
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-        }
-
-        // Liquid Temp thermometer
-        Column {
-            spacing: 10
-
-            Text {
-                text: "LIQ 💧"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                color: Theme.primary
-                font.weight: Font.Bold
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-
-            ThermometerWidget {
-                id: liquidThermo
-
-                width: 40
-                height: 80
-                temperature: cpuRamWidget.liquidTemp
-                maxTemp: 60
-                thermoColor: Theme.info
-            }
-
-            Text {
-                text: Math.round(cpuRamWidget.liquidTemp) + "°C"
-                font.family: Theme.fontMain
-                font.pixelSize: 16
-                font.weight: Font.Bold
-                color: Theme.foreground
-                anchors.horizontalCenter: parent.horizontalCenter
             }
 
         }

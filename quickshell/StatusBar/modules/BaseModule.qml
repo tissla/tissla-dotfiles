@@ -91,13 +91,9 @@ Item {
         onEntered: isHovered = true
         onExited: isHovered = false
         onClicked: (mouse) => {
-            if (widgetId) {
-                let globalPos = mouseArea.mapToItem(null, mouse.x, mouse.y);
-                WidgetManager.setMousePosition(globalPos, baseModule.screen);
-                Qt.callLater(() => {
-                    WidgetManager.toggleWidget(widgetId);
-                });
-            }
+            if (widgetId)
+                WidgetManager.toggleWidget(widgetId);
+
         }
     }
 
