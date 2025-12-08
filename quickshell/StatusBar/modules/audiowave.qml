@@ -4,8 +4,6 @@ import Quickshell
 import Quickshell.Io
 
 Item {
-    // === MAPPING TILL VISUELLA PARAMETRAR ===
-
     id: audiowaveModule
 
     property var screen: null
@@ -15,7 +13,8 @@ Item {
     property real frequency: 0.05
     property real phase: 0
     property real phaseSpeed: 0.05
-    property real wobbleAmount: 0.01
+    property real wobbleAmp: 0.03
+    property real wobbleFreq: 0.05
     property real lineThickness: 2.5
 
     function update() {
@@ -38,10 +37,15 @@ Item {
         let totalLevel = fftBars.reduce((sum, val) => {
             return sum + val;
         }, 0) / fftBars.length;
-        level = 0.2 + totalLevel * 0.4 + bass * 0.6;
-        frequency = 0.05 + highMid * 0.08 + treble * 0.12;
-        phaseSpeed = 0.05 + mid * 0.15 + treble * 0.2;
-        wobbleAmount = 0.03 + mid * 0.4;
+        // used for amp on wave1
+        level = 0.2 + totalLevel * 0.2 + lowMid * 0.2 + bass * 0.8;
+        frequency = 0.05 + highMid * 0.08 + mid * 0.1 + treble * 0.12;
+        // phasespeed only on wave2
+        phaseSpeed = 0.05 + highMid * 0.15 + treble * 0.2;
+        // used for amp on wave2
+        wobbleAmp = 0.03 + lowMid * 0.01 + mid * 0.05 + highMid * 0.1 + treble * 0.5;
+        wobbleFreq = 0.05 + treble * 0.5;
+        // thickness from bass
         lineThickness = 2 + bass * 2;
     }
 
@@ -93,10 +97,10 @@ Item {
 
             ctx.clearRect(0, 0, width, height);
             let centerY = height / 2;
-            let maxHeight = height * 0.6;
+            let maxHeight = height * 0.5 - 1;
             ctx.beginPath();
             ctx.strokeStyle = Theme.primary;
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = audiowaveModule.lineThickness;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
             for (let x = 0; x <= width; x += 2) {
@@ -107,12 +111,16 @@ Item {
                 centerFactor = centerFactor * centerFactor;
                 // total amp from level + centerfactor
                 let amplitude = audiowaveModule.level * (0.3 + centerFactor * 0.7);
+                // let wobbleAmp be heavier toward middle
+                let wobbleAmpl = audiowaveModule.wobbleAmp * (0.3 + centerFactor * 0.7);
                 // first wave static, no phase, affected by amp and freq
-                let wave1 = Math.sin(xFromCenter * audiowaveModule.frequency) * maxHeight * amplitude;
-                // detail wobble
-                let wave2 = Math.sin((xFromCenter * audiowaveModule.frequency * 5) + audiowaveModule.phase) * maxHeight * audiowaveModule.wobbleAmount;
+                let wave1 = Math.sin(xFromCenter * audiowaveModule.frequency) * amplitude;
+                // second wave, wobbles on first wave
+                let wave2 = Math.sin((xFromCenter * audiowaveModule.wobbleFreq * 2) + audiowaveModule.phase) * wobbleAmpl;
                 // combine
-                let y = centerY + wave1 + wave2;
+                let combinedWave = wave1 + wave2;
+                // scale to maxHeight
+                let y = centerY + (combinedWave * maxHeight);
                 // paint
                 ctx.lineTo(x, y);
             }
@@ -121,6 +129,14 @@ Item {
     }
 
     Behavior on level {
+        NumberAnimation {
+            duration: 150
+            easing.type: Easing.OutCubic
+        }
+
+    }
+
+    Behavior on lineThickness {
         NumberAnimation {
             duration: 150
             easing.type: Easing.OutCubic

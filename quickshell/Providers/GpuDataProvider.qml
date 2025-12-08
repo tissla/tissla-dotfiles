@@ -1,8 +1,8 @@
-// Gpu/GpuDataProvider.qml
 import QtQuick
 import Quickshell.Io
 pragma Singleton
 
+// TODO: reevaluate polling logic
 QtObject {
     id: gpuData
 

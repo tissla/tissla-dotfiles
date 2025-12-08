@@ -6,11 +6,9 @@ pragma Singleton
 QtObject {
     id: volumeData
 
-    // --- Samma publika API som innan ---
-    property int volume: 50      // 0–100
+    property int volume: 50 
     property bool isMuted: false
 
-    // Alltid aktuella default-sink från PipeWire
     property var sink: Pipewire.defaultAudioSink
 
     property Connections connection
@@ -21,7 +19,6 @@ QtObject {
         objects: sink ? [sink] : []
     }
 
-    // --- Publika funktioner ---
 
     function refresh() {
         if (!sink || !sink.audio)
@@ -37,11 +34,9 @@ QtObject {
 
         newVolume = Math.max(0, Math.min(100, newVolume));
 
-        // typiskt beteende: ändrar volym → auto-unmute
         sink.audio.muted = false;
         sink.audio.volume = newVolume / 100.0;
 
-        // spegla direkt i vår egen state
         volume = newVolume;
         isMuted = false;
     }
@@ -54,12 +49,9 @@ QtObject {
         isMuted = sink.audio.muted;
     }
 
-    // När default-sink byts (nyt ljudkort/hdmi osv) → uppdatera
     onSinkChanged: refresh()
 
-    // Håll i sync när något annat program ändrar volym/mute
     connection: Connections {
-        // samma stil som officiella volume-osd-exemplet
         target: Pipewire.defaultAudioSink?.audio
 
         function onVolumeChanged() {

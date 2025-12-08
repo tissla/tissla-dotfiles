@@ -33,6 +33,7 @@ ShellRoot {
 
     }
 
+    // TODO: add to settings instead
     Variants {
         model: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume"]
 

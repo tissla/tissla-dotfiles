@@ -1,7 +1,6 @@
 // StatusBar/modules/BaseModule.qml
 import "../.."
 import QtQuick
-import Quickshell.Hyprland
 
 Item {
     id: baseModule
@@ -12,13 +11,12 @@ Item {
     property bool widgetActive: false
     property string moduleIcon: ""
     property string moduleText: ""
-    // Visual state
+    // visual state
     property bool isPressed: widgetActive
     property bool isHovered: false
-    // default
+    // default width
     property int moduleWidth: contentRow.width + 16
 
-    // Callback for when widget visibility changes
     function onWidgetVisibilityChanged(visible) {
         widgetActive = visible;
     }
@@ -26,7 +24,7 @@ Item {
     width: moduleWidth
     height: 30
 
-    // Standard content container with visual feedback
+    // content container
     Rectangle {
         anchors.fill: parent
         radius: Theme.radiusAlt
@@ -80,7 +78,7 @@ Item {
 
     }
 
-    // Standard mouse interaction
+    // mouse interaction
     MouseArea {
         id: mouseArea
 
