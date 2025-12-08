@@ -10,5 +10,5 @@ BaseModule {
         WidgetManager.registerModule(widgetId, this);
     }
     moduleIcon: DevicesDataProvider.controllerIcon
-    moduleText: (!DevicesDataProvider.controllerWired && DevicesState.controllerConnected) ? (DevicesDataProvider.controllerBattery + "%") : ""
+    moduleText: (!DevicesDataProvider.controllerWired && DevicesDataProvider.controllerConnected) ? (DevicesDataProvider.controllerBattery + "%") : ""
 }

@@ -23,6 +23,8 @@ Item {
     property int globalStartY: 0
     property int widgetStartX: 0
     property int widgetStartY: 0
+    // panel visibility
+    property alias widgetVisible: panel.visible
 
     Component.onCompleted: {
         WidgetManager.registerWidget(widgetId, panel);
@@ -35,7 +37,6 @@ Item {
 
         anchors.fill: parent
         hoverEnabled: true
-        visible: true
         acceptedButtons: Qt.AllButtons
         onPressed: (mouse) => {
             console.log("Clicked wrapper at", mouse.x, mouse.y);

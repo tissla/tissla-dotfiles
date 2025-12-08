@@ -1,131 +1,136 @@
 import "../.."
 import QtQuick
+import Quickshell
 import Quickshell.Io
-import Quickshell.Services.Pipewire
 
 Item {
-    // Animate phase
+    // === MAPPING TILL VISUELLA PARAMETRAR ===
 
     id: audiowaveModule
 
     property var screen: null
-    property bool isPlaying: false
-    property real amplitude: 0.2
+    property var fftBars: []
+    // sound params
+    property real level: 0.2
+    property real frequency: 0.05
     property real phase: 0
-    property real rawLevel: linkTracker[0].audio.volume
+    property real phaseSpeed: 0.05
+    property real wobbleAmount: 0.01
+    property real lineThickness: 2.5
 
-    onIsPlayingChanged: {
-        amplitude = isPlaying ? amplitude : 0.2;
+    function update() {
+        // Bars 0-4: LOW (0-200 Hz)
+        // - kick drums, base
+        let bass = (fftBars[0] + fftBars[1] + fftBars[2] + fftBars[3] + fftBars[4]) / 5;
+        // Bars 5-7: LOW-MID (250-500 Hz)
+        // - guitar, piano, voice(deep)
+        let lowMid = (fftBars[5] + fftBars[6] + fftBars[7]) / 3;
+        // Bars 8-10: MID (500-2000 Hz)
+        // - voice, guitar, snare
+        let mid = (fftBars[8] + fftBars[9] + fftBars[10]) / 3;
+        // Bars 11-13: HIGH-MID (2000-6000 Hz)
+        // voice, guitar, attack, hi-hats
+        let highMid = (fftBars[11] + fftBars[12] + fftBars[13]) / 3;
+        // Bars 14-15: TREBLE/HIGH (6000-20000 Hz)
+        // cymbals and air
+        let treble = (fftBars[14] + fftBars[15]) / 2;
+        // levels
+        let totalLevel = fftBars.reduce((sum, val) => {
+            return sum + val;
+        }, 0) / fftBars.length;
+        level = 0.2 + totalLevel * 0.4 + bass * 0.6;
+        frequency = 0.05 + highMid * 0.08 + treble * 0.12;
+        phaseSpeed = 0.05 + mid * 0.15 + treble * 0.2;
+        wobbleAmount = 0.03 + mid * 0.4;
+        lineThickness = 2 + bass * 2;
     }
-    onRawLevelChanged: {
-        isPlaying = rawLevel > 0.01;
-        // mappa volym → amplitude, t.ex. 0.1–1.0
-        console.log("Raw Level:", rawLevel);
-        amplitude = isPlaying ? Math.min(1, 0.1 + rawLevel * 1.5) : 0.2;
-    }
+
     width: 600
     height: 40
-    Component.onCompleted: {
-        console.log("=== Pipewire Debug ===");
-        console.log("Default sink:", Pipewire.preferredDefaultAudioSink);
-        console.log("Sink properties:", Object.keys(Pipewire.preferredDefaultAudioSink));
-        if (Pipewire.defaultAudioSink) {
-            console.log("Sink volume:", Pipewire.defaultAudioSink.volume);
-            console.log("Sink channelVolumes:", Pipewire.preferredDfaultAudioSink.channelVolumes);
-            console.log("Sink isMuted:", Pipewire.preferredDefaultAudioSink.isMuted);
-        }
-    }
 
-    // Lyssna direkt på defaultAudioSink
-    Connections {
-        function onVolumeChanged() {
-            console.log("Volume changed:", Pipewire.preferredDefaultAudioSink.volume);
-            audiowaveModule.rawLevel = Pipewire.preferredDefaultAudioSink.volume || 0;
-        }
+    Process {
+        id: audioBackend
 
-        function onChannelVolumesChanged() {
-            if (Pipewire.preferredDefaultAudioSink.channelVolumes && Pipewire.preferredDefaultAudioSink.channelVolumes.length > 0) {
-                let avgVol = Pipewire.preferredDefaultAudioSink.channelVolumes.reduce((a, b) => {
-                    return a + b;
-                }) / Pipewire.preferredDefaultAudioSink.channelVolumes.length;
-                console.log("Channel volumes changed, avg:", avgVol);
-                audiowaveModule.rawLevel = avgVol;
+        running: true
+        command: [Quickshell.env("HOME") + "/.config/quickshell/AudioBackend/bin/audio-backend"]
+
+        stdout: SplitParser {
+            onRead: (line) => {
+                const parts = line.trim().split(";");
+                if (parts.length === 0)
+                    return ;
+
+                audiowaveModule.fftBars = parts.map((p) => {
+                    return parseFloat(p) || 0;
+                });
             }
         }
 
-        target: Pipewire.preferredDefaultAudioSink
     }
 
     Timer {
-        interval: 50
-        running: true // Always running for smooth animation
+        interval: 16 // ~60fps
+        running: true
         repeat: true
         onTriggered: {
-            audiowaveModule.phase += audiowaveModule.isPlaying ? 0.2 : 0.05;
-            if (audiowaveModule.phase > Math.PI * 2)
-                audiowaveModule.phase -= Math.PI * 2;
+            audiowaveModule.update();
+            audiowaveModule.phase += 0.05;
+            if (audiowaveModule.phase > Math.PI * 10)
+                audiowaveModule.phase -= Math.PI * 10;
 
             canvas.requestPaint();
         }
-    }
-
-    // Debug Rectangle
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-        border.width: 1
-        border.color: Theme.primary
-        opacity: 0.2
     }
 
     Canvas {
         id: canvas
 
         anchors.fill: parent
-        visible: true
-        Component.onCompleted: {
-            console.log("[audiowaveModule] Canvas created, size:", width, "x", height);
-        }
         onPaint: {
             var ctx = getContext("2d");
-            if (!ctx) {
-                console.log("No canvas context!");
+            if (!ctx)
                 return ;
-            }
+
             ctx.clearRect(0, 0, width, height);
             let centerY = height / 2;
             let maxHeight = height * 0.6;
-            // Main wave
             ctx.beginPath();
             ctx.strokeStyle = Theme.primary;
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.lineCap = "round";
+            ctx.lineJoin = "round";
             for (let x = 0; x <= width; x += 2) {
-                let y = centerY + Math.sin((x * 0.05) + audiowaveModule.phase) * maxHeight * audiowaveModule.amplitude;
-                if (x === 0)
-                    ctx.moveTo(x, y);
-                else
-                    ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            // Secondary wave (faded)
-            ctx.beginPath();
-            ctx.strokeStyle = Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3);
-            ctx.lineWidth = 1.5;
-            for (let x = 0; x <= width; x += 2) {
-                let y = centerY + Math.sin((x * 0.07) + audiowaveModule.phase + Math.PI) * maxHeight * audiowaveModule.amplitude * 0.7;
-                if (x === 0)
-                    ctx.moveTo(x, y);
-                else
-                    ctx.lineTo(x, y);
+                let xFromCenter = x - width / 2;
+                // parabola (higher amp toward mid)
+                let distFromCenter = Math.abs(xFromCenter);
+                let centerFactor = 1 - (distFromCenter / (width / 2));
+                centerFactor = centerFactor * centerFactor;
+                // total amp from level + centerfactor
+                let amplitude = audiowaveModule.level * (0.3 + centerFactor * 0.7);
+                // first wave static, no phase, affected by amp and freq
+                let wave1 = Math.sin(xFromCenter * audiowaveModule.frequency) * maxHeight * amplitude;
+                // detail wobble
+                let wave2 = Math.sin((xFromCenter * audiowaveModule.frequency * 5) + audiowaveModule.phase) * maxHeight * audiowaveModule.wobbleAmount;
+                // combine
+                let y = centerY + wave1 + wave2;
+                // paint
+                ctx.lineTo(x, y);
             }
             ctx.stroke();
         }
     }
 
-    Behavior on amplitude {
+    Behavior on level {
         NumberAnimation {
-            duration: 300
+            duration: 150
+            easing.type: Easing.OutCubic
+        }
+
+    }
+
+    Behavior on frequency {
+        NumberAnimation {
+            duration: 250
             easing.type: Easing.InOutCubic
         }
 

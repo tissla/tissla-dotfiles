@@ -204,8 +204,8 @@ BaseWidget {
         }
     }
     // update date on show
-    onVisibleChanged: {
-        if (visible) {
+    onWidgetVisibleChanged: {
+        if (widgetVisible) {
             resetCalendar();
             loadAllNotes();
         } else {

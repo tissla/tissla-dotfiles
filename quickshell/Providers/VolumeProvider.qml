@@ -1,84 +1,75 @@
-// Providers/VolumeProvider.qml
+
 import QtQuick
-import Quickshell.Io
+import Quickshell.Services.Pipewire
 pragma Singleton
 
 QtObject {
     id: volumeData
 
-    property int volume: 50
+    // --- Samma publika API som innan ---
+    property int volume: 50      // 0–100
     property bool isMuted: false
-    property Process subscribeProcess
-    property Process getVolumeProcess
-    property Process setVolumeProcess
-    property Process toggleMuteProcess
+
+    // Alltid aktuella default-sink från PipeWire
+    property var sink: Pipewire.defaultAudioSink
+
+    property Connections connection
+	property PwObjectTracker tracker 
+
+
+	tracker: PwObjectTracker {
+        objects: sink ? [sink] : []
+    }
+
+    // --- Publika funktioner ---
 
     function refresh() {
-        getVolumeProcess.running = true;
+        if (!sink || !sink.audio)
+            return;
+
+        volume = Math.round(sink.audio.volume * 100);
+        isMuted = sink.audio.muted;
     }
 
     function setVolume(newVolume) {
+        if (!sink || !sink.audio)
+            return;
+
         newVolume = Math.max(0, Math.min(100, newVolume));
-        setVolumeProcess.volume = newVolume;
-        setVolumeProcess.running = true;
+
+        // typiskt beteende: ändrar volym → auto-unmute
+        sink.audio.muted = false;
+        sink.audio.volume = newVolume / 100.0;
+
+        // spegla direkt i vår egen state
+        volume = newVolume;
+        isMuted = false;
     }
 
     function toggleMute() {
-        toggleMuteProcess.running = true;
+        if (!sink || !sink.audio)
+            return;
+
+        sink.audio.muted = !sink.audio.muted;
+        isMuted = sink.audio.muted;
     }
 
-    Component.onCompleted: {
-        refresh();
-    }
+    // När default-sink byts (nyt ljudkort/hdmi osv) → uppdatera
+    onSinkChanged: refresh()
 
-    subscribeProcess: Process {
-        running: true
-        command: ["sh", "-c", "pactl subscribe | grep --line-buffered 'sink'"]
+    // Håll i sync när något annat program ändrar volym/mute
+    connection: Connections {
+        // samma stil som officiella volume-osd-exemplet
+        target: Pipewire.defaultAudioSink?.audio
 
-        stdout: SplitParser {
-            onRead: (line) => {
-                volumeData.refresh();
-            }
+        function onVolumeChanged() {
+            volumeData.refresh();
         }
 
-    }
-
-    getVolumeProcess: Process {
-        running: false
-        command: ["sh", "-c", "pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\\d+%' | head -1 | tr -d '%' && " + "pactl get-sink-mute @DEFAULT_SINK@ | grep -q yes && echo muted || echo unmuted"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let lines = text.trim().split('\n');
-                if (lines.length >= 2) {
-                    volumeData.volume = parseInt(lines[0]) || 50;
-                    volumeData.isMuted = (lines[1] === "muted");
-                }
-            }
-        }
-
-    }
-
-    setVolumeProcess: Process {
-        property int volume: 50
-
-        running: false
-        command: ["sh", "-c", "pactl set-sink-volume @DEFAULT_SINK@ " + volume + "%"]
-        onRunningChanged: {
-            if (!running)
-                volumeData.refresh();
-
+        function onMutedChanged() {
+            volumeData.refresh();
         }
     }
 
-    toggleMuteProcess: Process {
-        running: false
-        command: ["pactl", "set-sink-mute", "@DEFAULT_SINK@", "toggle"]
-        onRunningChanged: {
-            if (!running)
-                volumeData.refresh();
-
-        }
-    }
-
+    Component.onCompleted: refresh()
 }
