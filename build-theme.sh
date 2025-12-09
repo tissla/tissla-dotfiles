@@ -68,8 +68,8 @@ FONT_STYLE_ROFI="$(printf '%s' "$FONT_STYLE" | sed 's/.*/\u&/')"
 
 cat > theme/theme.rasi <<EOF
 * {
-    bg:        ${CLR_ROFI_BG};
-    bg-alt:    ${CLR_ROFI_BG_ALT};
+    bg:        ${CLR_BG}E6;
+    bg-alt:    ${CLR_BG_DARK}E6;
     fg:        ${CLR_FG};
     primary:   ${CLR_PRIMARY};
     secondary: ${CLR_SECONDARY};
@@ -94,9 +94,9 @@ pragma Singleton
 QtObject {
     id: theme
 
-    property color background: "${CLR_QML_BG}"
+	property color background: "#CC$(strip_hash "$CLR_BG")"
 	property color backgroundSolid: "${CLR_BG}"
-    property color backgroundAlt: "${CLR_QML_BG_ALT}"
+	property color backgroundAlt: "#E6$(strip_hash "$CLR_PRIMARY_MUTED")"
 	property color backgroundAltSolid: "${CLR_MUTED}"
     property color primary: "${CLR_PRIMARY}"
     property color foreground: "${CLR_FG}"

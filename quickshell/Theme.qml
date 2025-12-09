@@ -4,9 +4,9 @@ pragma Singleton
 QtObject {
     id: theme
 
-    property color background: "#CC1e1b29"
+	property color background: "#CC1e1b29"
 	property color backgroundSolid: "#1e1b29"
-    property color backgroundAlt: "#E62b263b"
+	property color backgroundAlt: "#E62b263b"
 	property color backgroundAltSolid: "#342e4a"
     property color primary: "#8b5cf6"
     property color foreground: "#c9c7d4"

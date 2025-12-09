@@ -9,13 +9,15 @@ Item {
     property var screen: null
     property var fftBars: []
     // sound params
-    property real level: 0.2
-    property real frequency: 0.05
+    property real level: 0
+    property real frequency: 0
     property real phase: 0
-    property real phaseSpeed: 0.05
-    property real wobbleAmp: 0.03
-    property real wobbleFreq: 0.05
-    property real lineThickness: 2.5
+    property real phaseSpeed: 0
+    property real wobbleAmp: 0
+    property real wobbleFreq: 0
+    property real lineThickness: 1
+    property real bassFreq: 0
+    property real bassAmp: 0
 
     function update() {
         // Bars 0-4: LOW (0-200 Hz)
@@ -37,16 +39,33 @@ Item {
         let totalLevel = fftBars.reduce((sum, val) => {
             return sum + val;
         }, 0) / fftBars.length;
-        // used for amp on wave1
-        level = 0.2 + totalLevel * 0.2 + lowMid * 0.2 + bass * 0.8;
-        frequency = 0.05 + highMid * 0.08 + mid * 0.1 + treble * 0.12;
-        // phasespeed only on wave2
-        phaseSpeed = 0.05 + highMid * 0.15 + treble * 0.2;
-        // used for amp on wave2
-        wobbleAmp = 0.03 + lowMid * 0.01 + mid * 0.05 + highMid * 0.1 + treble * 0.5;
-        wobbleFreq = 0.05 + treble * 0.5;
-        // thickness from bass
-        lineThickness = 2 + bass * 2;
+        if (totalLevel == 0) {
+            // idle animation values
+            level = 0.5;
+            frequency = 0.02;
+            phaseSpeed = 0.05;
+            wobbleAmp = 0;
+            wobbleFreq = 0;
+            lineThickness = 2;
+            bassFreq = 0;
+            bassAmp = 0;
+        } else {
+            // TODO: try to make a wave for each bar and add them together?
+            // used for amp on wave1
+            level = totalLevel * 0.2 + lowMid * 0.3 + bass * 0.5;
+            frequency = highMid * 0.1 + mid * 0.1 + treble * 0.15;
+            // phasespeed 0 on play
+            phase = 0;
+            phaseSpeed = 0;
+            // used for amp on wave2
+            wobbleAmp = lowMid * 0.01 + mid * 0.09 + highMid * 0.35 + treble * 0.55;
+            wobbleFreq = 0.3 * treble / frequency;
+            // bass wave
+            bassAmp = bass * 0.9 + lowMid * 0.1;
+            bassFreq = 0.15 * frequency;
+            // thickness from bass
+            lineThickness = 2 + bass * 2;
+        }
     }
 
     width: 600
@@ -73,12 +92,12 @@ Item {
     }
 
     Timer {
-        interval: 16 // ~60fps
+        interval: 50 // 20 fps
         running: true
         repeat: true
         onTriggered: {
             audiowaveModule.update();
-            audiowaveModule.phase += 0.05;
+            audiowaveModule.phase += audiowaveModule.phaseSpeed;
             if (audiowaveModule.phase > Math.PI * 10)
                 audiowaveModule.phase -= Math.PI * 10;
 
@@ -87,6 +106,14 @@ Item {
     }
 
     Canvas {
+        // center line (debug)
+        // ctx.beginPath();
+        // ctx.strokeStyle = "orange";
+        // ctx.lineWidth = 1;
+        // ctx.moveTo(width / 2, 0);
+        // ctx.lineTo(width / 2, height);
+        // ctx.stroke();
+
         id: canvas
 
         anchors.fill: parent
@@ -103,22 +130,26 @@ Item {
             ctx.lineWidth = audiowaveModule.lineThickness;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
-            for (let x = 0; x <= width; x += 2) {
+            // 2step to ease on gpu, can be upped
+            let step = 2;
+            for (let x = 0; x <= width; x += step) {
                 let xFromCenter = x - width / 2;
                 // parabola (higher amp toward mid)
                 let distFromCenter = Math.abs(xFromCenter);
                 let centerFactor = 1 - (distFromCenter / (width / 2));
                 centerFactor = centerFactor * centerFactor;
                 // total amp from level + centerfactor
-                let amplitude = audiowaveModule.level * (0.3 + centerFactor * 0.7);
+                let amplitude = audiowaveModule.level * centerFactor;
                 // let wobbleAmp be heavier toward middle
-                let wobbleAmpl = audiowaveModule.wobbleAmp * (0.3 + centerFactor * 0.7);
-                // first wave static, no phase, affected by amp and freq
-                let wave1 = Math.sin(xFromCenter * audiowaveModule.frequency) * amplitude;
+                let wobbleAmpl = audiowaveModule.wobbleAmp * centerFactor;
+                // first wave static, phase to center max amp, affected by amp and freq
+                let wave1 = Math.sin(xFromCenter * audiowaveModule.frequency - Math.PI / 2 + audiowaveModule.phase) * amplitude;
                 // second wave, wobbles on first wave
-                let wave2 = Math.sin((xFromCenter * audiowaveModule.wobbleFreq * 2) + audiowaveModule.phase) * wobbleAmpl;
+                let wave2 = Math.sin((xFromCenter * audiowaveModule.wobbleFreq)) * wobbleAmpl;
+                // third way with low frequency and high amp
+                let wave3 = -Math.sin((xFromCenter * audiowaveModule.bassFreq) - Math.PI / 2) * audiowaveModule.bassAmp;
                 // combine
-                let combinedWave = wave1 + wave2;
+                let combinedWave = wave1 + wave2 + wave3;
                 // scale to maxHeight
                 let y = centerY + (combinedWave * maxHeight);
                 // paint

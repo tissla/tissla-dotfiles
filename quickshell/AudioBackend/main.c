@@ -23,7 +23,7 @@ static double smooth(double current, double target, double factor) {
 }
 
 int main(void) {
-  // --- 1. Init audio_data ---
+  // --- Init audio_data ---
   struct audio_data audio = {0};
   pthread_mutex_init(&audio.lock, NULL);
   audio.format = 16;
@@ -46,7 +46,7 @@ int main(void) {
   audio.virtual_node = 0;
   audio.source = strdup("auto");
 
-  // --- 2. Start PipeWire thread ---
+  // --- Start PipeWire thread ---
   pthread_t pw_thread;
   if (pthread_create(&pw_thread, NULL, input_pipewire, &audio) != 0) {
     perror("pthread_create");
@@ -54,7 +54,7 @@ int main(void) {
   }
   signal(SIGINT, handle_sigint);
 
-  // --- 3. Init Cava ---
+  // --- Init Cava ---
   const int bars = 16;
   int autosens = 1;
   double noise_reduction = 0.77;
@@ -80,9 +80,9 @@ int main(void) {
   double smooth_treble = 0.0;
   double smooth_level = 0.0;
 
-  const double smooth_factor = 0.3; // Adjust for smoother/faster response
+  const double smooth_factor = 0.3;
 
-  // --- 4. Main loop ---
+  // --- Main loop ---
   while (g_running) {
     int new_samples = 0;
     pthread_mutex_lock(&audio.lock);
@@ -119,7 +119,7 @@ int main(void) {
     usleep(16000); // ~60 fps
   }
 
-  // --- 5. Cleanup ---
+  // --- Cleanup ---
   signal_terminate(&audio);
   pthread_join(pw_thread, NULL);
   cava_destroy(plan);

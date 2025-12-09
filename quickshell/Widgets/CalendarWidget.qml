@@ -839,8 +839,9 @@ BaseWidget {
                                 const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
                                 return dayNames[date.getDay()];
                             }
-                            font.family: "Rubik SemiBold"
+                            font.family: Theme.fontMain
                             font.pixelSize: 15
+                            font.weight: Font.Bold
                             color: Theme.info
                         }
 
@@ -854,7 +855,7 @@ BaseWidget {
                                 return "Week " + root.getWeekNumber(date);
                             }
                             font.pixelSize: 12
-                            color: Theme.inactive
+                            color: Theme.foregroundAlt
                         }
 
                         // Separator
