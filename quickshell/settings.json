@@ -10,7 +10,7 @@
       "modules": {
         "left": ["workspaces"],
         "center": ["audiowave"],
-        "right": ["cpu", "network"]
+        "right": ["network"]
       }
     },
     {

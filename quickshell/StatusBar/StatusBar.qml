@@ -27,7 +27,7 @@ Item {
             width: leftRow.width
             height: parent.height
             color: Theme.backgroundAltSolid
-            radius: 15
+            radius: Theme.radius
             visible: leftRow.children.length > 0
 
             Row {
@@ -86,12 +86,13 @@ Item {
 
             anchors.right: parent.right
             anchors.rightMargin: 10
+            anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
             // space for 5 padding on either side
-            width: rightRow.width + 10
+            width: rightRow.width + 20
             height: parent.height
             color: Theme.backgroundAltSolid
-            radius: 15
+            radius: Theme.radius
             visible: rightRow.children.length > 0
 
             Row {
