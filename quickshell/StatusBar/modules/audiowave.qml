@@ -42,10 +42,10 @@ Item {
         if (totalLevel == 0) {
             // idle animation values
             level = 0.5;
-            frequency = 0.02;
+            frequency = 0.04;
             phaseSpeed = 0.05;
-            wobbleAmp = 0;
-            wobbleFreq = 0;
+            wobbleAmp = 0.04;
+            wobbleFreq = 0.2;
             lineThickness = 2;
             bassFreq = 0;
             bassAmp = 0;
@@ -122,11 +122,18 @@ Item {
             if (!ctx)
                 return ;
 
+            // GRADIENT FOR LINE STROKE
+            let gradient = ctx.createLinearGradient(0, 0, width, 0);
+            gradient.addColorStop(0, "transparent");
+            gradient.addColorStop(200 / width, Theme.primary);
+            gradient.addColorStop(1 - 200 / width, Theme.primary);
+            gradient.addColorStop(1, "transparent");
+            // canvas ctx
             ctx.clearRect(0, 0, width, height);
             let centerY = height / 2;
             let maxHeight = height * 0.5 - 1;
             ctx.beginPath();
-            ctx.strokeStyle = Theme.primary;
+            ctx.strokeStyle = gradient;
             ctx.lineWidth = audiowaveModule.lineThickness;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";
