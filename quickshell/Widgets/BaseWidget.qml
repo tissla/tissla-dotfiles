@@ -3,6 +3,8 @@ import QtQuick
 import Quickshell
 
 Item {
+    // the widget wrapper
+
     id: baseWidget
 
     // id of widget
@@ -32,43 +34,23 @@ Item {
     implicitWidth: screen.width
     implicitHeight: screen.height
 
-    MouseArea {
-        id: wrapperArea
-
-        anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.AllButtons
-        onPressed: (mouse) => {
-            console.log("Clicked wrapper at", mouse.x, mouse.y);
-        }
-        onClicked: (mouse) => {
-            if (!panel.contains(mouse.x - panel.x, mouse.y - panel.y))
-                panel.visible = false;
-
-        }
-    }
-    // the widget wrapper
-
     PanelWindow {
-        // TODO: instead of callback, use direct x-coordinate somehow
-        // reset position on invisible
-
         id: panel
 
         visible: false
-        focusable: true
+        focusable: false
         color: "transparent"
         implicitWidth: widgetWidth
         implicitHeight: widgetHeight
         // set position
         onVisibleChanged: {
-            if (visible)
-                GlobalMouse.requestPosition(function(p) {
+            if (visible) {
+                let p = WidgetManager.getMousePosition();
                 xPos = Math.max(10, Math.min(p.x - (widgetWidth / 2), screen.width - widgetWidth - 20));
                 console.log("[DynamicWidget]", widgetId, "on screen:", screen.name, "at x:", xPos);
-            });
-            else
+            } else {
                 yPos = 20;
+            }
             // notify owner(s) about visibility change
             let modules = WidgetManager.moduleRegistry[widgetId];
             if (modules && Array.isArray(modules)) {
@@ -79,54 +61,6 @@ Item {
 
                 }
             }
-        }
-
-        // dragging functionality
-        Rectangle {
-            id: dragHandle
-
-            anchors.top: parent.top
-            anchors.left: parent.left
-            anchors.right: parent.right
-            height: 30
-            color: "transparent"
-            z: 100
-
-            MouseArea {
-                id: mouseArea
-
-                cursorShape: Qt.OpenHandCursor
-                preventStealing: true
-                anchors.fill: parent
-                hoverEnabled: true
-                onPressed: (mouse) => {
-                    GlobalMouse.requestPosition(function(p) {
-                        baseWidget.isDragging = true;
-                        widgetStartX = xPos;
-                        widgetStartY = yPos;
-                        globalStartX = p.x;
-                        globalStartY = p.y;
-                        console.log("[DynamicWidget] MousePos: X:", p.x, "| Y:", p.y);
-                        console.log("[DynamicWidget] StartDrag: X:", xPos, "| Y:", yPos);
-                    });
-                }
-                onPositionChanged: (mouse) => {
-                    if (!baseWidget.isDragging)
-                        return ;
-
-                    GlobalMouse.requestPosition(function(p) {
-                        const dx = p.x - globalStartX;
-                        const dy = p.y - globalStartY;
-                        xPos = widgetStartX + dx;
-                        yPos = widgetStartY - dy;
-                    });
-                }
-                onReleased: (mouse) => {
-                    baseWidget.isDragging = false;
-                    console.log("[DynamicWidget] StopDrag: X:", xPos, "| Y:", yPos);
-                }
-            }
-
         }
 
         anchors {

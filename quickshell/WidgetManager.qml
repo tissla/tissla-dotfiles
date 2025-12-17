@@ -5,12 +5,20 @@ pragma Singleton
 QtObject {
     id: widgetManager
 
-    // TODO: register spawn point by module
-    property point spawn: Qt.point(0, 0)
+    property point position: Qt.point(0, 0)
     property var widgets: ({
     })
     property var moduleRegistry: ({
     })
+
+    function setMousePosition(point) {
+        widgetManager.position.x = point.x;
+        widgetManager.position.y = point.y;
+    }
+
+    function getMousePosition() {
+        return position;
+    }
 
     function registerWidget(widgetId, widgetRef) {
         widgets[widgetId] = widgetRef;

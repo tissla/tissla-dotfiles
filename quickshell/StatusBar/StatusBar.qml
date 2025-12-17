@@ -15,7 +15,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         // TODO: change to variable
-        color: Qt.rgba(0.118, 0.106, 0.161, 0.5)
+        color: Theme.background
 
         // Left modules container
         Rectangle {
@@ -26,8 +26,7 @@ Item {
             anchors.leftMargin: 10
             width: leftRow.width
             height: parent.height
-            color: Theme.backgroundAltSolid
-            radius: Theme.radius
+            color: "transparent"
             visible: leftRow.children.length > 0
 
             Row {
@@ -39,12 +38,22 @@ Item {
                 Repeater {
                     model: statusBar.config.left
 
-                    Loader {
-                        source: "modules/" + modelData + ".qml"
-                        // pass screen to the module
-                        onLoaded: {
-                            item.screen = statusBar.screen;
+                    Rectangle {
+                        color: Theme.backgroundAlt
+                        radius: Theme.radius
+                        width: loader.item ? loader.item.width : 0
+                        height: loader.item ? loader.item.height : 0
+
+                        Loader {
+                            id: loader
+
+                            source: "modules/" + modelData + ".qml"
+                            // pass screen to the module
+                            onLoaded: {
+                                item.screen = statusBar.screen;
+                            }
                         }
+
                     }
 
                 }
@@ -86,13 +95,10 @@ Item {
 
             anchors.right: parent.right
             anchors.rightMargin: 10
-            anchors.leftMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            // space for 5 padding on either side
-            width: rightRow.width + 20
+            width: rightRow.width
             height: parent.height
-            color: Theme.backgroundAltSolid
-            radius: Theme.radius
+            color: "transparent"
             visible: rightRow.children.length > 0
 
             Row {
@@ -100,18 +106,27 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 5
-                anchors.leftMargin: 5
-                spacing: 4
+                spacing: 8
 
                 Repeater {
                     model: statusBar.config.right
 
-                    Loader {
-                        source: "modules/" + modelData + ".qml"
-                        onLoaded: {
-                            item.screen = statusBar.screen;
+                    Rectangle {
+                        color: "transparent"
+                        radius: Theme.radius
+                        width: rightLoader.item ? rightLoader.item.width : 0
+                        height: rightLoader.item ? rightLoader.item.height : 0
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        Loader {
+                            id: rightLoader
+
+                            source: "modules/" + modelData + ".qml"
+                            onLoaded: {
+                                item.screen = statusBar.screen;
+                            }
                         }
+
                     }
 
                 }

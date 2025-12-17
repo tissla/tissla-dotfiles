@@ -15,14 +15,14 @@ Item {
     property bool isPressed: widgetActive
     property bool isHovered: false
     // default width
-    property int moduleWidth: contentRow.width + 16
+    property int moduleWidth: contentRow.width + 20
 
     function onWidgetVisibilityChanged(visible) {
         widgetActive = visible;
     }
 
     width: moduleWidth
-    height: 30
+    height: 40
 
     // content container
     Rectangle {
@@ -43,15 +43,13 @@ Item {
 
             anchors.centerIn: parent
             spacing: 8
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
 
             Text {
                 visible: baseModule.moduleIcon !== ""
                 text: baseModule.moduleIcon
-                font.pixelSize: 20
-                font.family: Theme.fontMain
+                font.pixelSize: 18
                 width: 20
+                font.family: Theme.fontMain
                 color: baseModule.isPressed ? Theme.backgroundSolid : Theme.primary
                 anchors.verticalCenter: parent.verticalCenter
             }
@@ -59,7 +57,6 @@ Item {
             Text {
                 visible: baseModule.moduleText !== ""
                 text: baseModule.moduleText
-                width: 50
                 font.family: Theme.fontMain
                 font.pixelSize: 15
                 font.weight: Font.Bold
@@ -89,9 +86,9 @@ Item {
         onEntered: isHovered = true
         onExited: isHovered = false
         onClicked: (mouse) => {
-            if (widgetId)
-                WidgetManager.toggleWidget(widgetId);
-
+            let position = mapToGlobal(0, 0);
+            WidgetManager.setMousePosition(position);
+            WidgetManager.toggleWidget(widgetId);
         }
     }
 

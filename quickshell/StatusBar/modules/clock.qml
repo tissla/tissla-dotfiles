@@ -12,7 +12,6 @@ BaseModule {
         WidgetManager.registerModule(widgetId, this);
     }
     moduleIcon: ""
-    moduleWidth: 100
 
     SystemClock {
         id: clock

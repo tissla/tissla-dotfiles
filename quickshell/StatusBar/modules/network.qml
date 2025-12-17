@@ -21,7 +21,7 @@ Item {
     }
 
     width: networkRow.width + 16
-    height: 30
+    height: 40
     // Detect active interface on startup
     Component.onCompleted: {
         detectInterfaceProcess.running = true;

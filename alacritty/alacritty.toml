@@ -3,9 +3,7 @@ general.import = [
 ]
 
 [window]
-opacity = 0.9
-decorations = "full"
-blur = true
+opacity = 0.85
 
 [font]
 size = 13.5

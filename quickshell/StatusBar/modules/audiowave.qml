@@ -68,7 +68,7 @@ Item {
         }
     }
 
-    width: 600
+    width: 1200
     height: 40
 
     Process {

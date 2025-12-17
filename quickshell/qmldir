@@ -31,7 +31,5 @@ BaseWidget 1.0 Widgets/BaseWidget.qml
 # modules
 BaseModule 1.0 StatusBar/modules/BaseModule.qml
 
-## cursorpos
-singleton GlobalMouse 1.0 GlobalMouse.qml
 
 
