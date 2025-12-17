@@ -27,6 +27,15 @@ Item {
         detectInterfaceProcess.running = true;
     }
 
+    Timer {
+        id: downTimer
+
+        interval: 2000
+        running: !parent.connected // only running when down
+        repeat: true
+        onTriggered: detectInterfaceProcess.running = true
+    }
+
     // Detect active network interface
     Process {
         // Get default route interface

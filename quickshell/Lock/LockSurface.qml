@@ -7,7 +7,7 @@ Item {
     required property var context
     required property var screen
 
-    // Bakgrundsbild baserat på skärm
+    // wallpapers
     Image {
         anchors.fill: parent
         source: {
@@ -23,12 +23,12 @@ Item {
         fillMode: Image.PreserveAspectCrop
     }
 
-    // Visa UI endast på DP-2
+    //TODO: switch to mainscreen
     Item {
         anchors.fill: parent
         visible: root.screen.name === "DP-2"
 
-        // Klocka
+        // Clock
         Text {
             id: timeLabel
 
@@ -43,7 +43,7 @@ Item {
             anchors.top: parent.top
             anchors.topMargin: 200
             color: Qt.rgba(1, 1, 1, 0.6)
-            font.pixelSize: 100
+            font.pixelSize: 200
             font.family: "Rubik"
             renderType: Text.NativeRendering
 
@@ -115,7 +115,6 @@ Item {
 
         }
 
-        // Felmeddelande
         Text {
             visible: root.context.showFailure
             text: "Incorrect password"
