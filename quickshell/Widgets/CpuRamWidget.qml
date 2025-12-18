@@ -17,7 +17,7 @@ BaseWidget {
         Rectangle {
             width: parent.width - 30
             height: parent.height - 30
-            color: Theme.backgroundAltSolid
+            color: "transparent"
             radius: Theme.radius
             anchors.centerIn: parent
 

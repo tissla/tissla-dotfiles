@@ -17,6 +17,9 @@ singleton GpuDataProvider 1.0 Providers/GpuDataProvider.qml
 singleton DevicesDataProvider 1.0 Providers/DevicesDataProvider.qml
 # performance (cpu, ram, cooling)
 singleton PerformanceDataProvider 1.0 Providers/PerformanceDataProvider.qml
+#network
+singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
+
 
 # resources
 GaugeWidget 1.0 Resources/GaugeWidget.qml

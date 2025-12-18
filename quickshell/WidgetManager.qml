@@ -6,14 +6,17 @@ QtObject {
     id: widgetManager
 
     property point position: Qt.point(0, 0)
+    property var screenName: null
     property var widgets: ({
     })
     property var moduleRegistry: ({
     })
 
-    function setMousePosition(point) {
+    function setMousePosition(point, scr) {
         widgetManager.position.x = point.x;
         widgetManager.position.y = point.y;
+        widgetManager.screenName = scr.name;
+        console.log("[WidgetManager] ScreenName set to:", widgetManager.screenName);
     }
 
     function getMousePosition() {

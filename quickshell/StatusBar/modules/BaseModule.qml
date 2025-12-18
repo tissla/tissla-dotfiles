@@ -15,7 +15,15 @@ Item {
     property bool isPressed: widgetActive
     property bool isHovered: false
     // default width
-    property int moduleWidth: contentRow.width + 20
+    property int moduleWidth: {
+        if (customContents && customLoader.item)
+            return customLoader.item.width + 20;
+
+        return contentRow.width + 20;
+    }
+    // custom params
+    property bool customContents: false
+    property Component customComponent: null
 
     function onWidgetVisibilityChanged(visible) {
         widgetActive = visible;
@@ -38,9 +46,11 @@ Item {
             return "transparent";
         }
 
+        // default layout
         Row {
             id: contentRow
 
+            visible: !baseModule.customContents
             anchors.centerIn: parent
             spacing: 8
 
@@ -66,6 +76,14 @@ Item {
 
         }
 
+        Loader {
+            id: customLoader
+
+            anchors.centerIn: parent
+            visible: baseModule.customContents
+            sourceComponent: baseModule.customComponent
+        }
+
         Behavior on color {
             ColorAnimation {
                 duration: 150
@@ -87,7 +105,8 @@ Item {
         onExited: isHovered = false
         onClicked: (mouse) => {
             let position = mapToGlobal(0, 0);
-            WidgetManager.setMousePosition(position);
+            WidgetManager.setMousePosition(position, screen);
+            console.log("TOGGLING WIDGET", widgetId, "ON SCREEN", screen);
             WidgetManager.toggleWidget(widgetId);
         }
     }

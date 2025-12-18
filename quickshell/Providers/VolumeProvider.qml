@@ -58,9 +58,7 @@ QtObject {
             volumeData.refresh();
         }
 
-        function onMutedChanged() {
-            volumeData.refresh();
-        }
+
     }
 
     Component.onCompleted: refresh()

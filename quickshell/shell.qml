@@ -35,15 +35,12 @@ ShellRoot {
 
     // TODO: add to settings instead
     Variants {
-        model: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume"]
+        model: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
 
         Loader {
             property var modelData
 
             source: "Widgets/" + modelData + "Widget.qml"
-            onLoaded: {
-                console.log("Loaded:", modelData);
-            }
         }
 
     }

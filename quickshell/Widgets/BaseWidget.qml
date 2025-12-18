@@ -10,21 +10,13 @@ Item {
     // id of widget
     required property string widgetId
     // the actual widget component
-    // size params
     required property Component widgetComponent
+    // size params
     required property int widgetWidth
     required property int widgetHeight
     // position data
-    property var screen: WidgetManager.lastScreen || Quickshell.screens[0]
-    //movement props
-    property bool isDragging: false
     property int xPos: 0
     property int yPos: 20
-    // drag state
-    property int globalStartX: 0
-    property int globalStartY: 0
-    property int widgetStartX: 0
-    property int widgetStartY: 0
     // panel visibility
     property alias widgetVisible: panel.visible
 
@@ -45,16 +37,27 @@ Item {
         // set position
         onVisibleChanged: {
             if (visible) {
-                let p = WidgetManager.getMousePosition();
-                xPos = Math.max(10, Math.min(p.x - (widgetWidth / 2), screen.width - widgetWidth - 20));
-                console.log("[DynamicWidget]", widgetId, "on screen:", screen.name, "at x:", xPos);
+                let pos = WidgetManager.getMousePosition();
+                console.log("[BaseWidget] MOUSE X POSITION:", pos.x);
+                let targetScreen = null;
+                for (let i = 0; i < Quickshell.screens.length; i++) {
+                    if (Quickshell.screens[i].name === WidgetManager.screenName) {
+                        targetScreen = Quickshell.screens[i];
+                        break;
+                    }
+                }
+                if (targetScreen) {
+                    let relativeX = pos.x - targetScreen.x;
+                    xPos = Math.max(10, Math.min(relativeX - (widgetWidth / 2), targetScreen.width - widgetWidth - 20));
+                    console.log("Displaying widget on screen:", targetScreen.name, "screen.x:", targetScreen.x, "relative X:", relativeX, "final xPos:", xPos);
+                }
             } else {
                 yPos = 20;
             }
             // notify owner(s) about visibility change
             let modules = WidgetManager.moduleRegistry[widgetId];
             if (modules && Array.isArray(modules)) {
-                console.log("[DynamicWidget] Notifying", modules.length, "modules for", widgetId);
+                console.log("[BaseWidget] Notifying", modules.length, "modules for", widgetId);
                 for (let i = 0; i < modules.length; i++) {
                     if (modules[i] && modules[i].onWidgetVisibilityChanged)
                         modules[i].onWidgetVisibilityChanged(visible);
