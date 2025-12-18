@@ -2,7 +2,7 @@ import ".."
 import QtQuick
 
 BaseWidget {
-    id: "networkWidget"
+    id: networkWidget
 
     widgetId: "network"
     widgetWidth: 400
@@ -34,7 +34,6 @@ BaseWidget {
                     Canvas {
                         id: networkGraph
 
-                        anchors.fill: parent
                         width: 160
                         height: 160
                         onPaint: {
@@ -42,19 +41,24 @@ BaseWidget {
                             if (!ctx)
                                 return ;
 
-                            ctx.clearRect(0, 0, networkGraph.width, networkGraph.height);
+                            ctx.clearRect(0, 0, width, height);
                             let history = NetworkDataProvider.downloadHistory;
                             if (history.length < 2)
                                 return ;
 
-                            let maxSpeed = Math.max(history, 1);
+                            let maxSpeed = 1;
+                            for (let i = 0; i < history.length; i++) {
+                                if (history[i] > maxSpeed)
+                                    maxSpeed = history[i];
+
+                            }
                             ctx.beginPath();
                             ctx.strokeStyle = Theme.primary;
                             ctx.lineWidth = 3;
                             ctx.lineCap = "round";
                             ctx.lineJoin = "round";
                             let stepX = width / (history.length - 1);
-                            for (let i = 0; i <= history.length; i++) {
+                            for (let i = 0; i < history.length; i++) {
                                 let x = i * stepX;
                                 let y = height - (history[i] / maxSpeed * height);
                                 if (i === 0)
@@ -64,6 +68,16 @@ BaseWidget {
                             }
                             ctx.stroke();
                         }
+
+                        Timer {
+                            interval: 5000
+                            running: true
+                            repeat: true
+                            onTriggered: {
+                                networkGraph.requestPaint();
+                            }
+                        }
+
                     }
 
                 }
