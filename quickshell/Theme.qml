@@ -16,7 +16,7 @@ QtObject {
 	property color info: "#559cd6"
 	property color surface: "#41395e"
 	property color active: "#76b900"
-	property int radius: 0
+	property int radius: 20
 	property int radiusAlt: 4
 	property string noteDirectory: "/home/tissla/Documents/Todo"
 	property string fontMain: "JetBrains Nerd Font"

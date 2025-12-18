@@ -44,7 +44,7 @@ Item {
             level = 0.5;
             frequency = 0.04;
             phaseSpeed = 0.05;
-            wobbleAmp = 0.04;
+            wobbleAmp = 0.08;
             wobbleFreq = 0.2;
             lineThickness = 2;
             bassFreq = 0;

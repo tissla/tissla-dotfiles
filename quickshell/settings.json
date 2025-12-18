@@ -18,7 +18,7 @@
       "modules": {
         "left": ["workspaces"],
         "center": ["mpris"],
-        "right": ["devices", "gpu", "cpu", "volume", "clock"]
+        "right": ["devices", "gpu", "cpu", "volume", "calendar", "clock"]
       }
     }
   ]
