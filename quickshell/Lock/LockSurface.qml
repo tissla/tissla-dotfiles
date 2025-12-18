@@ -1,3 +1,4 @@
+import ".."
 // LockSurface.qml
 import QtQuick
 
@@ -44,7 +45,7 @@ Item {
             anchors.topMargin: 200
             color: Qt.rgba(1, 1, 1, 0.6)
             font.pixelSize: 200
-            font.family: "Rubik"
+            font.family: "JetBrains Nerd Font"
             renderType: Text.NativeRendering
 
             Timer {
