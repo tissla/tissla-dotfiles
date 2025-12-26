@@ -36,9 +36,6 @@ Row {
                     modelData.activate();
                 }
             }
-
         }
-
     }
-
 }

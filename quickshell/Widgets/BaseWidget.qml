@@ -7,6 +7,7 @@ Item {
 
     id: baseWidget
 
+    property var screen: null
     // id of widget
     required property string widgetId
     // the actual widget component
@@ -23,8 +24,6 @@ Item {
     Component.onCompleted: {
         WidgetManager.registerWidget(widgetId, panel);
     }
-    implicitWidth: screen.width
-    implicitHeight: screen.height
 
     PanelWindow {
         id: panel
@@ -61,7 +60,6 @@ Item {
                 for (let i = 0; i < modules.length; i++) {
                     if (modules[i] && modules[i].onWidgetVisibilityChanged)
                         modules[i].onWidgetVisibilityChanged(visible);
-
                 }
             }
         }
@@ -83,7 +81,5 @@ Item {
             anchors.fill: parent
             sourceComponent: baseWidget.widgetComponent
         }
-
     }
-
 }

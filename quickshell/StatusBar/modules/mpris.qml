@@ -5,11 +5,10 @@ import Quickshell.Services.Mpris
 Item {
     id: mprisModule
 
-	property var screen: null
+    property var screen: null
 
-	readonly property list<MprisPlayer> availablePlayers: Mpris.players.values
+    readonly property list<MprisPlayer> availablePlayers: Mpris.players.values
     property MprisPlayer player: availablePlayers.find(p => p.isPlaying) ?? availablePlayers.find(p => p.canControl && p.canPlay) ?? null
-
 
     property string moduleIcon: {
         if (!player)
@@ -38,7 +37,7 @@ Item {
     width: Math.min(mprisRow.width + 16, 400)
     height: 40
 
-	Row {
+    Row {
         id: mprisRow
 
         anchors.centerIn: parent
@@ -48,30 +47,29 @@ Item {
             text: mprisModule.moduleIcon
             font.pixelSize: 20
             color: Theme.primary
-			anchors.verticalCenter: parent.verticalCenter
-			font.weight: Font.Bold
+            anchors.verticalCenter: parent.verticalCenter
+            font.weight: Font.Bold
         }
 
         Text {
             text: mprisModule.moduleText
             font.family: Theme.fontMain
-			font.pixelSize: 15
-			font.weight: Font.Bold
+            font.pixelSize: 15
+            font.weight: Font.Bold
             color: Theme.foregroundAlt
             elide: Text.ElideRight
             maximumLineCount: 1
             anchors.verticalCenter: parent.verticalCenter
         }
-
     }
 
     MouseArea {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: (mouse) => {
+        onClicked: mouse => {
             if (!mprisModule.player)
-                return ;
+                return;
 
             if (mouse.button === Qt.RightButton && mprisModule.player.canGoNext)
                 mprisModule.player.next();
@@ -79,5 +77,4 @@ Item {
                 mprisModule.player.togglePlaying();
         }
     }
-
 }

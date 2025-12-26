@@ -1,6 +1,6 @@
-import ".."
 // LockSurface.qml
 import QtQuick
+import Quickshell
 
 Item {
     id: root
@@ -15,11 +15,7 @@ Item {
             if (!root.screen)
                 return "";
 
-            if (root.screen.name === "DP-2")
-                return "/home/tissla/Pictures/wallpapers/MergedSkyVibrantFinal.png";
-            else if (root.screen.name === "HDMI-A-1")
-                return "/home/tissla/Pictures/wallpapers/Anime-Girl-Night-Sky.jpg";
-            return "";
+            return Quickshell.env("HOME") + "/.config/wallpapers/nightskyempty.png";
         }
         fillMode: Image.PreserveAspectCrop
     }
@@ -27,7 +23,7 @@ Item {
     //TODO: switch to mainscreen
     Item {
         anchors.fill: parent
-        visible: root.screen.name === "DP-2"
+        visible: root.screen.name === Quickshell.screens[0].name
 
         // Clock
         Text {

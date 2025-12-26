@@ -1,7 +1,7 @@
-pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+pragma Singleton
 
 QtObject {
     id: settings
@@ -10,7 +10,8 @@ QtObject {
     property int barHeight: 40
     property string barPosition: "bottom"
     // screen config map binding
-    property var screenConfigs: ({})
+    property var screenConfigs: ({
+    })
     property bool autoReload: false
     property int reloadInterval: 5000
     property Timer reloadTimer
@@ -18,6 +19,21 @@ QtObject {
 
     function loadSettings() {
         settingsLoader.running = true;
+    }
+
+    function getLockForScreen(screenName) {
+        const cfg = getScreenConfig(screenName);
+        if (cfg && cfg.lock)
+            return expandPath(cfg.lock);
+
+        return "";
+    }
+
+    function expandPath(p) {
+        if (!p)
+            return "";
+
+        return p.replace("$HOME", Quickshell.env("HOME"));
     }
 
     function getScreenConfig(screenName) {
@@ -30,7 +46,8 @@ QtObject {
             return {
                 "left": ["workspaces"],
                 "center": [],
-                "right": [""]
+                "right": [""],
+                "lock": ""
             };
         }
     }
@@ -67,9 +84,11 @@ QtObject {
 
                         if (json.bar.position !== undefined)
                             settings.barPosition = json.bar.position;
+
                     }
                     if (json.screens && Array.isArray(json.screens)) {
-                        let configs = {};
+                        let configs = {
+                        };
                         for (let i = 0; i < json.screens.length; i++) {
                             let screen = json.screens[i];
                             if (!screen.name || !screen.modules)
@@ -78,14 +97,15 @@ QtObject {
                             configs[screen.name] = {
                                 "left": screen.modules.left || [],
                                 "center": screen.modules.center || [],
-                                "right": screen.modules.right || []
+                                "right": screen.modules.right || [],
+                                "lock": screen.lock || ""
                             };
                         }
                         settings.screenConfigs = configs;
                         console.log("[SettingsManager] Loaded", Object.keys(configs).length, "screen configs");
                     }
                 } catch (e) {
-                    console.log("❌ Error parsing settings.json:", e);
+                    console.log("Error parsing settings.json:", e);
                 }
                 buffer = "";
             } else if (running) {
@@ -94,7 +114,7 @@ QtObject {
         }
 
         stdout: SplitParser {
-            onRead: data => {
+            onRead: (data) => {
                 settingsLoader.buffer += data;
             }
         }
@@ -103,7 +123,10 @@ QtObject {
             onStreamFinished: {
                 if (text.includes("No such file"))
                     console.log("[SettingsManager] settings.json not found");
+
             }
         }
+
     }
+
 }

@@ -3,6 +3,9 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
+// BUG: if the system is already producing sound when this
+// module starts, the canvas wont be drawn.
+// user has to pause all music and restart quickshell/the module
 Item {
     id: audiowaveModule
 
@@ -78,17 +81,16 @@ Item {
         command: [Quickshell.env("HOME") + "/.config/quickshell/AudioBackend/bin/audio-backend"]
 
         stdout: SplitParser {
-            onRead: (line) => {
+            onRead: line => {
                 const parts = line.trim().split(";");
                 if (parts.length === 0)
-                    return ;
+                    return;
 
-                audiowaveModule.fftBars = parts.map((p) => {
+                audiowaveModule.fftBars = parts.map(p => {
                     return parseFloat(p) || 0;
                 });
             }
         }
-
     }
 
     Timer {
@@ -120,7 +122,7 @@ Item {
         onPaint: {
             var ctx = getContext("2d");
             if (!ctx)
-                return ;
+                return;
 
             // GRADIENT FOR LINE STROKE
             let gradient = ctx.createLinearGradient(0, 0, width, 0);
@@ -171,7 +173,6 @@ Item {
             duration: 150
             easing.type: Easing.OutCubic
         }
-
     }
 
     Behavior on lineThickness {
@@ -179,7 +180,6 @@ Item {
             duration: 150
             easing.type: Easing.OutCubic
         }
-
     }
 
     Behavior on frequency {
@@ -187,7 +187,5 @@ Item {
             duration: 250
             easing.type: Easing.InOutCubic
         }
-
     }
-
 }

@@ -1,6 +1,5 @@
 import "../.."
 import QtQuick
-import Quickshell.Io
 
 BaseModule {
     id: gpuModule
