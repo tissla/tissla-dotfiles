@@ -6,3 +6,8 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.scrolloff = 10
 vim.opt.confirm = true
+
+-- enable wrap
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.breakindent = true

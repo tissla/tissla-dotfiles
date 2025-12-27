@@ -20,5 +20,5 @@ BaseModule {
 
         return "󰝟";
     }
-    moduleText: VolumeProvider.isMuted ? "mute" : VolumeProvider.volume + "%"
+    moduleText: VolumeProvider.volume + "%"
 }

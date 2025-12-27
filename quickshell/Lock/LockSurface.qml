@@ -15,7 +15,10 @@ Item {
             if (!root.screen)
                 return "";
 
-            return Quickshell.env("HOME") + "/.config/wallpapers/nightskyempty.png";
+            if (root.screen.name === "HDMI-A-1")
+                return Quickshell.env("HOME") + "/.config/wallpapers/Anime-Girl-Night-Sky.jpg";
+
+            return Quickshell.env("HOME") + "/.config/wallpapers/MergedSkyVibrantFinal.png";
         }
         fillMode: Image.PreserveAspectCrop
     }
@@ -23,7 +26,7 @@ Item {
     //TODO: switch to mainscreen
     Item {
         anchors.fill: parent
-        visible: root.screen.name === Quickshell.screens[0].name
+        visible: root.screen.name === Quickshell.screens[1].name
 
         // Clock
         Text {

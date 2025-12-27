@@ -28,6 +28,7 @@ Item {
             height: parent.height
             color: "transparent"
             visible: leftRow.children.length > 0
+            radius: Theme.radius
 
             Row {
                 id: leftRow
@@ -43,6 +44,8 @@ Item {
                         radius: Theme.radius
                         width: loader.item ? loader.item.width : 0
                         height: loader.item ? loader.item.height : 0
+                        border.width: 3
+                        border.color: Theme.primary
 
                         Loader {
                             id: loader

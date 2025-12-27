@@ -34,7 +34,17 @@ return {
           },
         },
         -- QML
-        qmlls = {},
+        qmlls = {
+          cmd = { "qmlls6", "-E" },
+          cmd_env = {
+            QMLLS_BUILD_DIRS = "/usr/lib/qt6/qml",
+            QML_IMPORT_PATH = table.concat({
+              "/usr/lib/qt6/qml",
+              vim.fn.expand("~/.config/quickshell"),
+            }, ":"),
+            QML2_IMPORT_PATH = "/usr/lib/qt6/qml",
+          },
+        },
       },
     },
   },
