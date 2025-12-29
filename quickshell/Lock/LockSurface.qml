@@ -1,4 +1,5 @@
 // LockSurface.qml
+import ".."
 import QtQuick
 import Quickshell
 
@@ -16,7 +17,7 @@ Item {
                 return "";
 
             if (root.screen.name === "HDMI-A-1")
-                return Quickshell.env("HOME") + "/.config/wallpapers/Anime-Girl-Night-Sky.jpg";
+                return Quickshell.env("HOME") + "/Pictures/wallpapers/wip-girl.png";
 
             return Quickshell.env("HOME") + "/.config/wallpapers/MergedSkyVibrantFinal.png";
         }
@@ -42,9 +43,9 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: parent.top
             anchors.topMargin: 200
-            color: Qt.rgba(1, 1, 1, 0.6)
+            color: Theme.foregroundAlt
             font.pixelSize: 200
-            font.family: "JetBrains Nerd Font"
+            font.family: Theme.fontMain
             renderType: Text.NativeRendering
 
             Timer {

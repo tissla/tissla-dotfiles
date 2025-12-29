@@ -35,7 +35,7 @@ Rectangle {
                 radius: Theme.radius
                 border.width: 3
                 border.color: isActive ? Theme.primary : "transparent"
-                color: isActive ? Theme.surface : "transparent"
+                color: isActive ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3) : "transparent"
 
                 Text {
                     anchors.centerIn: parent

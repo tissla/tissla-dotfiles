@@ -34,5 +34,7 @@ BaseWidget 1.0 Widgets/BaseWidget.qml
 # modules
 BaseModule 1.0 StatusBar/modules/BaseModule.qml
 
-
+## lock
+LockContext 1.0 Lock/LockContext.qml
+LockSurface 1.0 Lock/LockSurface.qml
 

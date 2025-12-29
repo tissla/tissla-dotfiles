@@ -1,5 +1,7 @@
 import QtQuick
 import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
 
 ShellRoot {
     id: shellRoot
@@ -43,6 +45,45 @@ ShellRoot {
             source: "Widgets/" + modelData + "Widget.qml"
         }
 
+    }
+
+    // Lock system
+    LockContext {
+        id: lockContext
+
+        onUnlocked: {
+            sessionLock.locked = false;
+        }
+    }
+
+    // session lock
+    WlSessionLock {
+        id: sessionLock
+
+        locked: false
+
+        WlSessionLockSurface {
+            id: lockSurface
+
+            LockSurface {
+                anchors.fill: parent
+                context: lockContext
+                screen: lockSurface.screen
+            }
+
+        }
+
+    }
+
+    IpcHandler {
+        property bool isLocked: sessionLock.locked
+
+        function lock() {
+            sessionLock.locked = true;
+            console.log("LOCK");
+        }
+
+        target: "lock"
     }
 
 }
