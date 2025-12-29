@@ -29,6 +29,9 @@ Rectangle {
                 // hyprland binding
                 property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
+                //animation
+                scale: isActive ? 1 : 0.9
+                //visibility
                 visible: modelData.monitor && modelData.monitor.name === workspaceModule.screen.name && modelData.id != -98
                 width: 40
                 height: 40
@@ -52,6 +55,30 @@ Rectangle {
                     onClicked: {
                         modelData.activate();
                     }
+                }
+
+                Behavior on border.color {
+                    ColorAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuad
+                    }
+
+                }
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: 300
+                        easing.type: Easing.InOutQuad
+                    }
+
+                }
+
+                Behavior on scale {
+                    NumberAnimation {
+                        duration: 300
+                        easing.type: Easing.OutCubic
+                    }
+
                 }
 
             }
