@@ -109,25 +109,28 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
 {
   "bar": {
     "transparentBackground": false,
-    "height": 40,
+    "height": 30,
     "position": "bottom"
   },
-  "defaultScreen": {
-    "modules": {
-      "left": ["workspaces"],
-      "center": ["mpris"],
-      "right": ["network", "volume", "calendar", "clock"]
-    }
+  "widgets": {
+    "enabled": ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
   },
-  "screens": []
-}
+  "screens": [
+    {
+      "isPrimary": true,
+      "modules": {
+        "left": ["workspaces"],
+        "center": ["logo"],
+        "right": ["cpu", "volume", "calendar", "clock"]
+      }
+    },
 EOF
 
 # setup symlinks
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/rofi" "$USER_CONFIG/rofi"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/waybar" "$USER_CONFIG/waybar"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/Kvantum" "$USER_CONFIG/Kvantum"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/hypr" "$USER_CONFIG/hypr"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"

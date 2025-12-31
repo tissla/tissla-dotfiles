@@ -40,12 +40,9 @@ Item {
                     model: statusBar.config.left
 
                     Rectangle {
-                        color: Theme.backgroundAlt
-                        radius: Theme.radius
+                        color: "transparent"
                         width: loader.item ? loader.item.width : 0
                         height: loader.item ? loader.item.height : 0
-                        border.width: 3
-                        border.color: Theme.primary
 
                         Loader {
                             id: loader

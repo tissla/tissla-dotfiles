@@ -10,7 +10,7 @@ QtObject {
     property int barHeight: 40
     property string barPosition: "bottom"
     // widgets
-    property var enabledWidgets: ["calendar", "cpuram", "devices", "gpu", "volume", "network"]
+    property var enabledWidgets: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
     // screen config map binding
     property var screenConfigs: ({
     })
