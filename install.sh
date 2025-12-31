@@ -26,6 +26,7 @@ PKGS=(
     kvantum-qt5
     qt6ct
     qt5ct
+    jq
     swww
     adwaita-icon-theme      # standard cursor/icons
     pipewire                # audio

@@ -1,7 +1,3 @@
-## EDIT COLORS / FONTS HERE
-
-## run ./build-theme.sh and reload your system to use the new colors
-
 ## COLORS
 CLR_BG="#1e1b29"
 CLR_BG_DARK="#41395E"
@@ -41,25 +37,3 @@ FONT_SIZE=12
 FONT_STYLE="bold"
 
 
-## transparency value cheatsheet
-# FF - 100%
-# F2 - 95%
-# E6 - 90%
-# D9 - 85%
-# CC - 80%
-# BF - 75%
-# B3 - 70%
-# A6 - 65%
-# 99 - 60%
-# 8C - 55%
-# 80 - 50%
-# 73 - 45%
-# 66 - 40%
-# 59 - 35%
-# 4D - 30%
-# 40 - 25%
-# 33 - 20%
-# 26 - 15%
-# 1A - 10%
-# 0D - 5%
-# 00 - 0%

@@ -1,38 +1,147 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+DOTFILES="$HOME/Dotfiles"
+THEMES_JSON="$DOTFILES/themes/themes.json"
+ACTIVE_THEME=$(jq -r '.active' "$THEMES_JSON")
 
-# load theme to generate
-source theme.env
-
-# remove hash func
-strip_hash() {
-  echo "${1#\#}"
+# Helper functions
+get_color() {
+    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .colors.$1" "$THEMES_JSON"
 }
 
+get_font() {
+    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .fonts.$1" "$THEMES_JSON"
+}
 
-mkdir -p theme
+get_value() {
+    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .values.$1" "$THEMES_JSON"
+}
 
-###############################################################################
-# theme.toml
-###############################################################################
-cat > theme/theme.toml <<EOF
+get_path() {
+    local path=$(jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .paths.$1" "$THEMES_JSON")
+    echo "${path//\$HOME/$HOME}"
+}
+
+get_spacing() {
+    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .spacing.$1" "$THEMES_JSON"
+}
+
+get_fontsize() {
+    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .fontSizes.$1" "$THEMES_JSON"
+}
+
+strip_hash() {
+    echo "${1#\#}"
+}
+
+# Quickshell
+cat >"$HOME/.config/quickshell/Theme.qml" <<EOF
+import QtQuick
+import Quickshell
+pragma Singleton
+
+QtObject {
+    id: theme
+    
+    // COLORS
+    property color background: "#CC$(strip_hash "$(get_color background)")"
+    property color backgroundSolid: "$(get_color background)"
+    property color backgroundAlt: "#E6$(strip_hash "$(get_color primaryMuted)")"
+    property color backgroundAltSolid: "$(get_color muted)"
+    property color primary: "$(get_color primary)"
+    property color foreground: "$(get_color foreground)"
+    property color foregroundAlt: "$(get_color foregroundMuted)"
+    property color inactive: "$(get_color inactive)"
+    property color accent: "$(get_color accent)"
+    property color info: "$(get_color info)"
+    property color surface: "$(get_color surface)"
+    property color active: "$(get_color active)"
+    
+    // ROUNDING
+    property int radius: $(get_value radius)
+    property int radiusAlt: $(get_value radiusAlt)
+    
+    // FONTS
+    property string fontMain: "$(get_font main)"
+    property string fontMono: "$(get_font mono)"
+    
+    // PATHS
+    property string noteDirectory: "$(get_path noteDirectory)"
+    property var wallpapers: $(jq ".themes[] | select(.id == \"$ACTIVE_THEME\") | .wallpapers | map(gsub(\"\\\$DOTFILES\"; \"$DOTFILES\") | gsub(\"\\\$HOME\"; \"$HOME\"))" "$THEMES_JSON")
+    property string logoPath: "$(get_path logoPath)"
+    
+    // SIZES AND GAPS
+    property int borderWidth: $(get_value borderWidth)
+    property int gap: $(get_value gap)
+    
+    // SPACINGS
+    property int spacingXs: $(get_spacing xs)
+    property int spacingSm: $(get_spacing sm)
+    property int spacingMd: $(get_spacing md)
+    property int spacingLg: $(get_spacing lg)
+    property int spacingXl: $(get_spacing xl)
+    
+    // Module dimensions
+    property int moduleWidth: 40
+    property int moduleHeight: SettingsManager.barHeight < 40 ? SettingsManager.barHeight : 40
+    
+    // Font sizes
+    property int fontSizeHuge: $(get_fontsize huge)
+    property int fontSizeXxl: $(get_fontsize xxl)
+    property int fontSizeXl: $(get_fontsize xl)
+    property int fontSizeLg: $(get_fontsize lg)
+    property int fontSizeMd: $(get_fontsize md)
+    property int fontSizeBase: $(get_fontsize base)
+    property int fontSizeSm: $(get_fontsize sm)
+    property int fontSizeXs: $(get_fontsize xs)
+    property int fontSizeXxs: $(get_fontsize xxs)
+    property int fontSizeTiny: $(get_fontsize tiny)
+    property int fontSizeMicro: $(get_fontsize micro)
+}
+EOF
+
+# Hyprland theme
+cat >"$HOME/.config/hypr/theme.conf" <<EOF
+\$bg        = rgb($(strip_hash "$(get_color background)"))
+\$fg        = rgb($(strip_hash "$(get_color foreground)"))
+\$primary   = rgb($(strip_hash "$(get_color primary)"))
+\$secondary = rgb($(strip_hash "$(get_color primaryMuted)"))
+\$bgalpha   = 0xee$(strip_hash "$(get_color background)")
+\$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
+EOF
+
+# Rofi theme
+cat >"$HOME/.config/rofi/theme.rasi" <<EOF
+* {
+    bg:        $(get_color background)E6;
+    bg-alt:    $(get_color backgroundDark)E6;
+    fg:        $(get_color foreground);
+    primary:   $(get_color primary);
+    secondary: $(get_color secondary);
+    muted:     $(get_color muted);
+    font-mono: "$(get_font main) Regular 10";
+}
+EOF
+
+# Alacritty theme
+cat >"$HOME/.config/alacritty/theme.toml" <<EOF
 [colors.primary]
-background = "0x$(strip_hash "$CLR_BG")"
-foreground = "0x$(strip_hash "$CLR_FG")"
+background = "0x$(strip_hash "$(get_color background)")"
+foreground = "0x$(strip_hash "$(get_color foreground)")"
 
 [colors.normal]
-black   = "0x$(strip_hash "$CLR_BG")"
+black   = "0x$(strip_hash "$(get_color background)")"
 red     = "0xf87171"
 green   = "0x34d399"
 yellow  = "0xfbbf24"
 blue    = "0x1e3a8a"
-magenta = "0x8b5cf6"
+magenta = "0x$(strip_hash "$(get_color primary)")"
 cyan    = "0x22d3ee"
 white   = "0xf9fafb"
 
 [colors.bright]
-black   = "0x$(strip_hash "${CLR_PRIMARY_MUTED}")"
+black   = "0x$(strip_hash "$(get_color primaryMuted)")"
 red     = "0xf87171"
 green   = "0x34d399"
 yellow  = "0xfbbf24"
@@ -42,78 +151,8 @@ cyan    = "0x7dd3fc"
 white   = "0xffffff"
 
 [font.normal]
-family = "$FONT_MONO"
-style = "$FONT_STYLE"
+family = "$(get_font mono)"
+style = "Regular"
 EOF
 
-###############################################################################
-# theme.conf
-###############################################################################
-cat > theme/theme.conf <<EOF
-\$bg        = rgb($(strip_hash "$CLR_BG"))
-\$fg        = rgb($(strip_hash "$CLR_FG"))
-\$primary   = rgb($(strip_hash "$CLR_PRIMARY"))
-\$secondary = rgb($(strip_hash "$CLR_PRIMARY_MUTED"))
-
-\$bgalpha   = 0xee$(strip_hash "$CLR_BG")
-\$mutedalpha = 0xaa$(strip_hash "$CLR_MUTED")
-
-EOF
-
-###############################################################################
-# theme.rasi
-###############################################################################
-
-FONT_STYLE_ROFI="$(printf '%s' "$FONT_STYLE" | sed 's/.*/\u&/')"
-
-cat > theme/theme.rasi <<EOF
-* {
-    bg:        ${CLR_BG}E6;
-    bg-alt:    ${CLR_BG_DARK}E6;
-    fg:        ${CLR_FG};
-    primary:   ${CLR_PRIMARY};
-    secondary: ${CLR_SECONDARY};
-    muted:     ${CLR_MUTED};
-
-	font-mono: "${FONT_MAIN} ${FONT_STYLE_ROFI} ${FONT_SIZE}";
-	font-search: "${FONT_MONO} ${FONT_SIZE_TITLE}";
-}
-EOF
-
-###############################################################################
-# Theme.qml
-###############################################################################
-
-mkdir -p quickshell
-
-## quickshell specific
-cat > quickshell/Theme.qml <<EOF
-import QtQuick
-pragma Singleton
-
-QtObject {
-    id: theme
-
-	property color background: "#CC$(strip_hash "$CLR_BG")"
-	property color backgroundSolid: "${CLR_BG}"
-	property color backgroundAlt: "#E6$(strip_hash "$CLR_PRIMARY_MUTED")"
-	property color backgroundAltSolid: "${CLR_MUTED}"
-    property color primary: "${CLR_PRIMARY}"
-    property color foreground: "${CLR_FG}"
-    property color foregroundAlt: "${CLR_FG_MUTED}"
-    property color inactive: "${CLR_INACTIVE}"
-	property color accent: "${CLR_ACCENT}"
-	property color info: "${CLR_INFO}"
-	property color surface: "${CLR_SURFACE}"
-	property color active: "${CLR_ACTIVE}"
-	property int radius: ${VAL_RAD}
-	property int radiusAlt: ${VAL_RAD_ALT}
-	property string noteDirectory: "${DIR_OBSIDIAN}"
-	property string fontMain: "${FONT_MAIN}"
-	property string fontMono: "${FONT_MONO}"
-}
-EOF
-
-
-
-echo "Themes generated!"
+echo "> Theme files generated for: $ACTIVE_THEME"
