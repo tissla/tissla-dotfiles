@@ -11,7 +11,7 @@ Rectangle {
     radius: Theme.radius
     width: workspaceModule ? workspaceModule.width : 0
     height: workspaceModule ? workspaceModule.height : 0
-    border.width: 3
+    border.width: Theme.borderWidth
     border.color: Theme.primary
 
     Row {
@@ -30,13 +30,13 @@ Rectangle {
                 property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === modelData.id
 
                 //animation
-                scale: isActive ? 1 : 0.9
+                scale: isActive ? 1 : 0.8
                 //visibility
                 visible: modelData.monitor && modelData.monitor.name === workspaceModule.screen.name && modelData.id != -98
-                width: 40
-                height: 40
+                width: Theme.moduleWidth
+                height: Theme.moduleHeight
                 radius: Theme.radius
-                border.width: 3
+                border.width: Theme.borderWidth
                 border.color: isActive ? Theme.primary : "transparent"
                 color: isActive ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3) : "transparent"
 
@@ -44,8 +44,8 @@ Rectangle {
                     anchors.centerIn: parent
                     text: modelData.id
                     font.family: Theme.fontMain
-                    font.pixelSize: 15
-                    font.weight: 700
+                    font.pixelSize: Theme.fontSizeBase
+                    font.weight: Font.Bold
                     color: isActive ? Theme.foreground : Theme.foregroundAlt
                 }
 

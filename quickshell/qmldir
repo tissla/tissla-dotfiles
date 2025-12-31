@@ -25,7 +25,7 @@ singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
 GaugeWidget 1.0 Resources/GaugeWidget.qml
 ThermometerWidget 1.0 Resources/ThermometerWidget.qml
 
-## manager
+## managers
 singleton WidgetManager 1.0 WidgetManager.qml
 
 ## basewidget

@@ -17,7 +17,7 @@ Item {
     required property int widgetHeight
     // position data
     property int xPos: 0
-    property int yPos: 20
+    property int yPos: Theme.gap
     // panel visibility
     property alias widgetVisible: panel.visible
 
@@ -46,12 +46,13 @@ Item {
                     }
                 }
                 if (targetScreen) {
+                    yPos = SettingsManager.barPosition === "top" ? targetScreen.height - widgetHeight - SettingsManager.barHeight - Theme.gap : Theme.gap;
                     let relativeX = pos.x - targetScreen.x;
-                    xPos = Math.max(10, Math.min(relativeX - (widgetWidth / 2), targetScreen.width - widgetWidth - 20));
+                    xPos = Math.max(10, Math.min(relativeX - (widgetWidth / 2), targetScreen.width - widgetWidth - Theme.gap));
                     console.log("Displaying widget on screen:", targetScreen.name, "screen.x:", targetScreen.x, "relative X:", relativeX, "final xPos:", xPos);
                 }
             } else {
-                yPos = 20;
+                yPos = Theme.gap;
             }
             // notify owner(s) about visibility change
             let modules = WidgetManager.moduleRegistry[widgetId];
@@ -60,6 +61,7 @@ Item {
                 for (let i = 0; i < modules.length; i++) {
                     if (modules[i] && modules[i].onWidgetVisibilityChanged)
                         modules[i].onWidgetVisibilityChanged(visible);
+
                 }
             }
         }
@@ -70,7 +72,6 @@ Item {
         }
 
         // position from left, static on bottom
-        // TODO: make dynamic (for example if bar and modules are on top)
         margins {
             bottom: yPos
             left: xPos
@@ -81,5 +82,7 @@ Item {
             anchors.fill: parent
             sourceComponent: baseWidget.widgetComponent
         }
+
     }
+
 }

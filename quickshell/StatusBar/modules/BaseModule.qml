@@ -30,7 +30,7 @@ Item {
     }
 
     width: moduleWidth
-    height: 40
+    height: Theme.moduleHeight
 
     // content container
     Rectangle {
@@ -52,13 +52,13 @@ Item {
 
             visible: !baseModule.customContents
             anchors.centerIn: parent
-            spacing: 8
+            spacing: Theme.spacingSm
 
             Text {
                 visible: baseModule.moduleIcon !== ""
                 text: baseModule.moduleIcon
-                font.pixelSize: 18
-                width: 20
+                font.pixelSize: Theme.fontSizeLg
+                width: Theme.spacingLg
                 font.family: Theme.fontMain
                 color: baseModule.isPressed ? Theme.backgroundSolid : Theme.primary
                 anchors.verticalCenter: parent.verticalCenter
@@ -68,7 +68,7 @@ Item {
                 visible: baseModule.moduleText !== ""
                 text: baseModule.moduleText
                 font.family: Theme.fontMain
-                font.pixelSize: 15
+                font.pixelSize: Theme.fontSizeBase
                 font.weight: Font.Bold
                 color: baseModule.isPressed ? Theme.backgroundSolid : Theme.foregroundAlt
                 anchors.verticalCenter: parent.verticalCenter

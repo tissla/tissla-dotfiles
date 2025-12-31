@@ -127,7 +127,7 @@ QtObject {
                     // Start monitoring now that we have interface
                     monitorTimer.start();
                 } else {
-                    console.log(" No active network interface found");
+                    console.log("No active network interface found");
                 }
             }
         }

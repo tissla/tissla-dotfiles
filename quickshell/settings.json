@@ -1,8 +1,11 @@
 {
   "bar": {
     "transparentBackground": false,
-    "height": 40,
-    "position": "bottom"
+    "height": 60,
+    "position": "top"
+  },
+  "widgets": {
+    "enabled": ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
   },
   "screens": [
     {

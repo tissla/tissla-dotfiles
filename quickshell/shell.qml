@@ -35,9 +35,9 @@ ShellRoot {
 
     }
 
-    // TODO: add to settings instead
+    // Widgets
     Variants {
-        model: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
+        model: SettingsManager.enabledWidgets
 
         Loader {
             property var modelData

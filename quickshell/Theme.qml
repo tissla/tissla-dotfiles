@@ -27,8 +27,30 @@ QtObject {
     // PATHS
     // notes
     property string noteDirectory: Quickshell.env("HOME") + "/Documents/Todo"
-    // wallpapers
     property var wallpapers: [Quickshell.shellDir + "/../wallpapers/wip-girl.png", Quickshell.shellDir + "/../wallpapers/MergedSkyVibrantFinal.png"]
-    // logo path
     property string logoPath: Quickshell.env("HOME") + "/Pictures/logos/logo.png"
+    // SIZES AND GAPS
+    property int borderWidth: 3
+    property int gap: 20
+    // SPACINGS
+    property int spacingXs: 4
+    property int spacingSm: 8
+    property int spacingMd: 12
+    property int spacingLg: 20
+    property int spacingXl: 30
+    // Module dimensions
+    property int moduleWidth: 40
+    property int moduleHeight: SettingsManager.barHeight < 40 ? SettingsManager.barHeight : 40
+    // Font sizes
+    property int fontSizeHuge: 200
+    property int fontSizeXxl: 48
+    property int fontSizeXl: 20
+    property int fontSizeLg: 18
+    property int fontSizeMd: 16
+    property int fontSizeBase: 15
+    property int fontSizeSm: 14
+    property int fontSizeXs: 13
+    property int fontSizeXxs: 12
+    property int fontSizeTiny: 11
+    property int fontSizeMicro: 10
 }

@@ -13,18 +13,6 @@ QtObject {
     property Timer updateTimer
     property Process checkControllerProcess
 
-    function toggle() {
-        isVisible = !isVisible;
-    }
-
-    function show() {
-        isVisible = true;
-    }
-
-    function hide() {
-        isVisible = false;
-    }
-
     updateTimer: Timer {
         interval: 5000
         running: true

@@ -72,7 +72,7 @@ Item {
     }
 
     width: 1200
-    height: 40
+    height: Theme.moduleHeight
 
     Process {
         id: audioBackend

@@ -9,6 +9,8 @@ QtObject {
     property bool barTransparentBackground: false
     property int barHeight: 40
     property string barPosition: "bottom"
+    // widgets
+    property var enabledWidgets: ["calendar", "cpuram", "devices", "gpu", "volume", "network"]
     // screen config map binding
     property var screenConfigs: ({
     })
@@ -71,6 +73,7 @@ QtObject {
             if (!running && buffer !== "") {
                 try {
                     const json = JSON.parse(buffer);
+                    // bar
                     if (json.bar) {
                         if (json.bar.transparentBackground !== undefined)
                             settings.barTransparentBackground = json.bar.transparentBackground;
@@ -82,6 +85,11 @@ QtObject {
                             settings.barPosition = json.bar.position;
 
                     }
+                    // widgets
+                    if (json.widgets && json.widgets.enabled)
+                        settings.enabledWidgets = json.widgets.enabled;
+
+                    // modules and screens
                     if (json.screens && Array.isArray(json.screens)) {
                         let configs = {
                         };
