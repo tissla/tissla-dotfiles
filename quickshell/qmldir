@@ -19,7 +19,8 @@ singleton DevicesDataProvider 1.0 Providers/DevicesDataProvider.qml
 singleton PerformanceDataProvider 1.0 Providers/PerformanceDataProvider.qml
 #network
 singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
-
+# battery
+singleton BatteryDataProvider 1.0 Providers/BatteryDataProvider.qml
 
 # resources
 GaugeWidget 1.0 Resources/GaugeWidget.qml

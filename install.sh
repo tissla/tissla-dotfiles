@@ -113,7 +113,7 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
     "position": "bottom"
   },
   "widgets": {
-    "enabled": ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
+    "enabled": ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
   },
   "screens": [
     {
@@ -121,7 +121,7 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
       "modules": {
         "left": ["workspaces"],
         "center": ["logo"],
-        "right": ["cpu", "volume", "calendar", "clock"]
+        "right": ["battery", "cpu", "volume", "calendar", "clock"]
       }
     },
 EOF
