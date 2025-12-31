@@ -16,18 +16,22 @@ Item {
             if (!root.screen)
                 return "";
 
-            if (root.screen.name === "HDMI-A-1")
-                return Quickshell.env("HOME") + "/Pictures/wallpapers/wip-girl.png";
+            let len = Quickshell.screens.length;
+            for (let i = 0; i < len; i++) {
+                if (root.screen.name === Quickshell.screens[i].name)
+                    return Theme.wallpapers[i % Theme.wallpapers.length];
 
-            return Quickshell.env("HOME") + "/.config/wallpapers/MergedSkyVibrantFinal.png";
+            }
+            // default
+            return "";
         }
         fillMode: Image.PreserveAspectCrop
     }
 
-    //TODO: switch to mainscreen
     Item {
         anchors.fill: parent
-        visible: root.screen.name === Quickshell.screens[1].name
+        // clock on primary screen only
+        visible: SettingsManager.isPrimary(root.screen.name)
 
         // Clock
         Text {

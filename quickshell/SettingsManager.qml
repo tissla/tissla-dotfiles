@@ -21,14 +21,6 @@ QtObject {
         settingsLoader.running = true;
     }
 
-    function getLockForScreen(screenName) {
-        const cfg = getScreenConfig(screenName);
-        if (cfg && cfg.lock)
-            return expandPath(cfg.lock);
-
-        return "";
-    }
-
     function expandPath(p) {
         if (!p)
             return "";
@@ -46,10 +38,14 @@ QtObject {
             return {
                 "left": ["workspaces"],
                 "center": [],
-                "right": [""],
-                "lock": ""
+                "right": [""]
             };
         }
+    }
+
+    function isPrimary(screenName) {
+        const cfg = screenConfigs[screenName];
+        return cfg && cfg.isPrimary === true;
     }
 
     Component.onCompleted: {
@@ -98,7 +94,7 @@ QtObject {
                                 "left": screen.modules.left || [],
                                 "center": screen.modules.center || [],
                                 "right": screen.modules.right || [],
-                                "lock": screen.lock || ""
+                                "isPrimary": screen.isPrimary === true
                             };
                         }
                         settings.screenConfigs = configs;

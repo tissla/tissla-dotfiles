@@ -7,21 +7,21 @@
   "screens": [
     {
       "name": "DP-2",
+      "isPrimary": true,
       "modules": {
         "left": ["workspaces"],
         "center": ["audiowave"],
         "right": ["network", "logo"]
-      },
-      "lock": "$HOME/Dotfiles/wallpapers/nightskyempty.png"
+      }
     },
     {
       "name": "HDMI-A-1",
+      "isPrimary": false,
       "modules": {
         "left": ["workspaces"],
         "center": ["mpris"],
         "right": ["devices", "gpu", "cpu", "volume", "calendar", "clock"]
-      },
-      "lock": "$HOME/Dotfiles/wallpapers/nightskyempty.png"
+      }
     }
   ]
 }
