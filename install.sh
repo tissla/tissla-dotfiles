@@ -21,17 +21,20 @@ USER_CONFIG="$USER_HOME/.config"
 
 #  Pacman installations
 PKGS=(
-    base-devel
-    kvantum
-    kvantum-qt5
-    qt6ct
-    qt5ct
-    jq
-    swww
+    base-devel              # if not installed
+    kvantum                 # desktop app theme manager
+    kvantum-qt5             # desktop app theme manager
+    qt6ct                   # qt framework
+    qt5ct                   # qt framework
+    jq                      # json parser
+    swww                    # wallpapermanager
+    fastfetch               # vital
+    btop                    # process monitor
     adwaita-icon-theme      # standard cursor/icons
     pipewire                # audio
     ttf-jetbrains-mono-nerd # font
     sddm                    # desktop manager
+    uwsm                    # wayland session manager
     hyprland                # wm / compositor
     hyprlock                # lockscreen
     hyprpaper               # wallpapers
@@ -83,13 +86,11 @@ monitor = ,preferred,auto,1
 EOF
 # wallpapers
 sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/autostart.conf" >/dev/null <<'EOF'
-$P1 = "$HOME/Dotfiles/wallpapers/nightskyempty.png"
-
-exec-once = swww-daemon & sleep 0.1 && swww img "$P1" --transition-type none
+exec-once = swww-daemon
 exec-once = quickshell &
-
 # lock on startup
-exec-once = quickshell -p "$HOME/.config/quickshell/Lock/LockScreen.qml"
+exec-once = qs ipc call lock lock
+
 EOF
 
 # workspaces
@@ -116,6 +117,9 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
   "widgets": {
     "enabled": ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
   },
+  "theme": "tissla",
+  "wallpapers": [ "default.png" ],
+  "wallpapersPath": "/../wallpapers", 
   "screens": [
     {
       "isPrimary": true,
@@ -138,6 +142,22 @@ sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
 
+# bashrc
+sudo -u "$USER_NAME" tee "$USER_HOME/.bashrc" >/dev/null <<'EOF'
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+PS1='\[\033[01;35m\]\u@\h \[\033[38;2;86;156;214m\]\W\[\033[00m\]$ '
+
+export LS_COLORS='di=38;5;74:ln=01;36:ex=01;32'
+
+EOF
 # Setup sddm
 
 echo "==> Configuring SDDM autologin for user: $USER_NAME"

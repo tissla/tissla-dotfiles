@@ -18,9 +18,7 @@ BaseWidget {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
-    property bool useObsidian: Theme.noteDirectory && Theme.noteDirectory !== ""
-    property string noteFileExtension: useObsidian ? ".md" : ".json"
-    property string notesFilePath: Theme.noteDirectory || Quickshell.env("HOME") + "/.config/quickshell/data/calendar_notes.json"
+    property string notesFilePath: Quickshell.shellDir + "/data/calendar_notes.json"
     property string selectedDayId: ""
     property var notesData: ({
     })
@@ -35,6 +33,32 @@ BaseWidget {
             displayMonth = 11;
             displayYear--;
         }
+    }
+
+    function hasNoteForDay(dayId) {
+        return notesData[dayId] && notesData[dayId].noteColors && notesData[dayId].noteColors.length > 0;
+    }
+
+    function saveAllNotes() {
+        let json = JSON.stringify(notesData, null, 2);
+        saveNotesProcess.noteText = json;
+        saveNotesProcess.running = true;
+    }
+
+    function loadAllNotes() {
+        loadNotesProcess.running = true;
+    }
+
+    function cleanupEmptyNotes() {
+        let newData = {
+        };
+        for (let dayId in notesData) {
+            if (notesData[dayId].noteColors && notesData[dayId].noteColors.length > 0)
+                newData[dayId] = notesData[dayId];
+
+        }
+        notesData = newData;
+        saveAllNotes();
     }
 
     function isNullOrWhiteSpace(str) {
@@ -61,49 +85,6 @@ BaseWidget {
         return Math.ceil((((d - yearStart) / 8.64e+07) + 1) / 7);
     }
 
-    // save notes
-    function saveAllNotes() {
-        if (useObsidian) {
-            let filename = selectedDayId + ".md";
-            let filepath = notesFilePath + "/" + filename;
-            // colors
-            let colors = getNoteColorsForDay(selectedDayId);
-            // ✅ Fixa optional chaining
-            let noteContent = (notesData[selectedDayId] && notesData[selectedDayId].notes) || "";
-            // frontmatter
-            let fullContent = noteContent;
-            if (colors.length > 0) {
-                let frontmatter = "---\ncolors: [" + colors.map((c) => {
-                    return '"' + c + '"';
-                }).join(", ") + "]\n---\n";
-                fullContent = frontmatter + noteContent;
-            }
-            // start
-            saveObsidianProcess.noteText = fullContent;
-            saveObsidianProcess.filepath = filepath;
-            saveObsidianProcess.running = true;
-        } else {
-            const jsonString = JSON.stringify(notesData, null, 2);
-            saveNotesProcess.noteText = jsonString;
-            saveNotesProcess.running = true;
-        }
-    }
-
-    function loadAllNotes() {
-        if (useObsidian)
-            listObsidianNotesProcess.running = true;
-        else
-            loadNotesProcess.running = true;
-    }
-
-    // get notes
-    function getNotesForDay(dayId) {
-        if (notesData && notesData[dayId] && notesData[dayId].notes)
-            return notesData[dayId].notes;
-
-        return "";
-    }
-
     function getNoteColorsForDay(dayId) {
         if (!notesData || typeof notesData !== 'object')
             return [];
@@ -114,93 +95,15 @@ BaseWidget {
         return [];
     }
 
-    function hasNoteForDay(dayId) {
-        if (!notesData)
-            return false;
-
-        if (!dayId)
-            return false;
-
-        if (!notesData[dayId])
-            return false;
-
-        if (useObsidian && notesData[dayId].hasFile)
-            return true;
-
-        if (!notesData[dayId].notes)
-            return false;
-
-        if (isNullOrWhiteSpace(notesData[dayId].notes))
-            return false;
-
-        return true;
-    }
-
-    function saveNoteForDay(dayId, noteText) {
-        // use copy
-        let newData = Object.assign({
-        }, notesData);
-        if (isNullOrWhiteSpace(noteText)) {
-            // empty = remove
-            if (newData[dayId])
-                delete newData[dayId];
-
-        } else {
-            if (!newData[dayId])
-                newData[dayId] = {
-                "noteColors": []
-            };
-
-            newData[dayId].notes = noteText;
-        }
-        // reference change to trigger binding update
-        notesData = newData;
-        saveAllNotes();
-    }
-
-    function cleanupEmptyNotes() {
-        console.log("cleanupEmptyNotes: before =", Object.keys(notesData));
-        let newData = {
-        };
-        for (let dayId in notesData) {
-            if (!notesData.hasOwnProperty(dayId))
-                continue;
-
-            const entry = notesData[dayId] || {
-            };
-            const hasNotes = entry.notes && !isNullOrWhiteSpace(entry.notes);
-            const hasColors = entry.noteColors && entry.noteColors.length > 0;
-            const hasFile = useObsidian && entry.hasFile === true;
-            if (hasNotes || hasColors || hasFile)
-                newData[dayId] = entry;
-            else
-                console.log("cleanupEmptyNotes: removed empty entry for", dayId);
-        }
-        notesData = newData;
-        console.log("cleanupEmptyNotes: after  =", Object.keys(notesData));
-    }
-
     Component.onCompleted: {
-        if (visible) {
+        if (visible)
             resetCalendar();
-            loadAllNotes();
-        }
+
     }
     onSelectedDayChanged: {
         if (selectedDay !== -1) {
-            if (saveTimer.running)
-                saveTimer.stop();
-
             selectedDayId = selectedYear + "-" + (selectedMonth + 1).toString().padStart(2, '0') + "-" + selectedDay.toString().padStart(2, '0');
-            // load from data
-            if (useObsidian) {
-                let filename = selectedDayId + ".md";
-                let filepath = notesFilePath + "/" + filename;
-                loadObsidianProcess.filepath = filepath;
-                loadObsidianProcess.running = true;
-            } else {
-                notesEdit.text = getNotesForDay(selectedDayId);
-            }
+            console.log("[Calendar] Selected day ID:", selectedDayId); // Debug
         }
     }
     // update date on show
@@ -217,164 +120,28 @@ BaseWidget {
     widgetId: "calendar"
 
     Process {
-        id: loadObsidianProcess
-
-        property string filepath: ""
-
-        running: false
-        command: ["cat", filepath]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0) {
-                    let colors = [];
-                    let noteContent = text;
-                    if (text.startsWith("---\n")) {
-                        let parts = text.split("---\n");
-                        if (parts.length >= 3) {
-                            let frontmatter = parts[1];
-                            noteContent = parts.slice(2).join("---\n").trim();
-                            let colorMatch = frontmatter.match(/colors:\s*\[(.*?)\]/);
-                            if (colorMatch) {
-                                let colorStr = colorMatch[1];
-                                colors = colorStr.split(",").map((c) => {
-                                    return c.trim().replace(/["']/g, "");
-                                });
-                            }
-                        }
-                    }
-                    let newData = Object.assign({
-                    }, root.notesData);
-                    newData[root.selectedDayId] = {
-                        "notes": noteContent,
-                        "noteColors": colors,
-                        "hasFile": true
-                    };
-                    root.notesData = newData;
-                    if (!isNullOrWhiteSpace(noteContent))
-                        notesEdit.text = noteContent;
-
-                } else {
-                    notesEdit.text = "";
-                }
-            }
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.includes("No such file"))
-                    notesEdit.text = "";
-
-            }
-        }
-
-    }
-
-    // lists the obsidian calendar notes in folder
-    Process {
-        id: listObsidianNotesProcess
-
-        running: false
-        command: ["sh", "-c", "cd '" + notesFilePath + "' 2>/dev/null && " + "for f in *.md; do " + "if [[ $f =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\\.md$ ]]; then " + "echo \"FILE:${f%.md}\"; " + "grep -m 1 'colors:' \"$f\" 2>/dev/null || echo 'colors: []'; " + "fi; " + "done"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0) {
-                    let lines = text.trim().split("\n");
-                    let newData = {
-                    };
-                    let currentFile = "";
-                    for (let line of lines) {
-                        if (line.startsWith("FILE:")) {
-                            currentFile = line.substring(5);
-                            newData[currentFile] = {
-                                "notes": "",
-                                "noteColors": [],
-                                "hasFile": true
-                            };
-                        } else if (line.includes("colors:") && currentFile) {
-                            let colorMatch = line.match(/colors:\s*\[(.*?)\]/);
-                            if (colorMatch) {
-                                let colorStr = colorMatch[1];
-                                let colors = colorStr.split(",").map((c) => {
-                                    return c.trim().replace(/["'\s]/g, "");
-                                }).filter((c) => {
-                                    return c.length > 0;
-                                });
-                                newData[currentFile].noteColors = colors;
-                            }
-                        }
-                    }
-                    root.notesData = newData;
-                    console.log("Loaded", Object.keys(newData).length, "Obsidian notes");
-                }
-            }
-        }
-
-    }
-
-    Process {
-        id: deleteFileProcess
-
-        property string filepath: ""
-
-        running: false
-        command: ["sh", "-c", "[ -f '" + filepath + "' ] && [ ! -s '" + filepath + "' ] && rm '" + filepath + "'"]
-        onRunningChanged: {
-            if (running)
-                console.log("deleteFileProcess running for:", filepath);
-
-        }
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0)
-                    console.log("deleteFile stdout:", text);
-
-            }
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0)
-                    console.log("deleteFile stderr:", text);
-
-            }
-        }
-
-    }
-
-    Process {
-        id: saveObsidianProcess
-
-        property string noteText: ""
-        property string filepath: ""
-
-        running: false
-        command: ["sh", "-c", "mkdir -p '" + notesFilePath + "' && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + filepath + "'"]
-        onRunningChanged: {
-            if (!running)
-                console.log("Saved Obsidian note:", filepath);
-
-        }
-    }
-
-    // default json save note process
-    Process {
         id: saveNotesProcess
 
         property string noteText: ""
 
         running: false
-        command: ["sh", "-c", "mkdir -p ~/.config/quickshell/data && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
+        command: ["sh", "-c", "mkdir -p '" + Quickshell.shellDir + "/data' && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
         onRunningChanged: {
             if (!running)
-                console.log("Saved notes to JSON");
+                console.log("[Calendar] Saved colors");
 
         }
+
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text.length > 0)
+                    console.error("[Calendar] Save error:", text);
+
+            }
+        }
+
     }
 
-    // default json loadNotesProcess
     Process {
         id: loadNotesProcess
 
@@ -386,33 +153,24 @@ BaseWidget {
                 if (text && text.trim().length > 0) {
                     try {
                         root.notesData = JSON.parse(text);
-                        console.log("Loaded notes from JSON");
-                        // Update UI if day chosen
-                        if (root.selectedDay !== -1)
-                            notesEdit.text = root.getNotesForDay(root.selectedDayId);
-
+                        console.log("[Calendar] Loaded colors");
                     } catch (e) {
-                        console.log("Error parsing JSON:", e);
                         root.notesData = {
                         };
                     }
                 } else {
-                    // Empty data
                     root.notesData = {
                     };
-                    console.log("[Calendar] No existing notes file, initialized empty data");
                 }
             }
         }
 
         stderr: StdioCollector {
             onStreamFinished: {
-                // No file handling
-                if (text.includes("No such file")) {
+                if (text.includes("No such file"))
                     root.notesData = {
-                    };
-                    console.log("Notes file doesn't exist yet, initialized empty data");
-                }
+                };
+
             }
         }
 
@@ -427,9 +185,6 @@ BaseWidget {
 
         // Main content - use Column since Grid doesn't support colspan
         Column {
-            // save notes in obsidian format
-            // empty file cleanup
-
             spacing: 12
 
             anchors {
@@ -762,27 +517,6 @@ BaseWidget {
 
                                         }
 
-                                        // has note earmark
-                                        Canvas {
-                                            id: noteIndicator
-
-                                            anchors.top: parent.top
-                                            anchors.right: parent.right
-                                            width: parent.width / 4
-                                            height: parent.height / 4
-                                            visible: root.hasNoteForDay(parent.dayId) || false
-                                            onPaint: {
-                                                var ctx = getContext("2d");
-                                                ctx.fillStyle = Theme.accent;
-                                                ctx.beginPath();
-                                                ctx.moveTo(width, 0);
-                                                ctx.lineTo(0, 0);
-                                                ctx.lineTo(width, height);
-                                                ctx.closePath();
-                                                ctx.fill();
-                                            }
-                                        }
-
                                     }
 
                                 }
@@ -865,51 +599,6 @@ BaseWidget {
                             color: Theme.primary
                         }
 
-                        // Notes area
-                        TextEdit {
-                            id: notesEdit
-
-                            visible: root.selectedDay !== -1
-                            width: parent.width
-                            height: 115
-                            text: ""
-                            color: Theme.foreground
-                            font.family: Theme.fontMain
-                            font.pixelSize: 12
-                            wrapMode: TextEdit.Wrap
-                            selectByMouse: true
-                            cursorVisible: true
-                            activeFocusOnPress: true
-                            onTextChanged: {
-                                if (root.selectedDay !== -1)
-                                    saveTimer.restart();
-
-                            }
-
-                            Timer {
-                                id: saveTimer
-
-                                interval: 1000
-                                repeat: false
-                                onTriggered: {
-                                    if (root.selectedDay !== -1)
-                                        root.saveNoteForDay(root.selectedDayId, notesEdit.text);
-
-                                }
-                            }
-
-                            // Placeholder
-                            Text {
-                                anchors.fill: parent
-                                text: "Add notes..."
-                                color: Theme.inactive
-                                font: parent.font
-                                visible: parent.text === ""
-                                enabled: false
-                            }
-
-                        }
-
                         Row {
                             spacing: 10
                             visible: root.selectedDay !== -1
@@ -937,7 +626,6 @@ BaseWidget {
                                         onClicked: {
                                             if (!root.notesData[root.selectedDayId])
                                                 root.notesData[root.selectedDayId] = {
-                                                "notes": "",
                                                 "noteColors": []
                                             };
 

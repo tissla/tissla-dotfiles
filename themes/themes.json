@@ -30,9 +30,6 @@
         "borderWidth": 3,
         "gap": 20
       },
-      "paths": {
-        "noteDirectory": "$HOME/Documents/Todo"
-      },
       "spacing": {
         "xs": 4,
         "sm": 8,
@@ -83,9 +80,6 @@
         "radiusAlt": 8,
         "borderWidth": 3,
         "gap": 20
-      },
-      "paths": {
-        "noteDirectory": "$HOME/Documents/Todo"
       },
       "spacing": {
         "xs": 4,

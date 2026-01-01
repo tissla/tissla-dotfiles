@@ -85,9 +85,6 @@ QtObject {
     property string fontMain: "$(get_font main)"
     property string fontMono: "$(get_font mono)"
     
-    // PATHS
-    property string noteDirectory: "$(get_path noteDirectory)"
-    
     // SIZES AND GAPS
     property int borderWidth: $(get_value borderWidth)
     property int gap: $(get_value gap)
