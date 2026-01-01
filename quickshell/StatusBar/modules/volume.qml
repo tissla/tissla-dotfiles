@@ -21,4 +21,5 @@ BaseModule {
         return "󰝟";
     }
     moduleText: VolumeProvider.volume + "%"
+    textWidth: Theme.fontSizeBase * 2
 }

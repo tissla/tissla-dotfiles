@@ -11,6 +11,9 @@ Item {
     property bool widgetActive: false
     property string moduleIcon: ""
     property string moduleText: ""
+    // textWidth can be used to keep dynamic values from altering module position.
+    // will default to implicitWidth of the text block if unset
+    property int textWidth: 0
     // visual state
     property bool isPressed: widgetActive
     property bool isHovered: false
@@ -67,6 +70,7 @@ Item {
             Text {
                 visible: baseModule.moduleText !== ""
                 text: baseModule.moduleText
+                width: baseModule.textWidth > 0 ? baseModule.textWidth : implicitWidth
                 font.family: Theme.fontMain
                 font.pixelSize: Theme.fontSizeBase
                 font.weight: Font.Bold

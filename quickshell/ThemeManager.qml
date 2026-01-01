@@ -17,7 +17,7 @@ QtObject {
     property string themesPath: Quickshell.shellDir + "/../themes/themes.json"
     // theme params
     property var availableThemes: []
-    property var activeTheme: SettingsManager.theme
+    property string activeTheme: SettingsManager.theme
 
     // set theme from themesData
     function setTheme(themeId) {

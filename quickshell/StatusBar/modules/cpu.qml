@@ -10,4 +10,5 @@ BaseModule {
     Component.onCompleted: {
         WidgetManager.registerModule(widgetId, this);
     }
+    textWidth: Theme.fontSizeBase * 2
 }

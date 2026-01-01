@@ -13,4 +13,5 @@ BaseModule {
         WidgetManager.registerModule(widgetId, this);
         console.log("[GpuModule] Using GPU vendor:", GpuDataProvider.gpuVendor);
     }
+    textWidth: Theme.fontSizeBase * 2
 }

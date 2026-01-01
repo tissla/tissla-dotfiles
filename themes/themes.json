@@ -3,19 +3,19 @@
     {
       "id": "mocha",
       "colors": {
-        "background": "#181622",
-        "backgroundDark": "#241f33",
-        "foreground": "#d7d6e8",
-        "foregroundMuted": "#a7a3be",
-        "primary": "#a48cfb",
-        "primaryMuted": "#3d335a",
-        "secondary": "#4f3f78",
-        "accent": "#f2937e",
-        "info": "#73b4e6",
-        "surface": "#2d2940",
-        "active": "#8ad370",
-        "inactive": "#5e5b73",
-        "muted": "#3b364d"
+        "background": "#1e1e2e",
+        "backgroundDark": "#181825",
+        "foreground": "#cdd6f4",
+        "foregroundMuted": "#bac2de",
+        "primary": "#cba6f7",
+        "primaryMuted": "#45475a",
+        "secondary": "#313244",
+        "accent": "#fab387",
+        "info": "#89b4fa",
+        "surface": "#45475a",
+        "active": "#a6e3a1",
+        "inactive": "#6c7086",
+        "muted": "#313244"
       },
       "fonts": {
         "main": "JetBrains Nerd Font",
