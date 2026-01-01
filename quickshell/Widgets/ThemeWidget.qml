@@ -44,10 +44,31 @@ BaseWidget {
 
                     width: parent.width
                     height: parent.height - wpHeader.height
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
                     ScrollBar.vertical.policy: ScrollBar.AlwaysOff
+                    contentWidth: wallpaperRow.implicitWidth
+                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
+                    // scrollbar customization
+                    Component.onCompleted: {
+                        ScrollBar.horizontal.height = 18;
+                        ScrollBar.horizontal.contentItem.color = Theme.surface;
+                        ScrollBar.horizontal.contentItem.radius = Theme.radiusAlt;
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        acceptedButtons: Qt.NoButton
+                        onWheel: (wheel) => {
+                            let scrollBar = wallpaperScroll.ScrollBar.horizontal;
+                            let delta = wheel.angleDelta.y;
+                            let step = delta / 3000;
+                            let newPos = Math.max(0, Math.min(1 - scrollBar.size, scrollBar.position - step));
+                            scrollBar.position = newPos;
+                        }
+                    }
 
                     Row {
+                        id: wallpaperRow
+
                         spacing: Theme.spacingSm
                         topPadding: Theme.spacingMd
                         bottomPadding: Theme.spacingMd
@@ -86,11 +107,12 @@ BaseWidget {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     propagateComposedEvents: true
+                                    acceptedButtons: Qt.NoButton
                                     onEntered: screenRow.isVisible = true
                                     onExited: screenRow.isVisible = false
                                 }
 
-                                Row {
+                                Rectangle {
                                     id: screenRow
 
                                     property bool isVisible
@@ -99,50 +121,62 @@ BaseWidget {
                                     anchors.bottom: parent.bottom
                                     anchors.bottomMargin: Theme.spacingMd
                                     anchors.horizontalCenter: parent.horizontalCenter
-                                    spacing: Theme.spacingXs
+                                    radius: Theme.radiusAlt
+                                    color: Theme.background
+                                    width: buttonRow.width + Theme.spacingXs * 2
+                                    height: buttonRow.height + Theme.spacingXs * 2
 
-                                    Repeater {
-                                        id: wpScreens
+                                    Row {
+                                        id: buttonRow
 
-                                        model: Quickshell.screens.length
+                                        spacing: Theme.spacingXs
+                                        padding: Theme.spacingXs
+                                        anchors.centerIn: parent
 
-                                        Rectangle {
-                                            width: Theme.spacingXl
-                                            height: Theme.spacingXl
-                                            radius: Theme.radiusAlt
-                                            color: {
-                                                if (SettingsManager.wallpapers[index] === wallpaperRect.wpFilename)
-                                                    return Theme.primary;
+                                        Repeater {
+                                            id: wpScreens
 
-                                                if (screenMouse.containsMouse)
-                                                    return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.2);
+                                            model: Quickshell.screens.length
 
-                                                return Theme.surface;
-                                            }
+                                            Rectangle {
+                                                width: Theme.spacingXl
+                                                height: Theme.spacingXl
+                                                radius: Theme.radiusAlt
+                                                color: {
+                                                    if (SettingsManager.wallpapers[index] === wallpaperRect.wpFilename)
+                                                        return Theme.primary;
 
-                                            Text {
-                                                visible: parent.visible
-                                                text: index + 1
-                                                font.pixelSize: Theme.fontSizeSm
-                                                font.family: Theme.fontMain
-                                                font.weight: Font.Bold
-                                                color: Theme.foregroundAlt
-                                                anchors.centerIn: parent
-                                            }
+                                                    if (screenMouse.containsMouse)
+                                                        return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.2);
 
-                                            MouseArea {
-                                                id: screenMouse
-
-                                                anchors.fill: parent
-                                                preventStealing: true
-                                                cursorShape: Qt.PointingHandCursor
-                                                onClicked: {
-                                                    // mutate the whole array to trigger propertychange
-                                                    let newWallpapers = SettingsManager.wallpapers.slice();
-                                                    newWallpapers[index] = wallpaperRect.wpFilename;
-                                                    SettingsManager.wallpapers = newWallpapers;
-                                                    SettingsManager.saveSettings();
+                                                    return Theme.surface;
                                                 }
+
+                                                Text {
+                                                    visible: parent.visible
+                                                    text: index + 1
+                                                    font.pixelSize: Theme.fontSizeSm
+                                                    font.family: Theme.fontMain
+                                                    font.weight: Font.Bold
+                                                    color: Theme.foregroundAlt
+                                                    anchors.centerIn: parent
+                                                }
+
+                                                MouseArea {
+                                                    id: screenMouse
+
+                                                    anchors.fill: parent
+                                                    preventStealing: true
+                                                    cursorShape: Qt.PointingHandCursor
+                                                    onClicked: {
+                                                        // mutate the whole array to trigger propertychange
+                                                        let newWallpapers = SettingsManager.wallpapers.slice();
+                                                        newWallpapers[index] = wallpaperRect.wpFilename;
+                                                        SettingsManager.wallpapers = newWallpapers;
+                                                        SettingsManager.saveSettings();
+                                                    }
+                                                }
+
                                             }
 
                                         }

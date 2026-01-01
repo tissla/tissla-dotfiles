@@ -138,6 +138,7 @@ cat >"$HOME/.config/theme/theme.rasi" <<EOF
     secondary: $(get_color secondary);
     muted:     $(get_color muted);
     font-mono: "$(get_font main) $(get_font style | sed 's/.*/\u&/') $(get_font size)";
+    font-search: "$(get_font mono) $(($(get_font size) + 4))";
 }
 EOF
 

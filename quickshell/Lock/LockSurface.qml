@@ -19,7 +19,7 @@ Item {
             let len = Quickshell.screens.length;
             for (let i = 0; i < len; i++) {
                 if (root.screen.name === Quickshell.screens[i].name)
-                    return Quickshell.shellDir + SettingsManager.wallpapers[i % SettingsManager.wallpapers.length];
+                    return WallpaperManager.wallpapersPath + "/" + WallpaperManager.wallpapers[i % SettingsManager.wallpapers.length];
 
             }
             // default

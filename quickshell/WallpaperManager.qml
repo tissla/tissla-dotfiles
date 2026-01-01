@@ -29,10 +29,7 @@ QtObject {
 
         let commands = [];
         for (let i = 0; i < Quickshell.screens.length; i++) {
-            if (!wallpapers[i])
-                continue;
-
-            let wp = wallpapersPath + "/" + wallpapers[i];
+            let wp = wallpapersPath + "/" + wallpapers[i % wallpapers.length];
             let screen = Quickshell.screens[i].name;
             commands.push(`swww img -o ${screen} "${wp}" --transition-type none`);
         }

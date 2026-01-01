@@ -1,7 +1,7 @@
 {
   "bar": {
     "transparentBackground": false,
-    "height": 30,
+    "height": 40,
     "position": "bottom"
   },
   "widgets": {

@@ -20,7 +20,7 @@ QtObject {
     property color active: "#76b900"
     
     // ROUNDING
-    property int radius: 12
+    property int radius: 20
     property int radiusAlt: 8
     
     // FONTS
