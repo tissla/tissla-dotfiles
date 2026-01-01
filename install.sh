@@ -84,15 +84,6 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/monitors.conf" >/dev/null <<'
 monitor = ,preferred,auto,1
 
 EOF
-# wallpapers
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/autostart.conf" >/dev/null <<'EOF'
-exec-once = swww-daemon
-exec-once = quickshell &
-# lock on startup
-exec-once = qs ipc call lock lock
-
-EOF
-
 # workspaces
 sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/workspaces.conf" >/dev/null <<'EOF'
 workspace = 1

@@ -50,9 +50,7 @@ strip_hash() {
 }
 
 mkdir -p "$HOME/.config/quickshell"
-mkdir -p "$HOME/.config/hypr"
-mkdir -p "$HOME/.config/rofi"
-mkdir -p "$HOME/.config/alacritty"
+mkdir -p "$HOME/.config/theme"
 
 # Generate Theme.qml
 cat >"$HOME/.config/quickshell/Theme.qml" <<EOF

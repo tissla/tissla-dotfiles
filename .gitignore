@@ -5,3 +5,9 @@ bin
 data
 Lazy
 .qmlls.ini
+theme
+
+
+user.conf
+workspaces.conf
+monitors.conf
