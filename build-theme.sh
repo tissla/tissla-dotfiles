@@ -168,4 +168,44 @@ family = "$(get_font mono)"
 style = "$(get_font style | sed 's/.*/\u&/')"
 EOF
 
+# generate swaync theme
+cat >"$HOME/.config/swaync/style.css" <<EOF
+* {
+  font-family: $(get_font main);
+  font-size: $(get_font size)px;
+}
+
+.floating-notifications {
+  padding: $(get_value gap)px;
+}
+
+.notification {
+  background: $(get_color background);
+  border: $(get_value borderWidth)px solid $(get_color primary);
+  border-radius: $(get_value radius)px;
+  color: $(get_color foreground);
+  padding: $(get_spacing md)px;
+}
+
+.notification-default-action {
+  background: $(get_color backgroundAlt);
+  color: $(get_color foreground);
+}
+
+.notification-default-action:hover {
+  background: $(get_color primary);
+}
+
+.control-center {
+  background: $(get_color background);
+  border: $(get_value borderWidth)px solid $(get_color primary);
+  border-radius: $(get_value radius)px;
+}
+
+.notification-group {
+  background: $(get_color surface);
+  border-radius: $(get_value radiusAlt)px;
+}
+EOF
+
 echo "✓ Generated theme: $ACTIVE_THEME"

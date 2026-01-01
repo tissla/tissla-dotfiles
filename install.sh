@@ -34,6 +34,8 @@ PKGS=(
     pipewire                # audio
     ttf-jetbrains-mono-nerd # font
     sddm                    # desktop manager
+    libnotify               # notify-send
+    swaync                  # notification daemon
     uwsm                    # wayland session manager
     hyprland                # wm / compositor
     hyprlock                # lockscreen
@@ -70,6 +72,18 @@ sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/Kvantum"
 sudo -u "$USER_NAME" tee "$USER_HOME/.config/Kvantum/kvantum.kvconfig" >/dev/null <<'EOF'
 [General]
 theme=catppuccin-mocha-lavender#
+EOF
+
+# qt5 app theme setup
+sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt5ct/qt5ct.conf" >/dev/null <<'EOF'
+[Appearance]
+style=kvantum
+EOF
+
+# and qt6
+sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt6ct/qt6ct.conf" >/dev/null <<'EOF'
+[Appearance]
+style=kvantum
 EOF
 
 mkdir -p "$USER_CONFIG"
@@ -149,6 +163,11 @@ PS1='\[\033[01;35m\]\u@\h \[\033[38;2;86;156;214m\]\W\[\033[00m\]$ '
 export LS_COLORS='di=38;5;74:ln=01;36:ex=01;32'
 
 EOF
+#generate default theme
+
+echo "==> Generating default theme (tissla)..."
+sudo -u "$USER_NAME" bash "$DOTFILES/scripts/build-theme.sh" "tissla"
+
 # Setup sddm
 
 echo "==> Configuring SDDM autologin for user: $USER_NAME"

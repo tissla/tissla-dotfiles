@@ -15,7 +15,7 @@ Item {
     Rectangle {
         anchors.fill: parent
         // TODO: change to variable
-        color: Theme.background
+        color: SettingsManager.barTransparentBackground ? "transparent" : Theme.background
 
         // Left modules container
         Rectangle {
