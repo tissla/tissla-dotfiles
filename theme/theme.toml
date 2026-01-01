@@ -24,4 +24,4 @@ white   = "0xffffff"
 
 [font.normal]
 family = "JetBrainsMono Nerd Font"
-style = "bold"
+style = "Bold"

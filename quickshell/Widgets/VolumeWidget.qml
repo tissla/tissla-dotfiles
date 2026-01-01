@@ -11,7 +11,7 @@ BaseWidget {
     widgetComponent: Rectangle {
         color: Theme.background
         radius: 20
-        border.width: 3
+        border.width: Theme.borderWidth
         border.color: Theme.primary
 
         Column {

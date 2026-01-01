@@ -5,25 +5,57 @@
     "position": "bottom"
   },
   "widgets": {
-    "enabled": ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
+    "enabled": [
+      "Theme",
+      "Calendar",
+      "CpuRam",
+      "Devices",
+      "Gpu",
+      "Volume",
+      "Network"
+    ]
   },
+  "theme": "tissla",
+  "wallpapers": [
+    "wip-girl.png",
+    "MergedSkyVibrantFinal.png"
+  ],
+  "wallpapersPath": "/../wallpapers",
   "screens": [
     {
       "name": "DP-2",
       "isPrimary": true,
       "modules": {
-        "left": ["workspaces"],
-        "center": ["audiowave"],
-        "right": ["network", "logo"]
+        "left": [
+          "workspaces"
+        ],
+        "center": [
+          "audiowave"
+        ],
+        "right": [
+          "network",
+          "logo"
+        ]
       }
     },
     {
       "name": "HDMI-A-1",
       "isPrimary": false,
       "modules": {
-        "left": ["workspaces"],
-        "center": ["mpris"],
-        "right": ["devices", "gpu", "cpu", "volume", "calendar", "clock"]
+        "left": [
+          "workspaces"
+        ],
+        "center": [
+          "mpris"
+        ],
+        "right": [
+          "devices",
+          "gpu",
+          "cpu",
+          "volume",
+          "calendar",
+          "clock"
+        ]
       }
     }
   ]

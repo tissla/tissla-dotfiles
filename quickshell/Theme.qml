@@ -4,7 +4,7 @@ pragma Singleton
 
 QtObject {
     id: theme
-
+    
     // COLORS
     property color background: "#CC1e1b29"
     property color backgroundSolid: "#1e1b29"
@@ -18,29 +18,33 @@ QtObject {
     property color info: "#559cd6"
     property color surface: "#41395e"
     property color active: "#76b900"
+    
     // ROUNDING
-    property int radius: 20
-    property int radiusAlt: 4
+    property int radius: 12
+    property int radiusAlt: 8
+    
     // FONTS
     property string fontMain: "JetBrains Nerd Font"
     property string fontMono: "JetBrainsMono Nerd Font"
+    
     // PATHS
-    // notes
-    property string noteDirectory: Quickshell.env("HOME") + "/Documents/Todo"
-    property var wallpapers: [Quickshell.shellDir + "/../wallpapers/wip-girl.png", Quickshell.shellDir + "/../wallpapers/MergedSkyVibrantFinal.png"]
-    property string logoPath: Quickshell.env("HOME") + "/Pictures/logos/logo.png"
+    property string noteDirectory: "/home/tissla/Documents/Todo"
+    
     // SIZES AND GAPS
     property int borderWidth: 3
     property int gap: 20
+    
     // SPACINGS
     property int spacingXs: 4
     property int spacingSm: 8
     property int spacingMd: 12
     property int spacingLg: 20
     property int spacingXl: 30
+    
     // Module dimensions
     property int moduleWidth: 40
     property int moduleHeight: SettingsManager.barHeight < 40 ? SettingsManager.barHeight : 40
+    
     // Font sizes
     property int fontSizeHuge: 200
     property int fontSizeXxl: 48

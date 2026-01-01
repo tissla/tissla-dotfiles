@@ -3,7 +3,21 @@ set -euo pipefail
 
 DOTFILES="$HOME/Dotfiles"
 THEMES_JSON="$DOTFILES/themes/themes.json"
-ACTIVE_THEME=$(jq -r '.active' "$THEMES_JSON")
+ACTIVE_THEME="$1"
+if [[ "$ACTIVE_THEME" == "null" || -z "$ACTIVE_THEME" ]]; then
+    echo "Error: No theme specified"
+    exit 1
+fi
+
+if ! command -v jq &>/dev/null; then
+    echo "Error: jq is not installed"
+    exit 1
+fi
+
+if [[ ! -f "$THEMES_JSON" ]]; then
+    echo "Error: $THEMES_JSON not found"
+    exit 1
+fi
 
 # Helper functions
 get_color() {
@@ -35,7 +49,12 @@ strip_hash() {
     echo "${1#\#}"
 }
 
-# Quickshell
+mkdir -p "$HOME/.config/quickshell"
+mkdir -p "$HOME/.config/hypr"
+mkdir -p "$HOME/.config/rofi"
+mkdir -p "$HOME/.config/alacritty"
+
+# Generate Theme.qml
 cat >"$HOME/.config/quickshell/Theme.qml" <<EOF
 import QtQuick
 import Quickshell
@@ -68,8 +87,6 @@ QtObject {
     
     // PATHS
     property string noteDirectory: "$(get_path noteDirectory)"
-    property var wallpapers: $(jq ".themes[] | select(.id == \"$ACTIVE_THEME\") | .wallpapers | map(gsub(\"\\\$DOTFILES\"; \"$DOTFILES\") | gsub(\"\\\$HOME\"; \"$HOME\"))" "$THEMES_JSON")
-    property string logoPath: "$(get_path logoPath)"
     
     // SIZES AND GAPS
     property int borderWidth: $(get_value borderWidth)
@@ -101,8 +118,8 @@ QtObject {
 }
 EOF
 
-# Hyprland theme
-cat >"$HOME/.config/hypr/theme.conf" <<EOF
+# Generate Hyprland theme
+cat >"$HOME/.config/theme/theme.conf" <<EOF
 \$bg        = rgb($(strip_hash "$(get_color background)"))
 \$fg        = rgb($(strip_hash "$(get_color foreground)"))
 \$primary   = rgb($(strip_hash "$(get_color primary)"))
@@ -111,8 +128,8 @@ cat >"$HOME/.config/hypr/theme.conf" <<EOF
 \$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
 EOF
 
-# Rofi theme
-cat >"$HOME/.config/rofi/theme.rasi" <<EOF
+# Generate Rofi theme
+cat >"$HOME/.config/theme/theme.rasi" <<EOF
 * {
     bg:        $(get_color background)E6;
     bg-alt:    $(get_color backgroundDark)E6;
@@ -120,12 +137,12 @@ cat >"$HOME/.config/rofi/theme.rasi" <<EOF
     primary:   $(get_color primary);
     secondary: $(get_color secondary);
     muted:     $(get_color muted);
-    font-mono: "$(get_font main) Regular 10";
+    font-mono: "$(get_font main) $(get_font style | sed 's/.*/\u&/') $(get_font size)";
 }
 EOF
 
-# Alacritty theme
-cat >"$HOME/.config/alacritty/theme.toml" <<EOF
+# Generate Alacritty theme
+cat >"$HOME/.config/theme/theme.toml" <<EOF
 [colors.primary]
 background = "0x$(strip_hash "$(get_color background)")"
 foreground = "0x$(strip_hash "$(get_color foreground)")"
@@ -152,7 +169,7 @@ white   = "0xffffff"
 
 [font.normal]
 family = "$(get_font mono)"
-style = "Regular"
+style = "$(get_font style | sed 's/.*/\u&/')"
 EOF
 
-echo "> Theme files generated for: $ACTIVE_THEME"
+echo "✓ Generated theme: $ACTIVE_THEME"

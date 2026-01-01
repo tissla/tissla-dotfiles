@@ -1,9 +1,13 @@
 # theme
 singleton Theme 1.0 Theme.qml
 
+# thememanager
+singleton ThemeManager 1.0 ThemeManager.qml
+
 # settings
 singleton SettingsManager 1.0 SettingsManager.qml
-
+# wallpapers
+singleton WallpaperManager 1.0 WallpaperManager.qml
 # statusbar
 StatusBar 1.0 StatusBar/StatusBar.qml
 

@@ -5,7 +5,5 @@
     primary:   #8b5cf6;
     secondary: #2b1a3d;
     muted:     #342e4a;
-
-	font-mono: "JetBrains Nerd Font Bold 12";
-	font-search: "JetBrainsMono Nerd Font 14";
+    font-mono: "JetBrains Nerd Font Bold 12";
 }

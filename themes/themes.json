@@ -1,0 +1,113 @@
+{
+  "themes": [
+    {
+      "id": "mocha",
+      "colors": {
+        "background": "#181622",
+        "backgroundDark": "#241f33",
+        "foreground": "#d7d6e8",
+        "foregroundMuted": "#a7a3be",
+        "primary": "#a48cfb",
+        "primaryMuted": "#3d335a",
+        "secondary": "#4f3f78",
+        "accent": "#f2937e",
+        "info": "#73b4e6",
+        "surface": "#2d2940",
+        "active": "#8ad370",
+        "inactive": "#5e5b73",
+        "muted": "#3b364d"
+      },
+      "fonts": {
+        "main": "JetBrains Nerd Font",
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 12,
+        "sizeTitle": 14,
+        "style": "bold"
+      },
+      "values": {
+        "radius": 12,
+        "radiusAlt": 8,
+        "borderWidth": 3,
+        "gap": 20
+      },
+      "paths": {
+        "noteDirectory": "$HOME/Documents/Todo"
+      },
+      "spacing": {
+        "xs": 4,
+        "sm": 8,
+        "md": 12,
+        "lg": 20,
+        "xl": 30
+      },
+      "fontSizes": {
+        "huge": 200,
+        "xxl": 48,
+        "xl": 20,
+        "lg": 18,
+        "md": 16,
+        "base": 15,
+        "sm": 14,
+        "xs": 13,
+        "xxs": 12,
+        "tiny": 11,
+        "micro": 10
+      }
+    },
+    {
+      "id": "tissla",
+      "colors": {
+        "background": "#1e1b29",
+        "backgroundDark": "#41395E",
+        "foreground": "#c9c7d4",
+        "foregroundMuted": "#9ca3af",
+        "primary": "#8b5cf6",
+        "primaryMuted": "#2b263b",
+        "secondary": "#2b1a3d",
+        "accent": "#ff9e64",
+        "info": "#559cd6",
+        "surface": "#41395e",
+        "active": "#76b900",
+        "inactive": "#4b5564",
+        "muted": "#342e4a"
+      },
+      "fonts": {
+        "main": "JetBrains Nerd Font",
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 12,
+        "sizeTitle": 14,
+        "style": "bold"
+      },
+      "values": {
+        "radius": 12,
+        "radiusAlt": 8,
+        "borderWidth": 3,
+        "gap": 20
+      },
+      "paths": {
+        "noteDirectory": "$HOME/Documents/Todo"
+      },
+      "spacing": {
+        "xs": 4,
+        "sm": 8,
+        "md": 12,
+        "lg": 20,
+        "xl": 30
+      },
+      "fontSizes": {
+        "huge": 200,
+        "xxl": 48,
+        "xl": 20,
+        "lg": 18,
+        "md": 16,
+        "base": 15,
+        "sm": 14,
+        "xs": 13,
+        "xxs": 12,
+        "tiny": 11,
+        "micro": 10
+      }
+    }
+  ],
+  "active": "tissla"
+}

@@ -9,18 +9,56 @@ QtObject {
     property bool barTransparentBackground: false
     property int barHeight: 40
     property string barPosition: "bottom"
-    // widgets
-    property var enabledWidgets: ["Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
-    // screen config map binding
+    property string theme: "tissla"
+    property var wallpapers: []
+    property string wallpapersPath: ""
+    property var enabledWidgets: ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network", "Theme"]
     property var screenConfigs: ({
     })
-    property bool autoReload: false
-    property int reloadInterval: 5000
-    property Timer reloadTimer
     property Process settingsLoader
+    property Process settingsSaver
 
     function loadSettings() {
         settingsLoader.running = true;
+    }
+
+    function setTheme(themeId) {
+        console.log("[SettingsManager] setTheme called:", themeId);
+        settings.theme = themeId;
+        saveSettings();
+    }
+
+    function saveSettings() {
+        console.log("[SettingsManager] saveSettings START");
+        let json = {
+            "bar": {
+                "transparentBackground": barTransparentBackground,
+                "height": barHeight,
+                "position": barPosition
+            },
+            "widgets": {
+                "enabled": enabledWidgets
+            },
+            "theme": theme,
+            "wallpapers": wallpapers,
+            "wallpapersPath": wallpapersPath,
+            "screens": []
+        };
+        for (let screenName in screenConfigs) {
+            json.screens.push({
+                "name": screenName,
+                "isPrimary": screenConfigs[screenName].isPrimary || false,
+                "modules": {
+                    "left": screenConfigs[screenName].left || [],
+                    "center": screenConfigs[screenName].center || [],
+                    "right": screenConfigs[screenName].right || []
+                }
+            });
+        }
+        let jsonString = JSON.stringify(json, null, 2);
+        console.log("[SettingsManager] About to save JSON (first 100 chars):", jsonString.substring(0, 100));
+        settingsSaver.jsonData = jsonString;
+        settingsSaver.running = true;
     }
 
     function expandPath(p) {
@@ -55,15 +93,6 @@ QtObject {
         loadSettings();
     }
 
-    reloadTimer: Timer {
-        interval: settings.reloadInterval
-        running: settings.autoReload
-        repeat: true
-        onTriggered: {
-            settings.loadSettings();
-        }
-    }
-
     settingsLoader: Process {
         property string buffer: ""
 
@@ -73,7 +102,6 @@ QtObject {
             if (!running && buffer !== "") {
                 try {
                     const json = JSON.parse(buffer);
-                    // bar
                     if (json.bar) {
                         if (json.bar.transparentBackground !== undefined)
                             settings.barTransparentBackground = json.bar.transparentBackground;
@@ -85,11 +113,18 @@ QtObject {
                             settings.barPosition = json.bar.position;
 
                     }
-                    // widgets
+                    if (json.wallpapers)
+                        settings.wallpapers = json.wallpapers;
+
+                    if (json.theme)
+                        settings.theme = json.theme;
+
+                    if (json.wallpapersPath)
+                        settings.wallpapersPath = json.wallpapersPath;
+
                     if (json.widgets && json.widgets.enabled)
                         settings.enabledWidgets = json.widgets.enabled;
 
-                    // modules and screens
                     if (json.screens && Array.isArray(json.screens)) {
                         let configs = {
                         };
@@ -127,6 +162,28 @@ QtObject {
             onStreamFinished: {
                 if (text.includes("No such file"))
                     console.log("[SettingsManager] settings.json not found");
+
+            }
+        }
+
+    }
+
+    settingsSaver: Process {
+        property string jsonData: ""
+
+        running: false
+        command: ["sh", "-c", "echo '" + jsonData.replace(/'/g, "'\\''") + "' > " + Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
+        onRunningChanged: {
+            console.log("[SettingsManager] Saver running:", running);
+            if (!running)
+                console.log("[SettingsManager] Saved settings.json");
+
+        }
+
+        stderr: StdioCollector {
+            onStreamFinished: {
+                if (text.length > 0)
+                    console.error("[SettingsManager] Save ERROR:", text);
 
             }
         }
