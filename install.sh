@@ -26,6 +26,7 @@ PKGS=(
     kvantum-qt5             # desktop app theme manager
     qt6ct                   # qt framework
     qt5ct                   # qt framework
+    qt6-5compat             # qt framework compat layer
     jq                      # json parser
     swww                    # wallpapermanager
     fastfetch               # vital
@@ -105,13 +106,14 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
     "position": "bottom"
   },
   "widgets": {
-    "enabled": ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network"]
+    "enabled": ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network", "Theme"]
   },
   "theme": "tissla",
   "wallpapers": [ "default.png" ],
   "wallpapersPath": "/../wallpapers", 
   "screens": [
     {
+      "name": "eDP-1",
       "isPrimary": true,
       "modules": {
         "left": ["workspaces"],
