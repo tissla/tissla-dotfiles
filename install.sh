@@ -75,12 +75,14 @@ theme=catppuccin-mocha-lavender#
 EOF
 
 # qt5 app theme setup
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt5ct"
 sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt5ct/qt5ct.conf" >/dev/null <<'EOF'
 [Appearance]
 style=kvantum
 EOF
 
 # and qt6
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt6ct"
 sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt6ct/qt6ct.conf" >/dev/null <<'EOF'
 [Appearance]
 style=kvantum
