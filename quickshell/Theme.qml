@@ -27,9 +27,6 @@ QtObject {
     property string fontMain: "JetBrains Nerd Font"
     property string fontMono: "JetBrainsMono Nerd Font"
     
-    // PATHS
-    property string noteDirectory: "/home/tissla/Documents/Todo"
-    
     // SIZES AND GAPS
     property int borderWidth: 3
     property int gap: 20
