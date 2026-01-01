@@ -30,8 +30,8 @@ Item {
 
     Item {
         anchors.fill: parent
-        // clock on primary screen only
-        visible: SettingsManager.isPrimary(root.screen.name)
+        // clock on primary screen only, or show if only one screen available
+        visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
 
         // Clock
         Text {
