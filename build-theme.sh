@@ -49,11 +49,13 @@ strip_hash() {
     echo "${1#\#}"
 }
 
-mkdir -p "$HOME/.config/quickshell"
-mkdir -p "$HOME/.config/theme"
+## ensure folders exist
+mkdir -p "$HOME/Dotfiles/quickshell"
+mkdir -p "$HOME/Dotfiles/theme"
+mkdir -p "$HOME/Dotfiles/swaync"
 
 # Generate Theme.qml
-cat >"$HOME/.config/quickshell/Theme.qml" <<EOF
+cat >"$HOME/Dotfiles/quickshell/Theme.qml" <<EOF
 import QtQuick
 import Quickshell
 pragma Singleton
@@ -114,7 +116,7 @@ QtObject {
 EOF
 
 # Generate Hyprland theme
-cat >"$HOME/.config/theme/theme.conf" <<EOF
+cat >"$HOME/Dotfiles/theme/theme.conf" <<EOF
 \$bg        = rgb($(strip_hash "$(get_color background)"))
 \$fg        = rgb($(strip_hash "$(get_color foreground)"))
 \$primary   = rgb($(strip_hash "$(get_color primary)"))
@@ -124,7 +126,7 @@ cat >"$HOME/.config/theme/theme.conf" <<EOF
 EOF
 
 # Generate Rofi theme
-cat >"$HOME/.config/theme/theme.rasi" <<EOF
+cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
 * {
     bg:        $(get_color background)E6;
     bg-alt:    $(get_color backgroundDark)E6;
@@ -138,7 +140,7 @@ cat >"$HOME/.config/theme/theme.rasi" <<EOF
 EOF
 
 # Generate Alacritty theme
-cat >"$HOME/.config/theme/theme.toml" <<EOF
+cat >"$HOME/Dotfiles/theme/theme.toml" <<EOF
 [colors.primary]
 background = "0x$(strip_hash "$(get_color background)")"
 foreground = "0x$(strip_hash "$(get_color foreground)")"
@@ -169,7 +171,7 @@ style = "$(get_font style | sed 's/.*/\u&/')"
 EOF
 
 # generate swaync theme
-cat >"$HOME/.config/swaync/style.css" <<EOF
+cat >"$HOME/Dotfiles/swaync/style.css" <<EOF
 * {
   font-family: $(get_font main);
   font-size: $(get_font size)px;

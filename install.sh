@@ -67,39 +67,22 @@ install_aur() {
 echo "==> Installing AUR packages:"
 install_aur kvantum-theme-catppuccin-git
 
-# Kvantum / Catppuccin setup
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/Kvantum"
-sudo -u "$USER_NAME" tee "$USER_HOME/.config/Kvantum/kvantum.kvconfig" >/dev/null <<'EOF'
-[General]
-theme=catppuccin-mocha-lavender#
-EOF
+# create dotfile structure (needed)
+echo "==> Creating Dotfiles structure..."
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/{hypr,quickshell,theme,swaync,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}"
 
-# qt5 app theme setup
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt5ct"
-sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt5ct/qt5ct.conf" >/dev/null <<'EOF'
-[Appearance]
-style=kvantum
-EOF
+# create config files
+echo "==> Creating config files..."
 
-# and qt6
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt6ct"
-sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt6ct/qt6ct.conf" >/dev/null <<'EOF'
-[Appearance]
-style=kvantum
-EOF
-
-mkdir -p "$USER_CONFIG"
-# setup config files
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/hypr"
+# Hypr configs
 sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/user.conf" >/dev/null <<EOF
 user = $USER_NAME
 EOF
 
-# monitor (preferred mode)
 sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/monitors.conf" >/dev/null <<'EOF'
 monitor = ,preferred,auto,1
-
 EOF
+
 # workspaces
 sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/workspaces.conf" >/dev/null <<'EOF'
 workspace = 1
@@ -135,19 +118,29 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
         "center": ["logo"],
         "right": ["battery", "cpu", "volume", "calendar", "clock"]
       }
-    },
+    }
+  ]
+}
 EOF
 
-# setup symlinks
-echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/rofi" "$USER_CONFIG/rofi"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/Kvantum" "$USER_CONFIG/Kvantum"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/hypr" "$USER_CONFIG/hypr"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
+# Kvantum config
+sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/Kvantum/kvantum.kvconfig" >/dev/null <<'EOF'
+[General]
+theme=catppuccin-mocha-lavender#
+EOF
+
+# Qt configs
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt5ct"
+sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt5ct/qt5ct.conf" >/dev/null <<'EOF'
+[Appearance]
+style=kvantum
+EOF
+
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt6ct"
+sudo -u "$USER_NAME" tee "$USER_HOME/.config/qt6ct/qt6ct.conf" >/dev/null <<'EOF'
+[Appearance]
+style=kvantum
+EOF
 
 # bashrc
 sudo -u "$USER_NAME" tee "$USER_HOME/.bashrc" >/dev/null <<'EOF'
@@ -165,10 +158,23 @@ PS1='\[\033[01;35m\]\u@\h \[\033[38;2;86;156;214m\]\W\[\033[00m\]$ '
 export LS_COLORS='di=38;5;74:ln=01;36:ex=01;32'
 
 EOF
+# setup symlinks
+echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/rofi" "$USER_CONFIG/rofi"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/Kvantum" "$USER_CONFIG/Kvantum"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/hypr" "$USER_CONFIG/hypr"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/swaync" "$USER_CONFIG/swaync"
+
 #generate default theme
 
 echo "==> Generating default theme (tissla)..."
-sudo -u "$USER_NAME" bash "$DOTFILES/scripts/build-theme.sh" "tissla"
+sudo -u "$USER_NAME" chmod +x "$USER_HOME/Dotfiles/build-theme.sh"
+sudo -u "$USER_NAME" bash "$USER_HOME/Dotfiles/build-theme.sh" "tissla"
 
 # Setup sddm
 
