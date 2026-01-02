@@ -45,16 +45,17 @@ Item {
 
         Text {
             text: mprisModule.moduleIcon
-            font.pixelSize: 20
+            font.pixelSize: Theme.fontSizeXl
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -2
             font.weight: Font.Bold
         }
 
         Text {
             text: mprisModule.moduleText
             font.family: Theme.fontMain
-            font.pixelSize: 15
+            font.pixelSize: Theme.fontSizeBase
             font.weight: Font.Bold
             color: Theme.foregroundAlt
             elide: Text.ElideRight
