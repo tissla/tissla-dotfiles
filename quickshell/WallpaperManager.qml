@@ -31,7 +31,7 @@ QtObject {
         for (let i = 0; i < Quickshell.screens.length; i++) {
             let wp = wallpapersPath + "/" + wallpapers[i % wallpapers.length];
             let screen = Quickshell.screens[i].name;
-            commands.push(`swww img -o ${screen} "${wp}" --transition-type none`);
+            commands.push(`swww img -o ${screen} "${wp}" --transition-type random`);
         }
         let fullCommand = commands.join(" && ");
         setAllWallpapersProcess.command = ["sh", "-c", fullCommand];

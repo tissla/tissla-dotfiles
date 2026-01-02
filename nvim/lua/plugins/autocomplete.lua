@@ -6,6 +6,9 @@ return {
   opts = function(_, opts)
     local cmp = require("cmp")
 
+    opts.mapping = opts.mapping or {}
+    opts.mapping["<C-Space>"] = cmp.mapping.complete()
+
     cmp.setup.cmdline(":", {
       mapping = cmp.mapping.preset.cmdline(),
       sources = {
@@ -18,7 +21,13 @@ return {
       mapping = cmp.mapping.preset.cmdline(),
       sources = {
         { name = "buffer" },
+        { name = "spell" },
       },
+    })
+
+    opts.sources = cmp.config.sources({
+      { name = "spell" },
+      { name = "buffer" },
     })
   end,
 }

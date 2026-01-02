@@ -45,6 +45,19 @@ return {
             QML2_IMPORT_PATH = "/usr/lib/qt6/qml",
           },
         },
+        -- ltex
+        ltex = {
+          filetypes = { "markdown", "text", "tex" },
+          settings = {
+            ltex = {
+              language = "en-US",
+              enabled = { "en-US", "sv-SE" },
+              additionalRules = {
+                motherTongue = "en",
+              },
+            },
+          },
+        },
       },
     },
   },

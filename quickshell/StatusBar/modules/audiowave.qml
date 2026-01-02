@@ -3,15 +3,12 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 
-// BUG: if the system is already producing sound when this
-// module starts, the canvas wont be drawn.
-// user has to pause all music and restart quickshell/the module
 Item {
     id: audiowaveModule
 
     property var screen: null
-    property var fftBars: []
-    property bool canvasReady: false
+    // initial values are necessary for live restarts
+    property var fftBars: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     // sound params
     property real level: 0
     property real frequency: 0
@@ -24,9 +21,6 @@ Item {
     property real bassAmp: 0
 
     function update() {
-        if (!canvasReady)
-            return ;
-
         // Bars 0-4: LOW (0-200 Hz)
         // - kick drums, base
         let bass = (fftBars[0] + fftBars[1] + fftBars[2] + fftBars[3] + fftBars[4]) / 5;
@@ -124,16 +118,6 @@ Item {
 
         id: canvas
 
-        Component.onCompleted: {
-            console.log("[AudioWave] Canvas completed, size:", width, "x", height);
-            Qt.callLater(function() {
-                if (width > 0 && height > 0) {
-                    audiowaveModule.canvasReady = true;
-                    console.log("[AudioWave] Canvas marked as ready");
-                    requestPaint();
-                }
-            });
-        }
         anchors.fill: parent
         onPaint: {
             var ctx = getContext("2d");
