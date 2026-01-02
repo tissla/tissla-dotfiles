@@ -70,7 +70,7 @@ install_aur kvantum-theme-catppuccin-git
 
 # create dotfile structure (needed)
 echo "==> Creating Dotfiles structure..."
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/{hypr,quickshell,theme,swaync,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}"
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,swaync,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}
 
 # create config files
 echo "==> Creating config files..."
