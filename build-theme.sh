@@ -52,7 +52,6 @@ strip_hash() {
 ## ensure folders exist
 mkdir -p "$HOME/Dotfiles/quickshell"
 mkdir -p "$HOME/Dotfiles/theme"
-mkdir -p "$HOME/Dotfiles/swaync"
 
 # Generate Theme.qml
 cat >"$HOME/Dotfiles/quickshell/Theme.qml" <<EOF
@@ -124,9 +123,6 @@ cat >"$HOME/Dotfiles/theme/theme.conf" <<EOF
 \$bgalpha   = 0xee$(strip_hash "$(get_color background)")
 \$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
 EOF
-# Live update hyprland colors
-hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
-hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
 
 # Generate Rofi theme
 cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
@@ -173,4 +169,8 @@ family = "$(get_font mono)"
 style = "$(get_font style | sed 's/.*/\u&/')"
 EOF
 
+# Live update hyprland colors
+# needs to be at the end of file or it will interrupt other file generation
+hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
+hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
 echo "✓ Generated theme: $ACTIVE_THEME"
