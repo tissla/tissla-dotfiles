@@ -11,6 +11,9 @@ Item {
     property bool widgetActive: false
     property string moduleIcon: ""
     property string moduleText: ""
+    // mouse events
+    property bool enableMouseArea: true
+    property var onScrollCallback: null
     // textWidth can be used to keep dynamic values from altering module position.
     // will default to implicitWidth of the text block if unset
     property int textWidth: 0
@@ -101,12 +104,19 @@ Item {
     MouseArea {
         id: mouseArea
 
+        enabled: baseModule.enableMouseArea
         preventStealing: true
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
         onEntered: isHovered = true
         onExited: isHovered = false
+        onWheel: (wheel) => {
+            let delta = wheel.angleDelta.y / 120;
+            if (baseModule.onScrollCallback)
+                baseModule.onScrollCallback(delta);
+
+        }
         onClicked: (mouse) => {
             let position = mapToGlobal(0, 0);
             WidgetManager.setMousePosition(position, screen);

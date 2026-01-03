@@ -1,6 +1,6 @@
 {
   "bar": {
-    "transparentBackground": true,
+    "transparentBackground": false,
     "height": 40,
     "position": "bottom"
   },
@@ -25,7 +25,7 @@
       "modules": {
         "left": ["workspaces"],
         "center": ["audiowave"],
-        "right": ["network", "logo"]
+        "right": ["systemtray", "vpn", "network", "logo"]
       }
     },
     {

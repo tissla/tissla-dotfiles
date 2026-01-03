@@ -22,4 +22,10 @@ BaseModule {
     }
     moduleText: VolumeProvider.volume + "%"
     textWidth: Theme.fontSizeBase * 2
+    onScrollCallback: (delta) => {
+        if (delta > 0)
+            VolumeProvider.setVolume(VolumeProvider.volume + 5);
+        else
+            VolumeProvider.setVolume(VolumeProvider.volume - 5);
+    }
 }
