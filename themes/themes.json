@@ -153,6 +153,58 @@
         "tiny": 11,
         "micro": 10
       }
+    },
+
+    {
+      "id": "tissla-ocean",
+      "colors": {
+        "background": "#1d3149",
+        "backgroundDark": "#0f2c53",
+        "foreground": "#c9c7d4",
+        "foregroundMuted": "#9ca3af",
+        "primary": "#559cd6",
+        "primaryMuted": "#0f2c53",
+        "secondary": "#2b1a3d",
+        "accent": "#ff9e64",
+        "info": "#559cd6",
+        "surface": "#457fae",
+        "active": "#76b900",
+        "inactive": "#1e394e",
+        "muted": "#285272"
+      },
+      "fonts": {
+        "main": "JetBrains Nerd Font",
+        "mono": "JetBrainsMono Nerd Font",
+        "size": 12,
+        "sizeTitle": 14,
+        "style": "bold"
+      },
+      "values": {
+        "radius": 20,
+        "radiusAlt": 8,
+        "borderWidth": 3,
+        "gap": 20
+      },
+      "spacing": {
+        "xs": 4,
+        "sm": 8,
+        "md": 12,
+        "lg": 20,
+        "xl": 30
+      },
+      "fontSizes": {
+        "huge": 200,
+        "xxl": 48,
+        "xl": 20,
+        "lg": 18,
+        "md": 16,
+        "base": 15,
+        "sm": 14,
+        "xs": 13,
+        "xxs": 12,
+        "tiny": 11,
+        "micro": 10
+      }
     }
   ],
   "active": "tissla"

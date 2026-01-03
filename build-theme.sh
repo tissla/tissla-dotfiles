@@ -124,6 +124,9 @@ cat >"$HOME/Dotfiles/theme/theme.conf" <<EOF
 \$bgalpha   = 0xee$(strip_hash "$(get_color background)")
 \$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
 EOF
+# Live update hyprland colors
+hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
+hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
 
 # Generate Rofi theme
 cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
@@ -168,46 +171,6 @@ white   = "0xffffff"
 [font.normal]
 family = "$(get_font mono)"
 style = "$(get_font style | sed 's/.*/\u&/')"
-EOF
-
-# generate swaync theme
-cat >"$HOME/Dotfiles/swaync/style.css" <<EOF
-* {
-  font-family: $(get_font main);
-  font-size: $(get_font size)px;
-}
-
-.floating-notifications {
-  padding: $(get_value gap)px;
-}
-
-.notification {
-  background: $(get_color background);
-  border: $(get_value borderWidth)px solid $(get_color primary);
-  border-radius: $(get_value radius)px;
-  color: $(get_color foreground);
-  padding: $(get_spacing md)px;
-}
-
-.notification-default-action {
-  background: $(get_color backgroundAlt);
-  color: $(get_color foreground);
-}
-
-.notification-default-action:hover {
-  background: $(get_color primary);
-}
-
-.control-center {
-  background: $(get_color background);
-  border: $(get_value borderWidth)px solid $(get_color primary);
-  border-radius: $(get_value radius)px;
-}
-
-.notification-group {
-  background: $(get_color surface);
-  border-radius: $(get_value radiusAlt)px;
-}
 EOF
 
 echo "✓ Generated theme: $ACTIVE_THEME"

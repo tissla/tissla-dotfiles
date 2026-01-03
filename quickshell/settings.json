@@ -15,26 +15,49 @@
       "Network"
     ]
   },
-  "theme": "tissla",
-  "wallpapers": ["default.png", "default.png"],
+  "theme": "tissla-ocean",
+  "wallpapers": [
+    "default.png",
+    "default.png"
+  ],
   "wallpapersPath": "/../wallpapers",
   "screens": [
     {
       "name": "DP-2",
       "isPrimary": true,
       "modules": {
-        "left": ["workspaces"],
-        "center": ["audiowave"],
-        "right": ["systemtray", "vpn", "network", "logo"]
+        "left": [
+          "workspaces"
+        ],
+        "center": [
+          "audiowave"
+        ],
+        "right": [
+          "systemtray",
+          "vpn",
+          "network",
+          "logo"
+        ]
       }
     },
     {
       "name": "HDMI-A-1",
       "isPrimary": false,
       "modules": {
-        "left": ["workspaces"],
-        "center": ["mpris"],
-        "right": ["devices", "gpu", "cpu", "volume", "calendar", "clock"]
+        "left": [
+          "workspaces"
+        ],
+        "center": [
+          "mpris"
+        ],
+        "right": [
+          "devices",
+          "gpu",
+          "cpu",
+          "volume",
+          "calendar",
+          "clock"
+        ]
       }
     }
   ]

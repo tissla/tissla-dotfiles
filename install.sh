@@ -36,7 +36,6 @@ PKGS=(
     ttf-jetbrains-mono-nerd # font
     sddm                    # desktop manager
     libnotify               # notify-send
-    swaync                  # notification daemon
     uwsm                    # wayland session manager
     hyprland                # wm / compositor
     hyprlock                # lockscreen
@@ -70,7 +69,7 @@ install_aur kvantum-theme-catppuccin-git
 
 # create dotfile structure (needed)
 echo "==> Creating Dotfiles structure..."
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,swaync,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}
 
 # create config files
 echo "==> Creating config files..."
@@ -170,7 +169,6 @@ sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quic
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/swaync" "$USER_CONFIG/swaync"
 
 #generate default theme
 
