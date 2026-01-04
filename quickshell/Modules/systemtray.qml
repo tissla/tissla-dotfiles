@@ -8,6 +8,7 @@ BaseModule {
     id: systemtray
 
     property bool trayToggle: false
+    property real t: trayToggle ? 1 : 0
 
     customContents: true
     // disable baseModules mouse area handling
@@ -28,9 +29,66 @@ BaseModule {
 
     }
 
+    Behavior on t {
+        NumberAnimation {
+            duration: 360
+            easing.type: Easing.OutCubic
+        }
+
+    }
+
     customComponent: Component {
         Row {
-            spacing: Theme.spacingSm
+            spacing: Theme.spacingSm * t
+
+            // "closer"
+            Rectangle {
+                width: Theme.moduleWidth / 2
+                height: Theme.moduleHeight / 2
+                color: "transparent"
+                radius: Theme.radiusAlt
+                visible: systemtray.trayToggle
+                onVisibleChanged: {
+                    if (visible)
+                        ccanvas.requestPaint();
+
+                }
+
+                Canvas {
+                    id: ccanvas
+
+                    anchors.fill: parent
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        if (!ctx)
+                            return ;
+
+                        const w = width, h = height;
+                        // centers
+                        const cx = w / 2, cy = h / 2;
+                        ctx.reset();
+                        ctx.clearRect(0, 0, w, h);
+                        ctx.strokeStyle = Theme.primary;
+                        ctx.lineWidth = 3;
+                        ctx.lineCap = "round";
+                        ctx.lineJoin = "round";
+                        const angle = Math.PI / 2;
+                        ctx.translate(cx, cy);
+                        ctx.rotate(angle);
+                        ctx.translate(-cx, -cy);
+                        // scale
+                        const size = Math.min(w, h) * 0.32;
+                        // draw
+                        ctx.beginPath();
+                        ctx.moveTo(cx - size, cy + size * 0.2);
+                        ctx.lineTo(cx, cy - size * 0.6);
+                        ctx.moveTo(cx + size, cy + size * 0.2);
+                        ctx.lineTo(cx, cy - size * 0.6);
+                        ctx.stroke();
+                    }
+                }
+
+            }
 
             Repeater {
                 model: SystemTray.items
@@ -38,7 +96,7 @@ BaseModule {
                 delegate: Rectangle {
                     required property var modelData
 
-                    width: Theme.moduleWidth / 2
+                    width: (Theme.moduleWidth / 2) * t
                     height: Theme.moduleHeight / 2
                     color: "transparent"
                     radius: Theme.radiusAlt
@@ -85,9 +143,9 @@ BaseModule {
                 Canvas {
                     id: canvas
 
-                    property real t: systemtray.trayToggle ? 1 : 0
+                    property real tt: systemtray.t
 
-                    onTChanged: requestPaint()
+                    onTtChanged: requestPaint()
                     anchors.fill: parent
                     onPaint: {
                         var ctx = getContext("2d");
@@ -103,7 +161,7 @@ BaseModule {
                         ctx.lineWidth = 3;
                         ctx.lineCap = "round";
                         ctx.lineJoin = "round";
-                        const angle = -Math.PI / 2 * t;
+                        const angle = -Math.PI / 2 * tt;
                         ctx.translate(cx, cy);
                         ctx.rotate(angle);
                         ctx.translate(-cx, -cy);
@@ -117,15 +175,6 @@ BaseModule {
                         ctx.lineTo(cx, cy - size * 0.6);
                         ctx.stroke();
                     }
-
-                    Behavior on t {
-                        NumberAnimation {
-                            duration: 220
-                            easing.type: Easing.OutCubic
-                        }
-
-                    }
-
                 }
 
                 MouseArea {
