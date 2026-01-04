@@ -124,7 +124,7 @@ Item {
 
         }
         onClicked: (mouse) => {
-            let position = mapToGlobal(0, 0);
+            let position = mapToGlobal(moduleWidth / 2, 0);
             WidgetManager.setMousePosition(position, screen);
             WidgetManager.toggleWidget(widgetId);
             console.log("TOGGLING WIDGET", baseModule.widgetId, "ON SCREEN", baseModule.screen);
