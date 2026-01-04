@@ -4,7 +4,7 @@ import QtQuick.Controls
 import Quickshell
 
 BaseWidget {
-    widgetId: "themes"
+    widgetId: "theme"
     widgetWidth: 1400
     widgetHeight: 400
 

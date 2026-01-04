@@ -1,8 +1,3 @@
-// inspiration and original by bgibson72
-// source: github.com/bgibson72/yahr-quickshell
-// modified by tissla
-// TODO: Refactor this monstrosity
-
 import ".."
 import QtQuick
 import Quickshell
@@ -107,8 +102,8 @@ BaseWidget {
         }
     }
     // update date on show
-    onWidgetVisibleChanged: {
-        if (widgetVisible) {
+    onVisibleChanged: {
+        if (visible) {
             resetCalendar();
             loadAllNotes();
         } else {
@@ -199,7 +194,7 @@ BaseWidget {
 
                 width: parent.width
                 height: 80
-                color: Theme.backgroundAltSolid
+                color: Theme.surface
                 radius: Theme.radius
 
                 // Function to time display based on current settings
@@ -237,7 +232,7 @@ BaseWidget {
                 Rectangle {
                     width: 380
                     height: parent.height
-                    color: Theme.backgroundAltSolid
+                    color: Theme.surface
                     radius: Theme.radius
 
                     Column {
@@ -286,7 +281,7 @@ BaseWidget {
                                 font.family: Theme.fontMain
                                 font.pixelSize: 18
                                 font.weight: Font.Medium
-                                color: Theme.foregroundAlt
+                                color: Theme.info
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
                             }
@@ -366,7 +361,7 @@ BaseWidget {
                                             return getWeekNumber(date);
                                         }
                                         font.family: Theme.fontMain
-                                        font.pixelSize: 11
+                                        font.pixelSize: Theme.fontSizeSm
                                         font.weight: Font.Bold
                                         font.italic: true
                                         color: Theme.info
@@ -534,7 +529,7 @@ BaseWidget {
                     // fill remaining space, 380 is calendar and 12 for spacing
                     width: parent.width - 380 - 12
                     height: parent.height
-                    color: Theme.backgroundAltSolid
+                    color: Theme.surface
                     radius: Theme.radius
 
                     Column {
@@ -588,7 +583,7 @@ BaseWidget {
                                 let date = new Date(root.selectedYear, root.selectedMonth, root.selectedDay);
                                 return "Week " + root.getWeekNumber(date);
                             }
-                            font.pixelSize: 12
+                            font.pixelSize: Theme.fontSizeXxs
                             color: Theme.foregroundAlt
                         }
 

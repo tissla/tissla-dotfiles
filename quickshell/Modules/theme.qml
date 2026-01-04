@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import Qt5Compat.GraphicalEffects
 import QtQuick
 import Quickshell
@@ -7,10 +7,7 @@ BaseModule {
     customContents: true
     width: Theme.moduleWidth
     height: Theme.moduleHeight
-    widgetId: "themes"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
+    widgetId: "theme"
 
     customComponent: Component {
         Rectangle {
@@ -20,7 +17,7 @@ BaseModule {
                 anchors.centerIn: parent
                 width: Theme.moduleWidth / 2
                 height: Theme.moduleHeight / 2
-                source: Quickshell.shellDir + "/Resources/tissla-free.png"
+                source: Quickshell.shellDir + "/Assets/tissla-free.png"
                 fillMode: Image.PreserveAspectFit
             }
 

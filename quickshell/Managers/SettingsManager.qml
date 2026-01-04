@@ -12,7 +12,6 @@ QtObject {
     property string theme: "tissla"
     property var wallpapers: []
     property string wallpapersPath: ""
-    property var enabledWidgets: ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network", "Theme"]
     property var screenConfigs: ({
     })
     property Process settingsLoader
@@ -36,9 +35,6 @@ QtObject {
                 "height": barHeight,
                 "position": barPosition
             },
-            "widgets": {
-                "enabled": enabledWidgets
-            },
             "theme": theme,
             "wallpapers": wallpapers,
             "wallpapersPath": wallpapersPath,
@@ -61,13 +57,6 @@ QtObject {
         settingsSaver.running = true;
     }
 
-    function expandPath(p) {
-        if (!p)
-            return "";
-
-        return p.replace("$HOME", Quickshell.env("HOME"));
-    }
-
     function getScreenConfig(screenName) {
         console.log("[SettingsManager] Getting config for screen:", screenName);
         if (screenConfigs && screenConfigs[screenName]) {
@@ -78,9 +67,15 @@ QtObject {
             return {
                 "left": ["workspaces"],
                 "center": [],
-                "right": [""]
+                "right": []
             };
         }
+    }
+
+    function getScreenModules(screenName) {
+        const cfg = getScreenConfig(screenName);
+        const mods = (cfg.left || []).concat(cfg.center || [], cfg.right || []);
+        return mods;
     }
 
     function isPrimary(screenName) {
@@ -97,7 +92,7 @@ QtObject {
         property string buffer: ""
 
         running: false
-        command: ["cat", Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
+        command: ["cat", Quickshell.shellDir + "/settings.json"]
         onRunningChanged: {
             if (!running && buffer !== "") {
                 try {
@@ -121,9 +116,6 @@ QtObject {
 
                     if (json.wallpapersPath)
                         settings.wallpapersPath = json.wallpapersPath;
-
-                    if (json.widgets && json.widgets.enabled)
-                        settings.enabledWidgets = json.widgets.enabled;
 
                     if (json.screens && Array.isArray(json.screens)) {
                         let configs = {

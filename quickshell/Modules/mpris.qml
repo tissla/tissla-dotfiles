@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import QtQuick
 import Quickshell.Services.Mpris
 

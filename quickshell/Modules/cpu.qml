@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import QtQuick
 
 BaseModule {
@@ -6,9 +6,6 @@ BaseModule {
 
     moduleIcon: ""
     moduleText: Math.round(PerformanceDataProvider.cpuUsage) + "%"
-    widgetId: "cpuram"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
+    widgetId: "cpu"
     textWidth: Theme.fontSizeBase * 2
 }

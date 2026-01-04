@@ -2,14 +2,18 @@
 singleton Theme 1.0 Theme.qml
 
 # thememanager
-singleton ThemeManager 1.0 ThemeManager.qml
+singleton ThemeManager 1.0 Managers/ThemeManager.qml
 
 # settings
-singleton SettingsManager 1.0 SettingsManager.qml
+singleton SettingsManager 1.0 Managers/SettingsManager.qml
 # wallpapers
-singleton WallpaperManager 1.0 WallpaperManager.qml
+singleton WallpaperManager 1.0 Managers/WallpaperManager.qml
+# widgets
+singleton WidgetManager 1.0 Managers/WidgetManager.qml
+
+
 # statusbar
-StatusBar 1.0 StatusBar/StatusBar.qml
+StatusBar 1.0 Layout/StatusBar.qml
 
 
 ## PROVIDERS
@@ -27,17 +31,14 @@ singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
 singleton BatteryDataProvider 1.0 Providers/BatteryDataProvider.qml
 
 # resources
-GaugeWidget 1.0 Resources/GaugeWidget.qml
-ThermometerWidget 1.0 Resources/ThermometerWidget.qml
-
-## managers
-singleton WidgetManager 1.0 WidgetManager.qml
+Gauge 1.0 Components/Gauge.qml
+Thermometer 1.0 Components/Thermometer.qml
 
 ## basewidget
-BaseWidget 1.0 Widgets/BaseWidget.qml
+BaseWidget 1.0 Core/BaseWidget.qml
 
 # modules
-BaseModule 1.0 StatusBar/modules/BaseModule.qml
+BaseModule 1.0 Core/BaseModule.qml
 
 ## lock
 LockContext 1.0 Lock/LockContext.qml

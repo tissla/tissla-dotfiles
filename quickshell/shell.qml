@@ -6,6 +6,8 @@ import Quickshell.Io
 import Quickshell.Wayland
 
 ShellRoot {
+    // Lock system
+
     id: shellRoot
 
     objectName: "shellRoot"
@@ -37,19 +39,28 @@ ShellRoot {
 
     }
 
-    // Widgets
+    // widgets
     Variants {
-        model: SettingsManager.enabledWidgets
+        model: Quickshell.screens
 
-        Loader {
+        Item {
             property var modelData
 
-            source: "Widgets/" + modelData + "Widget.qml"
+            Variants {
+                model: SettingsManager.getScreenModules(modelData.name)
+
+                Loader {
+                    property var modelData
+
+                    source: Quickshell.shellDir + "/Widgets/" + modelData + "Widget.qml"
+                }
+
+            }
+
         }
 
     }
 
-    // Lock system
     LockContext {
         id: lockContext
 

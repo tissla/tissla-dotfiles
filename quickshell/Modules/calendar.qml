@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import QtQuick
 import Quickshell
 
@@ -8,9 +8,6 @@ BaseModule {
     // connect to calendar
     widgetId: "calendar"
     moduleText: Qt.formatDateTime(date.date, "dd MMM")
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
     moduleIcon: ""
 
     SystemClock {

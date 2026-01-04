@@ -4,7 +4,7 @@ import QtQuick
 BaseWidget {
     id: cpuRamWidget
 
-    widgetId: "cpuram"
+    widgetId: "cpu"
     widgetWidth: 500
     widgetHeight: 220
 
@@ -40,7 +40,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    GaugeWidget {
+                    Gauge {
                         id: cpuGauge
 
                         width: 80
@@ -73,7 +73,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    GaugeWidget {
+                    Gauge {
                         id: ramGauge
 
                         width: 80
@@ -105,7 +105,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    GaugeWidget {
+                    Gauge {
                         id: pumpGauge
 
                         width: 80
@@ -138,7 +138,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    ThermometerWidget {
+                    Thermometer {
                         id: cpuThermo
 
                         width: 40
@@ -172,7 +172,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    ThermometerWidget {
+                    Thermometer {
                         id: liquidThermo
 
                         width: 40

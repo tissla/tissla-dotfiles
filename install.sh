@@ -104,9 +104,6 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
     "height": 30,
     "position": "bottom"
   },
-  "widgets": {
-    "enabled": ["Battery", "Calendar", "CpuRam", "Devices", "Gpu", "Volume", "Network", "Theme"]
-  },
   "theme": "tissla",
   "wallpapers": [ "default.png" ],
   "wallpapersPath": "/../wallpapers", 
@@ -116,7 +113,7 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
       "isPrimary": true,
       "modules": {
         "left": ["workspaces"],
-        "center": ["logo"],
+        "center": ["theme"],
         "right": ["battery", "cpu", "volume", "calendar", "clock"]
       }
     }

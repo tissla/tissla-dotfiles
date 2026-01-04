@@ -56,7 +56,6 @@ mkdir -p "$HOME/Dotfiles/theme"
 # Generate Theme.qml
 cat >"$HOME/Dotfiles/quickshell/Theme.qml" <<EOF
 import QtQuick
-import Quickshell
 pragma Singleton
 
 QtObject {
@@ -65,8 +64,8 @@ QtObject {
     // COLORS
     property color background: "#CC$(strip_hash "$(get_color background)")"
     property color backgroundSolid: "$(get_color background)"
-    property color backgroundAlt: "#E6$(strip_hash "$(get_color primaryMuted)")"
-    property color backgroundAltSolid: "$(get_color muted)"
+    property color backgroundAlt: "#E6$(strip_hash "$(get_color backgroundDark)")"
+    property color backgroundAltSolid: "$(get_color backgroundDark)"
     property color primary: "$(get_color primary)"
     property color foreground: "$(get_color foreground)"
     property color foregroundAlt: "$(get_color foregroundMuted)"
@@ -171,6 +170,9 @@ EOF
 
 # Live update hyprland colors
 # needs to be at the end of file or it will interrupt other file generation
-hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
-hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
+# batched to avoid errors
+{
+    hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
+    hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
+} 2>/dev/null || true
 echo "✓ Generated theme: $ACTIVE_THEME"

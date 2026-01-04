@@ -4,18 +4,7 @@
     "height": 40,
     "position": "bottom"
   },
-  "widgets": {
-    "enabled": [
-      "Theme",
-      "Calendar",
-      "CpuRam",
-      "Devices",
-      "Gpu",
-      "Volume",
-      "Network"
-    ]
-  },
-  "theme": "tissla-ocean",
+  "theme": "tissla",
   "wallpapers": [
     "default.png",
     "default.png"
@@ -36,7 +25,7 @@
           "systemtray",
           "vpn",
           "network",
-          "logo"
+          "theme"
         ]
       }
     },

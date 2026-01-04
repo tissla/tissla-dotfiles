@@ -1,22 +1,21 @@
 import QtQuick
-import Quickshell
 pragma Singleton
 
 QtObject {
     id: theme
     
     // COLORS
-    property color background: "#CC1d3149"
-    property color backgroundSolid: "#1d3149"
-    property color backgroundAlt: "#E60f2c53"
-    property color backgroundAltSolid: "#285272"
-    property color primary: "#559cd6"
+    property color background: "#CC1e1b29"
+    property color backgroundSolid: "#1e1b29"
+    property color backgroundAlt: "#E61d1a29"
+    property color backgroundAltSolid: "#1d1a29"
+    property color primary: "#8b5cf6"
     property color foreground: "#c9c7d4"
     property color foregroundAlt: "#9ca3af"
-    property color inactive: "#1e394e"
+    property color inactive: "#7a82ab"
     property color accent: "#ff9e64"
-    property color info: "#559cd6"
-    property color surface: "#457fae"
+    property color info: "#d4abf8"
+    property color surface: "#58498d"
     property color active: "#76b900"
     
     // ROUNDING

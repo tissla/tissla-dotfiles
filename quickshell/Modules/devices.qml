@@ -1,14 +1,10 @@
-import "../.."
-// StatusBar/modules/devices.qml
+import ".."
 import QtQuick
 
 BaseModule {
     id: usbModule
 
     widgetId: "devices"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
     moduleIcon: DevicesDataProvider.controllerIcon
     moduleText: (!DevicesDataProvider.controllerWired && DevicesDataProvider.controllerConnected) ? (DevicesDataProvider.controllerBattery + "%") : ""
 }

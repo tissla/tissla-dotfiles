@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import QtQuick
 
 BaseModule {
@@ -8,10 +8,6 @@ BaseModule {
 
     widgetId: "network"
     customContents: true
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, networkModule);
-        console.log("[NetworkModule] Registered with WidgetManager on screen:", screen);
-    }
 
     customComponent: Component {
         Row {

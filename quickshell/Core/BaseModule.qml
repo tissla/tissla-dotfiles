@@ -1,5 +1,4 @@
-// StatusBar/modules/BaseModule.qml
-import "../.."
+import ".."
 import QtQuick
 
 Item {
@@ -35,6 +34,12 @@ Item {
         widgetActive = visible;
     }
 
+    Component.onCompleted: {
+        if (!widgetId || widgetId.length === 0)
+            return ;
+
+        WidgetManager.registerModule(widgetId, this);
+    }
     width: moduleWidth
     height: Theme.moduleHeight
 
@@ -83,6 +88,7 @@ Item {
 
         }
 
+        // custom layout
         Loader {
             id: customLoader
 
@@ -109,8 +115,8 @@ Item {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
-        onEntered: isHovered = true
-        onExited: isHovered = false
+        onEntered: baseModule.isHovered = true
+        onExited: baseModule.isHovered = false
         onWheel: (wheel) => {
             let delta = wheel.angleDelta.y / 120;
             if (baseModule.onScrollCallback)
@@ -120,8 +126,8 @@ Item {
         onClicked: (mouse) => {
             let position = mapToGlobal(0, 0);
             WidgetManager.setMousePosition(position, screen);
-            console.log("TOGGLING WIDGET", widgetId, "ON SCREEN", screen);
             WidgetManager.toggleWidget(widgetId);
+            console.log("TOGGLING WIDGET", baseModule.widgetId, "ON SCREEN", baseModule.screen);
         }
     }
 

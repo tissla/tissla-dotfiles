@@ -1,4 +1,4 @@
-import "../.."
+import ".."
 import QtQuick
 
 BaseModule {
@@ -9,9 +9,5 @@ BaseModule {
     widgetId: "gpu"
     moduleIcon: "󰢮"
     moduleText: Math.round(GpuDataProvider.gpuUsage) + "%"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-        console.log("[GpuModule] Using GPU vendor:", GpuDataProvider.gpuVendor);
-    }
     textWidth: Theme.fontSizeBase * 2
 }

@@ -1,13 +1,10 @@
-import "../.."
+import ".."
 import QtQuick
 
 BaseModule {
     id: volumeModule
 
     widgetId: "volume"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
     moduleIcon: {
         if (VolumeProvider.isMuted)
             return "󰝟";

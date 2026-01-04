@@ -107,17 +107,17 @@
       "id": "tissla",
       "colors": {
         "background": "#1e1b29",
-        "backgroundDark": "#41395E",
+        "backgroundDark": "#1d1a29",
         "foreground": "#c9c7d4",
         "foregroundMuted": "#9ca3af",
         "primary": "#8b5cf6",
         "primaryMuted": "#2b263b",
         "secondary": "#2b1a3d",
         "accent": "#ff9e64",
-        "info": "#559cd6",
-        "surface": "#41395e",
+        "info": "#d4abf8",
+        "surface": "#58498d",
         "active": "#76b900",
-        "inactive": "#4b5564",
+        "inactive": "#7a82ab",
         "muted": "#342e4a"
       },
       "fonts": {
@@ -167,7 +167,7 @@
         "secondary": "#2b1a3d",
         "accent": "#ff9e64",
         "info": "#559cd6",
-        "surface": "#457fae",
+        "surface": "#437cab",
         "active": "#76b900",
         "inactive": "#1e394e",
         "muted": "#285272"

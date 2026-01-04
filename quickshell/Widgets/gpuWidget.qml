@@ -40,7 +40,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    GaugeWidget {
+                    Gauge {
                         id: gpuGauge
 
                         width: 80
@@ -73,7 +73,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    GaugeWidget {
+                    Gauge {
                         id: vramGauge
 
                         width: 80
@@ -106,7 +106,7 @@ BaseWidget {
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-                    ThermometerWidget {
+                    Thermometer {
                         id: gpuThermo
 
                         width: 40

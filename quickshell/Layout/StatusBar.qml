@@ -1,11 +1,13 @@
 import ".."
 import QtQuick
+import Quickshell
 
 Item {
     id: statusBar
 
     property var screen: null
     property var config: SettingsManager.getScreenConfig(screen.name)
+    readonly property string mSource: Quickshell.shellDir + "/Modules/"
 
     Component.onCompleted: {
         console.log("[StatusBar] === StatusBar Created ===");
@@ -14,7 +16,6 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        // TODO: change to variable
         color: SettingsManager.barTransparentBackground ? "transparent" : Theme.background
 
         // Left modules container
@@ -23,7 +24,7 @@ Item {
 
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
-            anchors.leftMargin: 10
+            anchors.leftMargin: Theme.spacingSm
             width: leftRow.width
             height: parent.height
             color: "transparent"
@@ -34,7 +35,7 @@ Item {
                 id: leftRow
 
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                spacing: Theme.spacingXs
 
                 Repeater {
                     model: statusBar.config.left
@@ -47,7 +48,7 @@ Item {
                         Loader {
                             id: loader
 
-                            source: "modules/" + modelData + ".qml"
+                            source: statusBar.mSource + modelData + ".qml"
                             // pass screen to the module
                             onLoaded: {
                                 item.screen = statusBar.screen;
@@ -70,14 +71,14 @@ Item {
 
             Row {
                 // offset to get the real center
-                spacing: 4
+                spacing: Theme.spacingXs
                 anchors.centerIn: parent
 
                 Repeater {
                     model: statusBar.config.center
 
                     Loader {
-                        source: "modules/" + modelData + ".qml"
+                        source: statusBar.mSource + modelData + ".qml"
                         onLoaded: {
                             item.screen = statusBar.screen;
                         }
@@ -94,7 +95,7 @@ Item {
             id: rightContainer
 
             anchors.right: parent.right
-            anchors.rightMargin: 10
+            anchors.rightMargin: Theme.spacingMd
             anchors.verticalCenter: parent.verticalCenter
             width: rightRow.width
             height: parent.height
@@ -106,7 +107,7 @@ Item {
 
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                spacing: 8
+                spacing: Theme.spacingMd
 
                 Repeater {
                     model: statusBar.config.right
@@ -121,7 +122,7 @@ Item {
                         Loader {
                             id: rightLoader
 
-                            source: "modules/" + modelData + ".qml"
+                            source: statusBar.mSource + modelData + ".qml"
                             onLoaded: {
                                 item.screen = statusBar.screen;
                             }
