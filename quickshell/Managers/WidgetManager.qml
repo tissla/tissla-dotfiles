@@ -20,11 +20,6 @@ QtObject {
         console.log("[WidgetManager] ScreenName set to:", widgetManager.screenName);
     }
 
-    // helper
-    function getMousePosition() {
-        return position;
-    }
-
     // registers a widget
     function registerWidget(widgetId, widgetRef) {
         widgets[widgetId] = widgetRef;

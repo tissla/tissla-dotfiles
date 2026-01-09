@@ -12,10 +12,19 @@ QtObject {
     property string controllerIcon: "󰖻"
     property Timer updateTimer
     property Process checkControllerProcess
+    property bool isActive: false
+
+    function activate() {
+        this.isActive = true;
+    }
+
+    function deactivate() {
+        this.isActive = false;
+    }
 
     updateTimer: Timer {
         interval: 5000
-        running: true
+        running: devicesData.isActive
         repeat: true
         triggeredOnStart: true
         onTriggered: {

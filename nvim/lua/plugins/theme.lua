@@ -46,5 +46,16 @@ return {
 
     vim.api.nvim_set_hl(0, "Pmenu", { bg = "#2b263b", fg = "#c9c7d4" })
     vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "#1e1b29" })
+
+    -- specific to csharp
+    vim.api.nvim_set_hl(0, "@lsp.type.class.cs", { link = "Type" })
+
+    vim.api.nvim_set_hl(0, "@lsp.type.interface.cs", { link = "Type" })
+    vim.api.nvim_set_hl(0, "@lsp.type.struct.cs", { link = "Type" })
+    vim.api.nvim_set_hl(0, "@lsp.type.enum.cs", { link = "Type" })
+
+    vim.api.nvim_set_hl(0, "@lsp.type.fieldName.cs", { link = "Variable" })
+
+    vim.api.nvim_set_hl(0, "@lsp.type.extensionMethodName.cs", { link = "Function" })
   end,
 }

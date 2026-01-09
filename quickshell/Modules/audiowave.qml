@@ -126,9 +126,10 @@ Item {
 
             // GRADIENT FOR LINE STROKE
             let gradient = ctx.createLinearGradient(0, 0, width, 0);
+            let gw = audiowaveModule.width / 4;
             gradient.addColorStop(0, "transparent");
-            gradient.addColorStop(200 / width, Theme.primary);
-            gradient.addColorStop(1 - 200 / width, Theme.primary);
+            gradient.addColorStop(gw / width, Theme.primary);
+            gradient.addColorStop(1 - gw / width, Theme.primary);
             gradient.addColorStop(1, "transparent");
             // canvas ctx
             ctx.clearRect(0, 0, width, height);

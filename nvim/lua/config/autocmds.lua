@@ -16,3 +16,11 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.textwidth = 0
   end,
 })
+
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  callback = function()
+    if vim.bo.filetype == "" then
+      vim.bo.filetype = "dosini"
+    end
+  end,
+})

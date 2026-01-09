@@ -43,6 +43,7 @@ ShellRoot {
     Variants {
         model: Quickshell.screens
 
+        // per screen item wrapper for widgets
         Item {
             property var modelData
 
