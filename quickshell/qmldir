@@ -10,7 +10,8 @@ singleton SettingsManager 1.0 Managers/SettingsManager.qml
 singleton WallpaperManager 1.0 Managers/WallpaperManager.qml
 # widgets
 singleton WidgetManager 1.0 Managers/WidgetManager.qml
-
+# command runner
+singleton RunCommandService 1.0 Services/RunCommandService.qml
 
 # statusbar
 StatusBar 1.0 Layout/StatusBar.qml

@@ -1,3 +1,4 @@
+import ".."
 // LockContext.qml
 import QtQuick
 import Quickshell
@@ -34,8 +35,10 @@ Scope {
         }
         onCompleted: (result) => {
             if (result === PamResult.Success) {
+                RunCommandService.playSound("/usr/share/sounds/freedesktop/stereo/service-login.oga");
                 root.unlocked();
             } else {
+                RunCommandService.playSound("/usr/share/sounds/freedesktop/stereo/dialog-error.oga");
                 root.currentText = "";
                 root.showFailure = true;
             }
