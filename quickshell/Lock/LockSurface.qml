@@ -33,30 +33,49 @@ Item {
         // clock on primary screen only, or show if only one screen available
         visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
 
-        // Clock
-        Text {
-            id: timeLabel
+        // TODO: move params to a config file
+        Column {
+            // date
+
+            id: dateDisplay
 
             property var date: new Date()
 
-            text: {
-                const hours = this.date.getHours().toString().padStart(2, '0');
-                const minutes = this.date.getMinutes().toString().padStart(2, '0');
-                return `${hours}:${minutes}`;
-            }
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-            anchors.topMargin: 200
-            color: Theme.foregroundAlt
-            font.pixelSize: 200
-            font.family: Theme.fontMain
-            renderType: Text.NativeRendering
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: 200
+            anchors.bottomMargin: 200
+            spacing: 0
 
             Timer {
                 running: true
                 repeat: true
                 interval: 1000
-                onTriggered: timeLabel.date = new Date()
+                onTriggered: dateDisplay.date = new Date()
+            }
+
+            // Clock
+            Text {
+                id: timeLabel
+
+                text: {
+                    const hours = dateDisplay.date.getHours().toString().padStart(2, '0');
+                    const minutes = dateDisplay.date.getMinutes().toString().padStart(2, '0');
+                    return `${hours}:${minutes}`;
+                }
+                color: Theme.foregroundAlt
+                font.pixelSize: 200
+                font.family: Theme.fontMain
+            }
+
+            // Date
+            Text {
+                id: dateLabel
+
+                text: Qt.formatDateTime(dateDisplay.date, "dd MMMM, yyyy")
+                color: Theme.foregroundAlt
+                font.pixelSize: 40
+                font.family: Theme.fontMain
             }
 
         }
