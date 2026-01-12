@@ -35,10 +35,10 @@ Scope {
         }
         onCompleted: (result) => {
             if (result === PamResult.Success) {
-                RunCommandService.playSound("/usr/share/sounds/freedesktop/stereo/service-login.oga");
+                PlaySoundService.playSound("login");
                 root.unlocked();
             } else {
-                RunCommandService.playSound("/usr/share/sounds/freedesktop/stereo/dialog-error.oga");
+                PlaySoundService.playSound("error");
                 root.currentText = "";
                 root.showFailure = true;
             }

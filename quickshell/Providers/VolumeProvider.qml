@@ -1,3 +1,4 @@
+import ".."
 import QtQuick
 import Quickshell.Services.Pipewire
 pragma Singleton
@@ -28,6 +29,7 @@ QtObject {
         sink.audio.volume = newVolume / 100;
         volume = newVolume;
         isMuted = false;
+        PlaySoundService.playSound("volume-change");
     }
 
     function toggleMute() {

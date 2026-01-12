@@ -95,7 +95,7 @@ ShellRoot {
         function lock() {
             sessionLock.locked = true;
             console.log("LOCK");
-            RunCommandService.playSound("/usr/share/sounds/freedesktop/stereo/service-logout.oga");
+            PlaySoundService.playSound("logout");
         }
 
         target: "lock"

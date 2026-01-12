@@ -27,6 +27,7 @@ PanelWindow {
     // set position
     onVisibleChanged: {
         if (visible) {
+            PlaySoundService.playSound("bell");
             let pos = WidgetManager.position;
             let targetScreen = null;
             for (let i = 0; i < Quickshell.screens.length; i++) {
