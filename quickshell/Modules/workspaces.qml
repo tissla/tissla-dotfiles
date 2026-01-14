@@ -3,7 +3,6 @@ import QtQuick
 import Quickshell.Hyprland
 
 pragma ComponentBehavior: Bound;
-
 Rectangle {
     id: root
 

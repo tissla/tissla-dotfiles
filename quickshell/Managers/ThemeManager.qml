@@ -5,9 +5,6 @@ import Quickshell.Io
 pragma Singleton
 
 QtObject {
-    // load themesData
-    // generate theme files (using active on themes.json)
-
     id: themeManager
 
     // process
@@ -68,11 +65,10 @@ QtObject {
         property string themeId: ""
 
         running: false
-        command: [Quickshell.shellDir + "/../build-theme.sh", themeId]
+        command: ["bash", "-c", Quickshell.shellDir + "/../build-theme.sh " + themeId + " >/dev/null 2>&1"]
 
-        stdout: StdioCollector {
-            onStreamFinished: {
-                console.log("[ThemeManager] Generated theme files for theme:", themeId);
+        stdout: SplitParser {
+            onRead: (data) => {
             }
         }
 

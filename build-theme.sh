@@ -123,20 +123,6 @@ cat >"$HOME/Dotfiles/theme/theme.conf" <<EOF
 \$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
 EOF
 
-# Generate Rofi theme
-cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
-* {
-    bg:        $(get_color background)E6;
-    bg-alt:    $(get_color backgroundDark)E6;
-    fg:        $(get_color foreground);
-    primary:   $(get_color primary);
-    secondary: $(get_color secondary);
-    muted:     $(get_color muted);
-    font-mono: "$(get_font main) $(get_font style | sed 's/.*/\u&/') $(get_font size)";
-    font-search: "$(get_font mono) $(($(get_font size) + 4))";
-}
-EOF
-
 # Generate Alacritty theme
 cat >"$HOME/Dotfiles/theme/theme.toml" <<EOF
 [colors.primary]
@@ -168,11 +154,16 @@ family = "$(get_font mono)"
 style = "$(get_font style | sed 's/.*/\u&/')"
 EOF
 
-# Live update hyprland colors
-# needs to be at the end of file or it will interrupt other file generation
-# batched to avoid errors
-{
-    hyprctl keyword general:col.active_border "rgb($(strip_hash "$(get_color primary)"))"
-    hyprctl keyword general:col.inactive_border "rgb($(strip_hash "$(get_color primaryMuted)"))"
-} 2>/dev/null || true
-echo "✓ Generated theme: $ACTIVE_THEME"
+# Generate Rofi theme
+cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
+* {
+    bg:        $(get_color background)E6;
+    bg-alt:    $(get_color backgroundDark)E6;
+    fg:        $(get_color foreground);
+    primary:   $(get_color primary);
+    secondary: $(get_color secondary);
+    muted:     $(get_color muted);
+    font-mono: "$(get_font main) $(get_font style | sed 's/.*/\u&/') $(get_font size)";
+    font-search: "$(get_font mono) $(($(get_font size) + 4))";
+}
+EOF
