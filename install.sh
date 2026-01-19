@@ -29,6 +29,11 @@ PKGS=(
     qt6-5compat             # qt framework compat layer
     jq                      # json parser
     swww                    # wallpapermanager
+    wl-clipboard            # clipboard
+    grimblast               # screenshots
+    tesseract               # base
+    tesseract-data-eng      # eng pack
+    tesseract-data-swe      # swe pack
     fastfetch               # vital
     btop                    # process monitor
     adwaita-icon-theme      # standard cursor/icons
