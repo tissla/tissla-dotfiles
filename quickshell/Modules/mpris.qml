@@ -34,8 +34,9 @@ Item {
         return title;
     }
 
-    width: Math.min(mprisRow.width + 16, 400)
+    width: Math.min(mprisRow.width + 16, 600)
     height: 40
+    clip: true
 
     Row {
         id: mprisRow
@@ -43,9 +44,11 @@ Item {
         anchors.centerIn: parent
         spacing: 8
 
+
         Text {
             text: mprisModule.moduleIcon
             font.pixelSize: Theme.fontSizeXl
+            width: 24
             color: Theme.primary
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -2
@@ -54,6 +57,7 @@ Item {
 
         Text {
             text: mprisModule.moduleText
+            width: Math.min(mprisModule.moduleText.length * Theme.fontSizeBase, 570)
             font.family: Theme.fontMain
             font.pixelSize: Theme.fontSizeBase
             font.weight: Font.Bold
