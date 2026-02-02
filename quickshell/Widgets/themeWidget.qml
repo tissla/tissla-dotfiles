@@ -113,6 +113,33 @@ BaseWidget {
                                 }
 
                                 Rectangle {
+                                    id: isWpIndicator
+
+                                    property bool isVisible: SettingsManager.wallpapers && SettingsManager.wallpapers.indexOf(wallpaperRect.wpFilename) !== -1
+
+                                    visible: isVisible
+                                    anchors.top: parent.top
+                                    anchors.topMargin: Theme.spacingMd
+                                    anchors.right: parent.right
+                                    anchors.rightMargin: Theme.spacingLg
+                                    color: Theme.background
+                                    width: Theme.spacingXl
+                                    height: Theme.spacingXl
+                                    radius: Theme.radiusAlt
+
+                                    Text {
+                                        visible: parent.visible
+                                        text: ""
+                                        font.pixelSize: Theme.fontSizeSm
+                                        font.family: Theme.fontMain
+                                        font.weight: Font.Bold
+                                        color: Theme.primary
+                                        anchors.centerIn: parent
+                                    }
+
+                                }
+
+                                Rectangle {
                                     id: screenRow
 
                                     property bool isVisible

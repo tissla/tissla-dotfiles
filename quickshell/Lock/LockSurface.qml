@@ -66,16 +66,25 @@ Item {
                 color: Theme.foregroundAlt
                 font.pixelSize: 200
                 font.family: Theme.fontMain
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
             }
 
             // Date
             Text {
                 id: dateLabel
 
-                text: Qt.formatDateTime(dateDisplay.date, "dd MMMM, yyyy")
+                text: Qt.formatDateTime(dateDisplay.date, "d MMMM, yyyy")
                 color: Theme.foregroundAlt
                 font.pixelSize: 40
                 font.family: Theme.fontMain
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                anchors.left: parent.left
+                anchors.top: timeLabel.bottom
+                anchors.topMargin: -30
             }
 
         }

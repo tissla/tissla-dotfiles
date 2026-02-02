@@ -10,7 +10,7 @@ return {
               plugins = {
                 pycodestyle = { enabled = false },
                 mccabe = { enabled = false },
-                pyflakes = { enabled = false },
+                pyflakes = { enabled = true },
               },
             },
           },

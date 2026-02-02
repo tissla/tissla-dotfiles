@@ -11,3 +11,6 @@ vim.opt.confirm = true
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.breakindent = true
+
+-- color
+vim.opt.termguicolors = true
