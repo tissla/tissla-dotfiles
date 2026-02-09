@@ -36,80 +36,156 @@ Item {
         property string temp: ""
         property string icon: ""
         property string wText: ""
+        property var futureWeatherPoints: []
 
         anchors.fill: parent
         visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
         Component.onCompleted: {
             WeatherDataProvider.weatherDataReady.connect(function(data) {
-                weatherInfo.temp = data.temp;
-                weatherInfo.icon = data.icon;
-                weatherInfo.wText = data.wText;
-                weatherInfo.latestUpdate = data.latestUpdate;
+                let current = data[0];
+                weatherInfo.temp = current.temp;
+                weatherInfo.icon = current.icon;
+                weatherInfo.wText = current.wText;
+                weatherInfo.latestUpdate = current.latestUpdate;
+                futureWeatherPoints = data.slice(1);
             });
             WeatherDataProvider.getWeatherData();
         }
 
-        Row {
+        Column {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.leftMargin: 200
             anchors.topMargin: 200
-            spacing: 30
 
-            Column {
-                spacing: 0
+            Row {
+                spacing: 50
 
-                Text {
-                    id: weatherInfoTime
+                Column {
+                    spacing: 0
 
-                    text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
-                    color: Theme.foregroundAlt
-                    font.pixelSize: 30
-                    font.family: Theme.fontMain
-                    style: Text.Outline
-                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    Text {
+                        id: weatherInfoTime
+
+                        text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
+                        color: Theme.foregroundAlt
+                        font.pixelSize: 30
+                        font.family: Theme.fontMain
+                        style: Text.Outline
+                        styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    }
+                    // Temp
+
+                    Text {
+                        id: weatherInfoTemp
+
+                        text: weatherInfo.temp + " °C"
+                        color: Theme.foregroundAlt
+                        font.pixelSize: 40
+                        font.family: Theme.fontMain
+                        style: Text.Outline
+                        styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    }
+
+                    Text {
+                        id: weatherInfoText
+
+                        text: weatherInfo.wText
+                        color: Theme.foregroundAlt
+                        font.pixelSize: 20
+                        font.family: Theme.fontMain
+                        style: Text.Outline
+                        styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    }
+
                 }
-                // Temp
+                // Icon
 
-                Text {
-                    id: weatherInfoTemp
+                Item {
+                    width: 140
+                    height: parent.height
 
-                    text: weatherInfo.temp + " °C"
-                    color: Theme.foregroundAlt
-                    font.pixelSize: 40
-                    font.family: Theme.fontMain
-                    style: Text.Outline
-                    styleColor: Qt.rgba(0, 0, 0, 0.6)
-                }
+                    Text {
+                        id: weatherInfoIcon
 
-                Text {
-                    id: weatherInfoText
+                        text: weatherInfo.icon
+                        color: Theme.foregroundAlt
+                        font.pixelSize: 130
+                        font.family: Theme.fontMain
+                        anchors.centerIn: parent
+                        style: Text.Outline
+                        styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    }
 
-                    text: weatherInfo.wText
-                    color: Theme.foregroundAlt
-                    font.pixelSize: 20
-                    font.family: Theme.fontMain
-                    style: Text.Outline
-                    styleColor: Qt.rgba(0, 0, 0, 0.6)
                 }
 
             }
-            // Icon
 
-            Item {
-                width: 120
-                height: parent.height
+            // future weather
+            Row {
+                topPadding: 20
+                spacing: 20
 
-                Text {
-                    id: weatherInfoIcon
+                Repeater {
+                    model: weatherInfo.futureWeatherPoints
 
-                    text: weatherInfo.icon
-                    color: Theme.foregroundAlt
-                    font.pixelSize: 120
-                    font.family: Theme.fontMain
-                    anchors.centerIn: parent
-                    style: Text.Outline
-                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                    Row {
+                        width: childrenRect.width
+                        height: childrenRect.height
+                        spacing: 20
+
+                        Column {
+                            // Temp
+
+                            //weatherdata
+                            Text {
+                                text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 16
+                                font.family: Theme.fontMain
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                            }
+
+                            Text {
+                                text: modelData.temp + " °C"
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 20
+                                font.family: Theme.fontMain
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                            }
+
+                            Text {
+                                text: modelData.wText
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 12
+                                font.family: Theme.fontMain
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                            }
+
+                        }
+
+                        Item {
+                            width: 40
+                            height: parent.height
+
+                            Text {
+                                //icon
+                                text: modelData.icon
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 30
+                                font.family: Theme.fontMain
+                                anchors.centerIn: parent
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                            }
+
+                        }
+
+                    }
+
                 }
 
             }

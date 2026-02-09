@@ -9,11 +9,8 @@ QtObject {
     property double lat: SettingsManager.weatherCoords[0]
     property double lon: SettingsManager.weatherCoords[1]
     property Process getWeatherDataProcess
-    // weather data params
-    property string temp: ""
-    property string icon: ""
-    property string wText: ""
-    property date latestUpdate
+    // weather data
+    property var wData
     // weather map
     property var weatherIcons: ({
         "clearsky_day": {
@@ -121,39 +118,49 @@ QtObject {
         // use weather data
         // find the dataPoint closest to current time
         let dataPoints = data.properties.timeseries;
-        let currentPoint = null;
+        let weatherPoints = null;
         // within 31 minutes
         let smallestDiff = 31 * 60 * 1000;
         for (let i = 0; i < dataPoints.length; i++) {
             let pointTime = new Date(dataPoints[i].time);
             let diff = Math.abs(now - pointTime);
             if (diff < smallestDiff) {
-                currentPoint = dataPoints[i];
+                // current point (for big display)
+                weatherPoints = dataPoints.slice(i, i + 4);
+                // future points (for small displays)
                 break;
             }
         }
-        if (currentPoint) {
-            if (currentPoint.data.instant.details.air_temperature)
-                temp = currentPoint.data.instant.details.air_temperature;
+        let wPoints = [];
+        for (const wPoint of weatherPoints) {
+            let temp = "";
+            let icon = "";
+            let wText = "No data";
+            let latestUpdate = null;
+            if (wPoint) {
+                if (wPoint.data.instant.details.air_temperature)
+                    temp = wPoint.data.instant.details.air_temperature;
 
-            if (currentPoint.data.next_1_hours.summary.symbol_code) {
-                icon = weatherIcons[currentPoint.data.next_1_hours.summary.symbol_code].icon;
-                wText = weatherIcons[currentPoint.data.next_1_hours.summary.symbol_code].english;
+                if (wPoint.data.next_1_hours.summary.symbol_code) {
+                    icon = weatherIcons[wPoint.data.next_1_hours.summary.symbol_code].icon;
+                    wText = weatherIcons[wPoint.data.next_1_hours.summary.symbol_code].english;
+                }
+                if (wPoint.time)
+                    latestUpdate = new Date(wPoint.time);
+
+            } else {
+                temp = "NULL";
+                icon = "󰼯";
+                wText = "No data";
             }
-            if (currentPoint.time)
-                latestUpdate = new Date(currentPoint.time);
-
-        } else {
-            temp = "NULL";
-            icon = "󰼯";
-            wText = "No data";
+            wPoints.push({
+                "temp": temp,
+                "icon": icon,
+                "wText": wText,
+                "latestUpdate": latestUpdate
+            });
         }
-        weatherData.weatherDataReady({
-            "temp": temp,
-            "icon": icon,
-            "wText": wText,
-            "latestUpdate": latestUpdate
-        });
+        weatherData.weatherDataReady(wPoints);
     }
 
     getWeatherDataProcess: Process {
