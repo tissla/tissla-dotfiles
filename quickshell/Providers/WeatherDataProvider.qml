@@ -4,14 +4,6 @@ import Quickshell.Io
 pragma Singleton
 
 QtObject {
-    // map symbol_code to icon
-    // Clear / clouds
-    // Rain
-    // Thunder
-    // Snow
-    // Sleet
-    // Fog
-
     id: weatherData
 
     property double lat: SettingsManager.weatherCoords[0]

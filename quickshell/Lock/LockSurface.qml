@@ -49,40 +49,69 @@ Item {
             WeatherDataProvider.getWeatherData();
         }
 
-        Column {
-            // date
+        Row {
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.leftMargin: 200
             anchors.topMargin: 200
-            spacing: 0
+            spacing: 30
 
-            // Icon
-            Text {
-                id: weatherInfoIcon
+            Column {
+                spacing: 0
 
-                text: weatherInfo.icon + weatherInfo.wText
-                color: Theme.foregroundAlt
-                font.pixelSize: 80
-                font.family: Theme.fontMain
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                anchors.left: parent.left
-                anchors.top: timeLabel.bottom
+                Text {
+                    id: weatherInfoTime
+
+                    text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
+                    color: Theme.foregroundAlt
+                    font.pixelSize: 30
+                    font.family: Theme.fontMain
+                    style: Text.Outline
+                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                }
+                // Temp
+
+                Text {
+                    id: weatherInfoTemp
+
+                    text: weatherInfo.temp + " °C"
+                    color: Theme.foregroundAlt
+                    font.pixelSize: 40
+                    font.family: Theme.fontMain
+                    style: Text.Outline
+                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                }
+
+                Text {
+                    id: weatherInfoText
+
+                    text: weatherInfo.wText
+                    color: Theme.foregroundAlt
+                    font.pixelSize: 20
+                    font.family: Theme.fontMain
+                    style: Text.Outline
+                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                }
+
             }
+            // Icon
 
-            // Temp
-            Text {
-                id: weatherInfoTemp
+            Item {
+                width: 120
+                height: parent.height
 
-                text: weatherInfo.temp + " °C" + Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
-                color: Theme.foregroundAlt
-                font.pixelSize: 80
-                font.family: Theme.fontMain
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
+                Text {
+                    id: weatherInfoIcon
+
+                    text: weatherInfo.icon
+                    color: Theme.foregroundAlt
+                    font.pixelSize: 120
+                    font.family: Theme.fontMain
+                    anchors.centerIn: parent
+                    style: Text.Outline
+                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                }
+
             }
 
         }
