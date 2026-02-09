@@ -28,6 +28,68 @@ Item {
         fillMode: Image.PreserveAspectCrop
     }
 
+    // weather
+    Item {
+        id: weatherInfo
+
+        property date latestUpdate
+        property string temp: ""
+        property string icon: ""
+        property string wText: ""
+
+        anchors.fill: parent
+        visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
+        Component.onCompleted: {
+            WeatherDataProvider.weatherDataReady.connect(function(data) {
+                weatherInfo.temp = data.temp;
+                weatherInfo.icon = data.icon;
+                weatherInfo.wText = data.wText;
+                weatherInfo.latestUpdate = data.latestUpdate;
+            });
+            WeatherDataProvider.getWeatherData();
+        }
+
+        Column {
+            // date
+            anchors.left: parent.left
+            anchors.top: parent.top
+            anchors.leftMargin: 200
+            anchors.topMargin: 200
+            spacing: 0
+
+            // Icon
+            Text {
+                id: weatherInfoIcon
+
+                text: weatherInfo.icon + weatherInfo.wText
+                color: Theme.foregroundAlt
+                font.pixelSize: 80
+                font.family: Theme.fontMain
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                anchors.left: parent.left
+                anchors.top: timeLabel.bottom
+            }
+
+            // Temp
+            Text {
+                id: weatherInfoTemp
+
+                text: weatherInfo.temp + " °C" + Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
+                color: Theme.foregroundAlt
+                font.pixelSize: 80
+                font.family: Theme.fontMain
+                style: Text.Outline
+                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                anchors.left: parent.left
+                anchors.bottom: parent.bottom
+            }
+
+        }
+
+    }
+
+    // date
     Item {
         anchors.fill: parent
         // clock on primary screen only, or show if only one screen available

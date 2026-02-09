@@ -29,6 +29,7 @@ return {
       jsonc = { "prettier" },
       c = { "clang-format" },
       cpp = { "clang-format" },
+      ino = { "clang-format" },
       cs = { "dotnet_format" },
     },
   },

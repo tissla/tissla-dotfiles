@@ -57,5 +57,17 @@ return {
     vim.api.nvim_set_hl(0, "@lsp.type.fieldName.cs", { link = "Variable" })
 
     vim.api.nvim_set_hl(0, "@lsp.type.extensionMethodName.cs", { link = "Function" })
+
+    -- cpp
+    vim.api.nvim_set_hl(0, "@lsp.type.class.cpp", { link = "Type" })
+    vim.api.nvim_set_hl(0, "cStructure", { link = "Keyword" })
+    -- vim.api.nvim_set_hl(0, "cStorageClass", { link = "Keyword" })
+    vim.api.nvim_set_hl(0, "cType", { link = "Keyword" })
+
+    vim.api.nvim_set_hl(0, "@lsp.type.type", { link = "Type" })
+    -- vim.api.nvim_set_hl(0, "@lsp.type.enum", { link = "@type" })
+    -- vim.api.nvim_set_hl(0, "@lsp.type.function", { link = "@function" })
+    --
+    vim.api.nvim_set_hl(0, "@lsp.typemod.parameter.readonly", { link = "@variable" })
   end,
 }

@@ -30,6 +30,8 @@ singleton PerformanceDataProvider 1.0 Providers/PerformanceDataProvider.qml
 singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
 # battery
 singleton BatteryDataProvider 1.0 Providers/BatteryDataProvider.qml
+# weather
+singleton WeatherDataProvider 1.0 Providers/WeatherDataProvider.qml
 
 # resources
 Gauge 1.0 Components/Gauge.qml

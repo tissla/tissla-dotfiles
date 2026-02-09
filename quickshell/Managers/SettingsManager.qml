@@ -10,6 +10,7 @@ QtObject {
     property int barHeight: 40
     property string barPosition: "bottom"
     property string theme: "tissla"
+    property var weatherCoords: []
     property var wallpapers: []
     property string wallpapersPath: ""
     property var screenConfigs: ({
@@ -38,6 +39,7 @@ QtObject {
             "theme": theme,
             "wallpapers": wallpapers,
             "wallpapersPath": wallpapersPath,
+            "weatherCoords": weatherCoords,
             "screens": []
         };
         for (let screenName in screenConfigs) {
@@ -113,6 +115,9 @@ QtObject {
 
                     if (json.theme)
                         settings.theme = json.theme;
+
+                    if (json.weatherCoords)
+                        settings.weatherCoords = json.weatherCoords;
 
                     if (json.wallpapersPath)
                         settings.wallpapersPath = json.wallpapersPath;
