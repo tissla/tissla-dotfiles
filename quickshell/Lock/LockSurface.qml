@@ -37,9 +37,10 @@ Item {
         property string icon: ""
         property string wText: ""
         property var futureWeatherPoints: []
+        property bool dataReceived: false
 
         anchors.fill: parent
-        visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
+        visible: (SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1) && dataReceived
         Component.onCompleted: {
             WeatherDataProvider.weatherDataReady.connect(function(data) {
                 let current = data[0];
@@ -47,9 +48,24 @@ Item {
                 weatherInfo.icon = current.icon;
                 weatherInfo.wText = current.wText;
                 weatherInfo.latestUpdate = current.latestUpdate;
-                futureWeatherPoints = data.slice(1);
+                weatherInfo.futureWeatherPoints = data.slice(1);
+                weatherInfo.dataReceived = true;
             });
-            WeatherDataProvider.getWeatherData();
+            // start timer
+            weatherUpdateTimer.running = true;
+        }
+
+        Timer {
+            id: weatherUpdateTimer
+
+            // 60 min
+            interval: 1000 * 60 * 60
+            running: false
+            triggeredOnStart: true
+            repeat: true
+            onTriggered: {
+                WeatherDataProvider.getWeatherData();
+            }
         }
 
         Column {
@@ -135,16 +151,43 @@ Item {
                         spacing: 20
 
                         Column {
-                            // Temp
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            width: 100
 
                             //weatherdata
                             Text {
                                 text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
                                 color: Theme.foregroundAlt
-                                font.pixelSize: 16
+                                font.pixelSize: 18
                                 font.family: Theme.fontMain
                                 style: Text.Outline
                                 styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                width: parent.width
+                                horizontalAlignment: Text.AlignHCenter
+                            }
+
+                            Text {
+                                //icon
+                                text: modelData.icon
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 34
+                                font.family: Theme.fontMain
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                horizontalAlignment: Text.AlignHCenter
+                                width: parent.width
+                            }
+
+                            Text {
+                                text: modelData.wText
+                                color: Theme.foregroundAlt
+                                font.pixelSize: 12
+                                font.family: Theme.fontMain
+                                font.italic: true
+                                style: Text.Outline
+                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                horizontalAlignment: Text.AlignHCenter
+                                width: parent.width
                             }
 
                             Text {
@@ -154,15 +197,8 @@ Item {
                                 font.family: Theme.fontMain
                                 style: Text.Outline
                                 styleColor: Qt.rgba(0, 0, 0, 0.6)
-                            }
-
-                            Text {
-                                text: modelData.wText
-                                color: Theme.foregroundAlt
-                                font.pixelSize: 12
-                                font.family: Theme.fontMain
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                horizontalAlignment: Text.AlignHCenter
+                                width: parent.width
                             }
 
                         }
@@ -170,18 +206,6 @@ Item {
                         Item {
                             width: 40
                             height: parent.height
-
-                            Text {
-                                //icon
-                                text: modelData.icon
-                                color: Theme.foregroundAlt
-                                font.pixelSize: 30
-                                font.family: Theme.fontMain
-                                anchors.centerIn: parent
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                            }
-
                         }
 
                     }
