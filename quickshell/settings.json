@@ -7,7 +7,7 @@
   "theme": "tissla",
   "wallpapers": [
     "default.png",
-    "nightskyempty.png"
+    "default.png"
   ],
   "wallpapersPath": "/../wallpapers",
   "weatherCoords": [

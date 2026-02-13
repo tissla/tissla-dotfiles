@@ -340,13 +340,38 @@ Item {
         }
 
         Text {
-            visible: root.context.showFailure
-            text: "Incorrect password"
-            color: "red"
-            font.pixelSize: 14
+            id: noText
+
+            property real shake: visible ? 4 * Math.PI : 0
+            property real ampl: visible ? 0 : 50
+
             anchors.horizontalCenter: parent.horizontalCenter
+            anchors.horizontalCenterOffset: Math.sin(shake) * ampl
             anchors.top: parent.verticalCenter
             anchors.topMargin: -20
+            style: Text.Outline
+            styleColor: Qt.rgba(0, 0, 0, 0.6)
+            visible: root.context.showFailure
+            text: ""
+            color: Theme.accent
+            font.pixelSize: 150
+
+            Behavior on shake {
+                NumberAnimation {
+                    duration: 1000
+                    easing.type: Easing.OutCubic
+                }
+
+            }
+
+            Behavior on ampl {
+                NumberAnimation {
+                    duration: 1000
+                    easing.type: Easing.Linear
+                }
+
+            }
+
         }
 
     }
