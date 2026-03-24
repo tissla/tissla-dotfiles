@@ -347,6 +347,11 @@ Item {
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: Math.sin(shake) * ampl
+            // 0 == 0
+            // pi / 2 == 0 > 1 == ampl = 50
+            // pi ==  -0 == ampl = 0
+            // pi* 3/2 == ampl = -50
+            // 2*pi == 0
             anchors.top: parent.verticalCenter
             anchors.topMargin: -20
             style: Text.Outline

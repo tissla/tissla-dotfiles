@@ -23,7 +23,8 @@ QtObject {
     function playSound(key) {
         if (!noPlay) {
             let sound = map[key];
-            runCommand(["pw-play", sound]);
+            // pw-play or paplay depending on sound routing
+            runCommand(["paplay", sound]);
             noPlay = true;
             throttleTimer.start();
         }
