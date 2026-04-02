@@ -34,7 +34,7 @@ QtObject {
             let screen = Quickshell.screens[i].name;
             // errorcheck
             if (wallpapersPath != Quickshell.shellDir)
-                commands.push(`swww img -o ${screen} "${wp}" --transition-type random`);
+                commands.push(`awww img -o ${screen} "${wp}" --transition-type random`);
 
         }
         let fullCommand = commands.join(" && ");
