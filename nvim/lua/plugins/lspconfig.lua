@@ -34,18 +34,19 @@ return {
           },
         },
         -- QML
-        qmlls = {
-          cmd = { "qmlls6", "-E" },
-          cmd_env = {
-            QMLLS_BUILD_DIRS = "/usr/lib/qt6/qml",
-            QML_IMPORT_PATH = table.concat({
-              "/usr/lib/qt6/qml",
-              vim.fn.expand("~/.config/quickshell"),
-            }, ":"),
-            QML2_IMPORT_PATH = "/usr/lib/qt6/qml",
-          },
-        },
+        -- qmlls = {
+        --   cmd = { "qmlls6", "-E" },
+        --   cmd_env = {
+        --     QMLLS_BUILD_DIRS = "/usr/lib/qt6/qml",
+        --     QML_IMPORT_PATH = table.concat({
+        --       "/usr/lib/qt6/qml",
+        --       vim.fn.expand("~/.config/quickshell"),
+        --     }, ":"),
+        --     QML2_IMPORT_PATH = "/usr/lib/qt6/qml",
+        --   },
+        -- },
         -- ltex
+
         ltex = {
           filetypes = { "markdown", "text", "tex" },
           settings = {
@@ -71,6 +72,16 @@ return {
           },
           filetypes = { "arduino" },
         },
+      },
+      setup = {
+        gdscript = function(_, opts)
+          require("lspconfig").gdscript.setup({
+            cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
+            filetypes = { "gd" },
+            root_dir = require("lspconfig.util").root_pattern("project.godot", ".git"),
+          })
+          return true
+        end,
       },
     },
   },
