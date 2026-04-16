@@ -12,9 +12,14 @@ singleton WallpaperManager 1.0 Managers/WallpaperManager.qml
 singleton WidgetManager 1.0 Managers/WidgetManager.qml
 # command runner
 singleton PlaySoundService 1.0 Services/PlaySoundService.qml
+# notifications
+singleton NotificationService 1.0 Services/NotificationService.qml
 
 # statusbar
 StatusBar 1.0 Layout/StatusBar.qml
+
+# notifications
+NotificationPopup 1.0 Notifications/NotificationPopup.qml
 
 
 ## PROVIDERS

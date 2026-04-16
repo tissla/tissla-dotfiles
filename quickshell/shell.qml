@@ -38,6 +38,12 @@ ShellRoot {
         }
 
     }
+Component.onCompleted: {
+    console.log("Forcing NotificationService load")
+    NotificationService.server
+}
+    // notifications
+    NotificationPopup{}
 
     // widgets
     Variants {
