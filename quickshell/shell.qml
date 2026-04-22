@@ -11,6 +11,10 @@ ShellRoot {
     id: shellRoot
 
     objectName: "shellRoot"
+    Component.onCompleted: {
+        console.log("Forcing NotificationService load");
+        NotificationService.server;
+    }
 
     // StatusBar
     Variants {
@@ -38,12 +42,10 @@ ShellRoot {
         }
 
     }
-Component.onCompleted: {
-    console.log("Forcing NotificationService load")
-    NotificationService.server
-}
+
     // notifications
-    NotificationPopup{}
+    NotificationPopup {
+    }
 
     // widgets
     Variants {

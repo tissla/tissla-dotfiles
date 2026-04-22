@@ -6,7 +6,7 @@ return {
         name = "qml-language-server",
         cmd = { "/home/tissla/.local/bin/qml-language-server" },
         filetypes = { "qml" },
-        root_markers = { ".git", "qmldir", "CMakeLists.txt" },
+        root_markers = { ".qmlproject", "qmldir", "CMakeLists.txt" },
         settings = {},
       })
 

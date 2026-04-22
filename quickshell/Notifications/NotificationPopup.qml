@@ -1,4 +1,5 @@
 import ".."
+import QtQml
 import QtQuick
 import Quickshell
 import Quickshell.Services.Notifications
@@ -6,48 +7,67 @@ import Quickshell.Services.Notifications
 PanelWindow {
     id: root
 
-    screen: Quickshell.screens[1]
+    property var notifications: NotificationService.notifications
+    property var cards: []
+
+    screen: Quickshell.screens[0]
     color: "transparent"
     exclusiveZone: 0
     implicitWidth: 200
     implicitHeight: 700
-    visible: NotificationService.notifications
+    visible: cards.length > 0
 
     anchors {
         top: true
         right: true
     }
 
-    Repeater {
-        model: NotificationService.notifications
+    Connections {
+        function onNotificationsChanged() {
+            if (notifications.length > cards.length)
+                cards = notifications.slice();
+            else
+                cards = notifications.slice();
+        }
 
-        delegate: Rectangle {
-            required property Notification modelData
-            readonly property Notification notif: modelData
+        target: NotificationService
+    }
 
-            width: 180
-            implicitHeight: 100
-            radius: Theme.radius
-            color: Theme.background
-            border.color: Theme.primary
-            border.width: 3
-            anchors.top: parent.top
-            anchors.right: parent.right
-            anchors.topMargin: 20
-            anchors.rightMargin: 20
+    Column {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: Theme.gap
+        anchors.rightMargin: Theme.gap
+        spacing: 12
 
-            Column {
-                anchors.fill: parent
-                anchors.margins: 10
+        Repeater {
+            model: notifications
 
-                Text {
-                    text: notif.summary
-                    color: Theme.foreground
-                }
+            delegate: Rectangle {
+                required property var modelData
+                readonly property var notif: modelData
 
-                Text {
-                    text: notif.body
-                    color: Theme.foreground
+                width: 180
+                implicitHeight: 100
+                radius: Theme.radius
+                color: Theme.background
+                border.color: Theme.primary
+                border.width: Theme.borderWidth
+
+                Column {
+                    anchors.fill: parent
+                    anchors.margins: 10
+
+                    Text {
+                        text: notif.summary
+                        color: Theme.foreground
+                    }
+
+                    Text {
+                        text: notif.body
+                        color: Theme.foreground
+                    }
+
                 }
 
             }
