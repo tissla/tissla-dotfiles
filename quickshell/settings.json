@@ -6,8 +6,8 @@
   },
   "theme": "tissla",
   "wallpapers": [
-    "wip-girl.png",
-    "MergedSkyVibrantFinal.png"
+    "nightskyempty.png",
+    "default.png"
   ],
   "wallpapersPath": "/../wallpapers",
   "weatherCoords": [

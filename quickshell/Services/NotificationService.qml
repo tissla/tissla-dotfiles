@@ -10,8 +10,6 @@ QtObject {
     property NotificationServer server
 
     function removeNotif(item) {
-
-        
         notifications = notifications.filter(n => n && n.id !== item.id);
         
         if (item.sourceNotif)
@@ -25,11 +23,13 @@ QtObject {
 
         // convert to local item
         const item = {
-                id: notif.id,
-                summary: notif.summary || "",
-                body: notif.body || "",
-                sourceNotif: notif
-            }
+            id: notif.id,
+            appName: notif.appName || "",
+            image: notif.image || null,
+            summary: notif.summary || "",
+            body: notif.body || "",
+            sourceNotif: notif
+        }
 
         notifications = [item, ...notifications.filter(n => n && n.id !== item.id)]
         const timer = Qt.createQmlObject(`

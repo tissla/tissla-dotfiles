@@ -46,7 +46,6 @@ return {
         --   },
         -- },
         -- ltex
-
         ltex = {
           filetypes = { "markdown", "text", "tex" },
           settings = {

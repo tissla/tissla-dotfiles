@@ -1,6 +1,7 @@
 import ".."
 import QtQml
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Notifications
 
@@ -13,7 +14,7 @@ PanelWindow {
     screen: Quickshell.screens[0]
     color: "transparent"
     exclusiveZone: 0
-    implicitWidth: 200
+    implicitWidth: 300
     implicitHeight: 700
     visible: cards.length > 0
 
@@ -47,25 +48,59 @@ PanelWindow {
                 required property var modelData
                 readonly property var notif: modelData
 
-                width: 180
-                implicitHeight: 100
+                width: 280
+                implicitHeight: 140
                 radius: Theme.radius
                 color: Theme.background
                 border.color: Theme.primary
                 border.width: Theme.borderWidth
 
-                Column {
+                RowLayout {
                     anchors.fill: parent
-                    anchors.margins: 10
+                    anchors.margins: 15
 
-                    Text {
-                        text: notif.summary
-                        color: Theme.foreground
+                    ColumnLayout {
+                        // A
+                        Text {
+                            text: notif.summary
+                            color: Theme.foreground
+                            font.weight: Font.Bold
+                            Layout.alignment: Qt.AlignLeft
+                            font.pixelSize: 16
+                            width: 130
+                            elide: Text.ElideRight
+                        }
+
+                        // B
+                        Text {
+                            text: notif.appName
+                            color: Theme.foreground
+                            font.weight: Font.Bold
+                            font.pixelSize: 18
+                            Layout.alignment: Qt.AlignRight
+                            width: 130
+                        }
+
                     }
 
-                    Text {
-                        text: notif.body
-                        color: Theme.foreground
+                    ColumnLayout {
+                        // C
+                        Image {
+                            Layout.preferredWidth: 60
+                            Layout.preferredHeight: 60
+                            source: notif.image
+                        }
+
+                        // D
+                        Text {
+                            Layout.fillWidth: true
+                            Layout.preferredWidth: 1
+                            Layout.alignment: Qt.AlignTop
+                            text: notif.body
+                            wrapMode: Text.Wrap
+                            color: Theme.foreground
+                        }
+
                     }
 
                 }

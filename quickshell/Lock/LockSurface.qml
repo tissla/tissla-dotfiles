@@ -26,6 +26,7 @@ Item {
             return "";
         }
         fillMode: Image.PreserveAspectCrop
+        cache: true
     }
 
     // weather
@@ -241,7 +242,7 @@ Item {
             Timer {
                 running: true
                 repeat: true
-                interval: 1000
+                interval: 60000
                 onTriggered: dateDisplay.date = new Date()
             }
 
