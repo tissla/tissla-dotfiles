@@ -33,7 +33,31 @@ return {
             },
           },
         },
+        gopls = {
+          settings = {
+            gopls = {
+              gofumpt = true,
+              staticcheck = true,
+              usePlaceholders = true,
+              completeUnimported = true,
+
+              analyses = {
+                unusedparams = true,
+                unusedwrite = true,
+                nilness = true,
+                shadow = true,
+              },
+            },
+          },
+        },
         -- QML
+        qml = {
+          name = "qml-language-server",
+          cmd = { "/home/tissla/.local/bin/qml-language-server" },
+          filetypes = { "qml" },
+          root_markers = { ".qmlproject", "qmldir", "CMakeLists.txt" },
+          settings = {},
+        },
         -- qmlls = {
         --   cmd = { "qmlls6", "-E" },
         --   cmd_env = {

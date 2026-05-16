@@ -28,7 +28,7 @@ PKGS=(
     qt5ct                   # qt framework
     qt6-5compat             # qt framework compat layer
     jq                      # json parser
-    swww                    # wallpapermanager
+    ewww                    # wallpapermanager
     wl-clipboard            # clipboard
     grimblast               # screenshots
     tesseract               # base

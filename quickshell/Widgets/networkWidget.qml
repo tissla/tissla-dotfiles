@@ -73,21 +73,31 @@ BaseWidget {
                 Repeater {
                     model: networkWidget.serverData ? networkWidget.serverData.length : 0
 
-                    Row {
-                        Text {
-                            text: networkWidget.serverData[index].Name
-                            width: 150
-                            height: 20
-                            color: Theme.foreground
-                            font.pixelSize: Theme.fontSizeBase
-                        }
+                    Rectangle {
+                        width: 300
+                        height: 24
+                        color: index % 2 === 0 ? Theme.background : Theme.backgroundAltSolid
 
-                        Text {
-                            text: networkWidget.serverData[index].Status
-                            width: 150
-                            height: 20
-                            color: Theme.foreground
-                            font.pixelSize: Theme.fontSizeBase
+                        Row {
+                            anchors.fill: parent
+                            anchors.margins: 2
+
+                            Text {
+                                text: networkWidget.serverData[index].Name
+                                color: Theme.foreground
+                                width: 150
+                                height: 20
+                                font.pixelSize: Theme.fontSizeBase
+                            }
+
+                            Text {
+                                text: networkWidget.serverData[index].Status
+                                color: Theme.foreground
+                                width: 150
+                                height: 20
+                                font.pixelSize: Theme.fontSizeBase
+                            }
+
                         }
 
                     }

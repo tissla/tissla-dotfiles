@@ -10,13 +10,16 @@ Scope {
     property string currentText: ""
     property bool unlockInProgress: false
     property bool showFailure: false
+    property bool authPending: false
 
     signal unlocked()
 
     function tryUnlock() {
-        if (currentText === "")
+        if (currentText === "" || unlockInProgress)
             return ;
 
+        showFailure = false;
+        authPending = true;
         unlockInProgress = true;
         pam.start();
     }
@@ -34,13 +37,14 @@ Scope {
 
         }
         onCompleted: (result) => {
+            root.authPending = false;
             if (result === PamResult.Success) {
-                PlaySoundService.playSound("login");
                 root.unlocked();
+                PlaySoundService.playSound("login");
             } else {
-                PlaySoundService.playSound("error");
                 root.currentText = "";
                 root.showFailure = true;
+                PlaySoundService.playSound("error");
             }
             root.unlockInProgress = false;
         }

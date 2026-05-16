@@ -26,7 +26,9 @@ QtObject {
             // pw-play or paplay depending on sound routing
             runCommand(["paplay", sound]);
             noPlay = true;
-            throttleTimer.start();
+            if (!throttleTimer.running)
+                throttleTimer.start();
+
         }
     }
 

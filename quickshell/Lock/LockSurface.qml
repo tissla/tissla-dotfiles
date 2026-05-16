@@ -343,8 +343,9 @@ Item {
         Text {
             id: noText
 
-            property real shake: visible ? 4 * Math.PI : 0
-            property real ampl: visible ? 0 : 50
+            property real shake: root.context.showFailure ? 4 * Math.PI : 0
+            property real ampl: root.context.showFailure ? 0 : 50
+            property real rotate: root.context.authPending ? 0 : 360
 
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.horizontalCenterOffset: Math.sin(shake) * ampl
@@ -357,10 +358,19 @@ Item {
             anchors.topMargin: -20
             style: Text.Outline
             styleColor: Qt.rgba(0, 0, 0, 0.6)
-            visible: root.context.showFailure
-            text: ""
+            visible: root.context.showFailure || root.context.authPending
+            text: root.context.authPending ? "" : ""
+            rotation: root.context.authPending ? rotate : 0
             color: Theme.accent
             font.pixelSize: 150
+
+            Behavior on rotate {
+                NumberAnimation {
+                    duration: 2000
+                    easing.type: Easing.Linear
+                }
+
+            }
 
             Behavior on shake {
                 NumberAnimation {

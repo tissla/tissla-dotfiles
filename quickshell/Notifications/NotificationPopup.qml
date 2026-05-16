@@ -55,11 +55,11 @@ PanelWindow {
                 border.color: Theme.primary
                 border.width: Theme.borderWidth
 
-                RowLayout {
+                ColumnLayout {
                     anchors.fill: parent
                     anchors.margins: 15
 
-                    ColumnLayout {
+                    RowLayout {
                         // A
                         Text {
                             text: notif.summary
@@ -67,7 +67,7 @@ PanelWindow {
                             font.weight: Font.Bold
                             Layout.alignment: Qt.AlignLeft
                             font.pixelSize: 16
-                            width: 130
+                            Layout.preferredWidth: 130
                             elide: Text.ElideRight
                         }
 
@@ -77,17 +77,17 @@ PanelWindow {
                             color: Theme.foreground
                             font.weight: Font.Bold
                             font.pixelSize: 18
-                            Layout.alignment: Qt.AlignRight
-                            width: 130
+                            Layout.fillWidth: true
+                            horizontalAlignment: Text.AlignRight
                         }
 
                     }
 
-                    ColumnLayout {
+                    RowLayout {
                         // C
                         Image {
-                            Layout.preferredWidth: 60
-                            Layout.preferredHeight: 60
+                            Layout.preferredWidth: 50
+                            Layout.preferredHeight: 50
                             source: notif.image
                         }
 
@@ -95,8 +95,10 @@ PanelWindow {
                         Text {
                             Layout.fillWidth: true
                             Layout.preferredWidth: 1
+                            Layout.maximumHeight: 100
                             Layout.alignment: Qt.AlignTop
                             text: notif.body
+                            Layout.leftMargin: 10
                             wrapMode: Text.Wrap
                             color: Theme.foreground
                         }
