@@ -70,7 +70,8 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: wsRect.modelData.activate()
+                    // fix for lua, go back to wsRect.modelData.activate() once quickshell updates
+                    onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = "${wsRect.modelData.id}" })`)
                 }
 
                 Behavior on scale {
