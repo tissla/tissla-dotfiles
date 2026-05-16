@@ -114,13 +114,17 @@ QtObject {
 EOF
 
 # Generate Hyprland theme
-cat >"$HOME/Dotfiles/theme/theme.conf" <<EOF
-\$bg        = rgb($(strip_hash "$(get_color background)"))
-\$fg        = rgb($(strip_hash "$(get_color foreground)"))
-\$primary   = rgb($(strip_hash "$(get_color primary)"))
-\$secondary = rgb($(strip_hash "$(get_color primaryMuted)"))
-\$bgalpha   = 0xee$(strip_hash "$(get_color background)")
-\$mutedalpha = 0xaa$(strip_hash "$(get_color muted)")
+cat >"$HOME/Dotfiles/hypr/theme.conf" <<EOF
+hl.config({
+	colors = {
+		bg = "rgb($(strip_hash "$(get_color background)"))",
+		fg = "rgb($(strip_hash "$(get_color foreground)"))",
+		primary = "rgb($(strip_hash "$(get_color primary)"))",
+		secondary = "rgb($(strip_hash "$(get_color primaryMuted)"))",
+		bgalpha = "0xee$(strip_hash "$(get_color background)")",
+		mutedalpha = "0xaa$(strip_hash "$(get_color muted)")",
+	},
+})
 EOF
 
 # Generate Alacritty theme
