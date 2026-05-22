@@ -2,10 +2,18 @@
 set -euo pipefail
 
 DOTFILES="$HOME/Dotfiles"
-THEMES_JSON="$DOTFILES/themes/themes.json"
 ACTIVE_THEME="$1"
+
 if [[ "$ACTIVE_THEME" == "null" || -z "$ACTIVE_THEME" ]]; then
     echo "Error: No theme specified"
+    exit 1
+fi
+
+THEME_FILE="$DOTFILES/themes/$ACTIVE_THEME.json"
+DEFAULTS_FILE="$DOTFILES/themes/defaults.json"
+
+if [[ ! -f "$THEME_FILE" ]]; then
+    echo "Error: Theme '$ACTIVE_THEME' not found (missing $THEME_FILE)"
     exit 1
 fi
 
@@ -14,160 +22,162 @@ if ! command -v jq &>/dev/null; then
     exit 1
 fi
 
-if [[ ! -f "$THEMES_JSON" ]]; then
-    echo "Error: $THEMES_JSON not found"
-    exit 1
-fi
+# Merge defaults with theme overrides — one jq parse for all token lookups
+MERGED=$(jq -s '.[0] * .[1]' "$DEFAULTS_FILE" "$THEME_FILE")
 
-# Helper functions
-get_color() {
-    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .colors.$1" "$THEMES_JSON"
-}
+get_palette()  { echo "$MERGED" | jq -r ".palette.$1"; }
+get_role()     { echo "$MERGED" | jq -r ".palette[.roles.$1]"; }
+get_font()     { echo "$MERGED" | jq -r ".fonts.$1"; }
+get_value()    { echo "$MERGED" | jq -r ".values.$1"; }
+get_spacing()  { echo "$MERGED" | jq -r ".spacing.$1"; }
+get_fontsize() { echo "$MERGED" | jq -r ".fontSizes.$1"; }
 
-get_font() {
-    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .fonts.$1" "$THEMES_JSON"
-}
+strip_hash() { echo "${1#\#}"; }
+capitalize()  { echo "$1" | sed 's/.*/\u&/'; }
 
-get_value() {
-    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .values.$1" "$THEMES_JSON"
-}
-
-get_path() {
-    local path=$(jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .paths.$1" "$THEMES_JSON")
-    echo "${path//\$HOME/$HOME}"
-}
-
-get_spacing() {
-    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .spacing.$1" "$THEMES_JSON"
-}
-
-get_fontsize() {
-    jq -r ".themes[] | select(.id == \"$ACTIVE_THEME\") | .fontSizes.$1" "$THEMES_JSON"
-}
-
-strip_hash() {
-    echo "${1#\#}"
-}
-
-## ensure folders exist
-mkdir -p "$HOME/Dotfiles/quickshell"
-mkdir -p "$HOME/Dotfiles/theme"
+mkdir -p "$DOTFILES/quickshell"
+mkdir -p "$DOTFILES/theme"
 
 # Generate Theme.qml
-cat >"$HOME/Dotfiles/quickshell/Theme.qml" <<EOF
+cat >"$DOTFILES/quickshell/Theme.qml" <<EOF
 import QtQuick
 pragma Singleton
 
 QtObject {
     id: theme
-    
-    // COLORS
-    property color background: "#CC$(strip_hash "$(get_color background)")"
-    property color backgroundSolid: "$(get_color background)"
-    property color backgroundAlt: "#E6$(strip_hash "$(get_color backgroundDark)")"
-    property color backgroundAltSolid: "$(get_color backgroundDark)"
-    property color primary: "$(get_color primary)"
-    property color foreground: "$(get_color foreground)"
-    property color foregroundAlt: "$(get_color foregroundMuted)"
-    property color inactive: "$(get_color inactive)"
-    property color accent: "$(get_color accent)"
-    property color info: "$(get_color info)"
-    property color surface: "$(get_color surface)"
-    property color active: "$(get_color active)"
-    
+
+    // SEMANTIC COLORS
+    property color accent:  "$(get_role accent)"
+    property color warning: "$(get_role warning)"
+    property color success: "$(get_role success)"
+    property color info:    "$(get_role info)"
+    property color muted:   "$(get_role muted)"
+
+    // BACKGROUND LAYERS
+    property color base:         "#CC$(strip_hash "$(get_palette base)")"
+    property color baseSolid:    "$(get_palette base)"
+    property color mantle:       "#E6$(strip_hash "$(get_palette mantle)")"
+    property color mantleSolid:  "$(get_palette mantle)"
+
+    // TEXT
+    property color text:     "$(get_palette text)"
+    property color subtext1: "$(get_palette subtext1)"
+
+    // SURFACES
+    property color surface0: "$(get_palette surface0)"
+    property color surface1: "$(get_palette surface1)"
+    property color surface2: "$(get_palette surface2)"
+
+    // OVERLAYS
+    property color overlay0: "$(get_palette overlay0)"
+    property color overlay1: "$(get_palette overlay1)"
+
+    // FULL PALETTE
+    property color mauve:    "$(get_palette mauve)"
+    property color lavender: "$(get_palette lavender)"
+    property color peach:    "$(get_palette peach)"
+    property color green:    "$(get_palette green)"
+    property color red:      "$(get_palette red)"
+    property color yellow:   "$(get_palette yellow)"
+    property color blue:     "$(get_palette blue)"
+    property color teal:     "$(get_palette teal)"
+    property color pink:     "$(get_palette pink)"
+    property color white:    "$(get_palette white)"
+    property color black:    "$(get_palette black)"
+
     // ROUNDING
-    property int radius: $(get_value radius)
+    property int radius:    $(get_value radius)
     property int radiusAlt: $(get_value radiusAlt)
-    
+
     // FONTS
     property string fontMain: "$(get_font main)"
     property string fontMono: "$(get_font mono)"
-    
+
     // SIZES AND GAPS
     property int borderWidth: $(get_value borderWidth)
-    property int gap: $(get_value gap)
-    
+    property int gap:         $(get_value gap)
+
     // SPACINGS
     property int spacingXs: $(get_spacing xs)
     property int spacingSm: $(get_spacing sm)
     property int spacingMd: $(get_spacing md)
     property int spacingLg: $(get_spacing lg)
     property int spacingXl: $(get_spacing xl)
-    
-    // Module dimensions
-    property int moduleWidth: 40
+
+    // MODULE DIMENSIONS
+    property int moduleWidth:  40
     property int moduleHeight: SettingsManager.barHeight < 40 ? SettingsManager.barHeight : 40
-    
-    // Font sizes
-    property int fontSizeHuge: $(get_fontsize huge)
-    property int fontSizeXxl: $(get_fontsize xxl)
-    property int fontSizeXl: $(get_fontsize xl)
-    property int fontSizeLg: $(get_fontsize lg)
-    property int fontSizeMd: $(get_fontsize md)
-    property int fontSizeBase: $(get_fontsize base)
-    property int fontSizeSm: $(get_fontsize sm)
-    property int fontSizeXs: $(get_fontsize xs)
-    property int fontSizeXxs: $(get_fontsize xxs)
-    property int fontSizeTiny: $(get_fontsize tiny)
+
+    // FONT SIZES
+    property int fontSizeHuge:  $(get_fontsize huge)
+    property int fontSizeXxl:   $(get_fontsize xxl)
+    property int fontSizeXl:    $(get_fontsize xl)
+    property int fontSizeLg:    $(get_fontsize lg)
+    property int fontSizeMd:    $(get_fontsize md)
+    property int fontSizeBase:  $(get_fontsize base)
+    property int fontSizeSm:    $(get_fontsize sm)
+    property int fontSizeXs:    $(get_fontsize xs)
+    property int fontSizeXxs:   $(get_fontsize xxs)
+    property int fontSizeTiny:  $(get_fontsize tiny)
     property int fontSizeMicro: $(get_fontsize micro)
 }
 EOF
 
 # Generate Hyprland theme
-cat >"$HOME/Dotfiles/hypr/theme.lua" <<EOF
+cat >"$DOTFILES/hypr/theme.lua" <<EOF
 local colors = {
-	bg = "rgb($(strip_hash "$(get_color background)"))",
-	fg = "rgb($(strip_hash "$(get_color foreground)"))",
-	primary = "rgb($(strip_hash "$(get_color primary)"))",
-	secondary = "rgb($(strip_hash "$(get_color primaryMuted)"))",
-	bgalpha = "0xee$(strip_hash "$(get_color background)")",
-	mutedalpha = "0xaa$(strip_hash "$(get_color muted)")",
+    base       = "rgb($(strip_hash "$(get_palette base)"))",
+    text       = "rgb($(strip_hash "$(get_palette text)"))",
+    accent     = "rgb($(strip_hash "$(get_role accent)"))",
+    surface1   = "rgb($(strip_hash "$(get_palette surface1)"))",
+    bgalpha    = "0xee$(strip_hash "$(get_palette base)")",
+    mutedalpha = "0xaa$(strip_hash "$(get_palette surface1)")",
 }
 
 return colors
 EOF
 
 # Generate Alacritty theme
-cat >"$HOME/Dotfiles/theme/theme.toml" <<EOF
+cat >"$DOTFILES/theme/theme.toml" <<EOF
 [colors.primary]
-background = "0x$(strip_hash "$(get_color background)")"
-foreground = "0x$(strip_hash "$(get_color foreground)")"
+background = "0x$(strip_hash "$(get_palette base)")"
+foreground = "0x$(strip_hash "$(get_palette text)")"
 
 [colors.normal]
-black   = "0x$(strip_hash "$(get_color background)")"
-red     = "0xf87171"
-green   = "0x34d399"
-yellow  = "0xfbbf24"
-blue    = "0x1e3a8a"
-magenta = "0x$(strip_hash "$(get_color primary)")"
-cyan    = "0x22d3ee"
-white   = "0xf9fafb"
+black   = "0x$(strip_hash "$(get_palette black)")"
+red     = "0x$(strip_hash "$(get_palette red)")"
+green   = "0x$(strip_hash "$(get_palette green)")"
+yellow  = "0x$(strip_hash "$(get_palette yellow)")"
+blue    = "0x$(strip_hash "$(get_palette blue)")"
+magenta = "0x$(strip_hash "$(get_role accent)")"
+cyan    = "0x$(strip_hash "$(get_palette teal)")"
+white   = "0x$(strip_hash "$(get_palette text)")"
 
 [colors.bright]
-black   = "0x$(strip_hash "$(get_color primaryMuted)")"
-red     = "0xf87171"
-green   = "0x34d399"
-yellow  = "0xfbbf24"
-blue    = "0x569cd5"
-magenta = "0xa78bfa"
-cyan    = "0x7dd3fc"
-white   = "0xffffff"
+black   = "0x$(strip_hash "$(get_palette surface1)")"
+red     = "0x$(strip_hash "$(get_palette red)")"
+green   = "0x$(strip_hash "$(get_palette green)")"
+yellow  = "0x$(strip_hash "$(get_palette yellow)")"
+blue    = "0x$(strip_hash "$(get_palette blue)")"
+magenta = "0x$(strip_hash "$(get_palette pink)")"
+cyan    = "0x$(strip_hash "$(get_palette teal)")"
+white   = "0x$(strip_hash "$(get_palette white)")"
 
 [font.normal]
 family = "$(get_font mono)"
-style = "$(get_font style | sed 's/.*/\u&/')"
+style  = "$(capitalize "$(get_font style)")"
 EOF
 
 # Generate Rofi theme
-cat >"$HOME/Dotfiles/theme/theme.rasi" <<EOF
+cat >"$DOTFILES/theme/theme.rasi" <<EOF
 * {
-    bg:        $(get_color background)E6;
-    bg-alt:    $(get_color backgroundDark)E6;
-    fg:        $(get_color foreground);
-    primary:   $(get_color primary);
-    secondary: $(get_color secondary);
-    muted:     $(get_color muted);
-    font-mono: "$(get_font main) $(get_font style | sed 's/.*/\u&/') $(get_font size)";
+    bg:          $(get_palette base)E6;
+    bg-alt:      $(get_palette mantle)E6;
+    fg:          $(get_palette text);
+    primary:     $(get_role accent);
+    error:       $(get_palette red);
+    muted:       $(get_role muted);
+    font-main:   "$(get_font main) $(capitalize "$(get_font style)") $(get_font size)";
     font-search: "$(get_font mono) $(($(get_font size) + 4))";
 }
 EOF

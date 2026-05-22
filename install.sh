@@ -8,7 +8,7 @@ if [[ "$EUID" -ne 0 ]]; then
 fi
 
 # start logo
-./printlogo.sh
+"$(dirname "$0")/printlogo.sh"
 
 #  Update
 echo "==> Updating (pacman -Syu)..."
@@ -84,12 +84,19 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/user.conf" >/dev/null <<EOF
 user = $USER_NAME
 EOF
 
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/monitors.conf" >/dev/null <<'EOF'
+MONITORS_CONF="$USER_HOME/Dotfiles/hypr/monitors.conf"
+if [[ ! -f "$MONITORS_CONF" ]]; then
+    sudo -u "$USER_NAME" tee "$MONITORS_CONF" >/dev/null <<'EOF'
 monitor = ,preferred,auto,1
 EOF
+else
+    echo "  skipping monitors.conf (already exists)"
+fi
 
 # workspaces
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/workspaces.conf" >/dev/null <<'EOF'
+WORKSPACES_CONF="$USER_HOME/Dotfiles/hypr/workspaces.conf"
+if [[ ! -f "$WORKSPACES_CONF" ]]; then
+    sudo -u "$USER_NAME" tee "$WORKSPACES_CONF" >/dev/null <<'EOF'
 workspace = 1
 workspace = 2
 workspace = 3
@@ -100,9 +107,14 @@ workspace = 7
 workspace = 8
 workspace = 9
 EOF
+else
+    echo "  skipping workspaces.conf (already exists)"
+fi
 
 # quickshell settings
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/null <<'EOF'
+SETTINGS_JSON="$USER_HOME/Dotfiles/quickshell/settings.json"
+if [[ ! -f "$SETTINGS_JSON" ]]; then
+    sudo -u "$USER_NAME" tee "$SETTINGS_JSON" >/dev/null <<'EOF'
 {
   "bar": {
     "transparentBackground": false,
@@ -111,7 +123,7 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
   },
   "theme": "tissla",
   "wallpapers": [ "default.png" ],
-  "wallpapersPath": "/../wallpapers", 
+  "wallpapersPath": "/../wallpapers",
   "screens": [
     {
       "name": "eDP-1",
@@ -125,12 +137,20 @@ sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/quickshell/settings.json" >/dev/nu
   ]
 }
 EOF
+else
+    echo "  skipping settings.json (already exists)"
+fi
 
 # Kvantum config
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/Kvantum/kvantum.kvconfig" >/dev/null <<'EOF'
+KVANTUM_CONF="$USER_HOME/Dotfiles/Kvantum/kvantum.kvconfig"
+if [[ ! -f "$KVANTUM_CONF" ]]; then
+    sudo -u "$USER_NAME" tee "$KVANTUM_CONF" >/dev/null <<'EOF'
 [General]
 theme=catppuccin-mocha-lavender#
 EOF
+else
+    echo "  skipping kvantum.kvconfig (already exists)"
+fi
 
 # Qt configs
 sudo -u "$USER_NAME" mkdir -p "$USER_HOME/.config/qt5ct"
@@ -146,7 +166,9 @@ style=kvantum
 EOF
 
 # bashrc
-sudo -u "$USER_NAME" tee "$USER_HOME/.bashrc" >/dev/null <<'EOF'
+BASHRC="$USER_HOME/.bashrc"
+if [[ ! -f "$BASHRC" ]]; then
+    sudo -u "$USER_NAME" tee "$BASHRC" >/dev/null <<'EOF'
 #
 # ~/.bashrc
 #
@@ -161,6 +183,9 @@ PS1='\[\033[01;35m\]\u@\h \[\033[38;2;86;156;214m\]\W\[\033[00m\]$ '
 export LS_COLORS='di=38;5;74:ln=01;36:ex=01;32'
 
 EOF
+else
+    echo "  skipping .bashrc (already exists)"
+fi
 # setup symlinks
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"

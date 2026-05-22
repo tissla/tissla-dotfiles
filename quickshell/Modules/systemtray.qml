@@ -68,7 +68,7 @@ BaseModule {
                         const cx = w / 2, cy = h / 2;
                         ctx.reset();
                         ctx.clearRect(0, 0, w, h);
-                        ctx.strokeStyle = Theme.primary;
+                        ctx.strokeStyle = Theme.accent;
                         ctx.lineWidth = 3;
                         ctx.lineCap = "round";
                         ctx.lineJoin = "round";
@@ -157,7 +157,7 @@ BaseModule {
                         const cx = w / 2, cy = h / 2;
                         ctx.reset();
                         ctx.clearRect(0, 0, w, h);
-                        ctx.strokeStyle = Theme.primary;
+                        ctx.strokeStyle = Theme.accent;
                         ctx.lineWidth = 3;
                         ctx.lineCap = "round";
                         ctx.lineJoin = "round";

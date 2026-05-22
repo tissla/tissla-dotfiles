@@ -169,7 +169,7 @@ QtObject {
         property string jsonData: ""
 
         running: false
-        command: ["sh", "-c", "echo '" + jsonData.replace(/'/g, "'\\''") + "' > " + Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
+        command: ["bash", "-c", "printf '%s' \"$1\" > \"$2\"", "--", jsonData, Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
         onRunningChanged: {
             console.log("[SettingsManager] Saver running:", running);
             if (!running)

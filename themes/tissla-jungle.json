@@ -1,0 +1,35 @@
+{
+  "id": "tissla-jungle",
+  "palette": {
+    "base": "#0e1a0f",
+    "mantle": "#0b150c",
+    "crust": "#070d08",
+    "surface0": "#162a14",
+    "surface1": "#1f3d1b",
+    "surface2": "#2e5927",
+    "overlay0": "#3d6e34",
+    "overlay1": "#527a47",
+    "text": "#d8f0c0",
+    "subtext1": "#a0c878",
+    "subtext0": "#78a055",
+    "mauve": "#8b5cf6",
+    "lavender": "#a78bfa",
+    "peach": "#d4872a",
+    "green": "#2fbf71",
+    "lime": "#7bdc5b",
+    "red": "#c0392b",
+    "yellow": "#d4a017",
+    "blue": "#4aa3ff",
+    "teal": "#22d3ee",
+    "pink": "#e879f9",
+    "white": "#e8f5e0",
+    "black": "#040a04"
+  },
+  "roles": {
+    "accent": "green",
+    "warning": "peach",
+    "success": "lime",
+    "info": "blue",
+    "muted": "overlay1"
+  }
+}

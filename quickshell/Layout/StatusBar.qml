@@ -16,7 +16,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: SettingsManager.barTransparentBackground ? "transparent" : Theme.background
+        color: SettingsManager.barTransparentBackground ? "transparent" : Theme.base
 
         // Left modules container
         Rectangle {

@@ -10,10 +10,10 @@ BaseWidget {
     widgetHeight: 180
 
     widgetComponent: Rectangle {
-        color: Theme.backgroundSolid
+        color: Theme.baseSolid
         radius: Theme.radius
         border.width: 3
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Column {
             anchors.centerIn: parent
@@ -23,7 +23,7 @@ BaseWidget {
             Text {
                 text: DevicesDataProvider.controllerIcon
                 font.pixelSize: 64
-                color: DevicesDataProvider.controllerConnected ? Theme.primary : Theme.inactive
+                color: DevicesDataProvider.controllerConnected ? Theme.accent : Theme.muted
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 Behavior on color {
@@ -48,7 +48,7 @@ BaseWidget {
                 font.family: Theme.fontMain
                 font.pixelSize: 16
                 font.weight: Font.Bold
-                color: Theme.foreground
+                color: Theme.text
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -68,10 +68,10 @@ BaseWidget {
                 Rectangle {
                     width: 100
                     height: 12
-                    color: Theme.backgroundAlt
+                    color: Theme.mantle
                     radius: 6
                     border.width: 2
-                    border.color: Theme.primary
+                    border.color: Theme.accent
                     anchors.verticalCenter: parent.verticalCenter
 
                     Rectangle {
@@ -110,7 +110,7 @@ BaseWidget {
                     text: DevicesDataProvider.controllerBattery + "%"
                     font.family: Theme.fontMain
                     font.pixelSize: 14
-                    color: Theme.foreground
+                    color: Theme.text
                     font.weight: Font.Bold
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -127,7 +127,7 @@ BaseWidget {
             text: "🎮 Xbox Controller"
             font.family: Theme.fontMain
             font.pixelSize: 12
-            color: Theme.inactive
+            color: Theme.muted
         }
 
     }

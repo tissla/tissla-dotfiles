@@ -49,7 +49,7 @@ Item {
             text: mprisModule.moduleIcon
             font.pixelSize: Theme.fontSizeXl
             width: 24
-            color: Theme.primary
+            color: Theme.accent
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -2
             font.weight: Font.Bold
@@ -61,7 +61,7 @@ Item {
             font.family: Theme.fontMain
             font.pixelSize: Theme.fontSizeBase
             font.weight: Font.Bold
-            color: Theme.foregroundAlt
+            color: Theme.subtext1
             elide: Text.ElideRight
             maximumLineCount: 1
             anchors.verticalCenter: parent.verticalCenter

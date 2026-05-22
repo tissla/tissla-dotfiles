@@ -24,15 +24,15 @@ BaseWidget {
     }
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: Theme.borderWidth
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Rectangle {
             width: parent.width - 30
             height: parent.height - 30
-            color: Theme.surface
+            color: Theme.surface1
             radius: Theme.radius
             anchors.centerIn: parent
 
@@ -47,7 +47,7 @@ BaseWidget {
                         text: "NAME"
                         width: 150
                         height: 20
-                        color: Theme.foreground
+                        color: Theme.text
                         font.weight: Font.Bold
                         font.pixelSize: Theme.fontSizeLg
                     }
@@ -56,7 +56,7 @@ BaseWidget {
                         text: "STATUS"
                         width: 150
                         height: 20
-                        color: Theme.foreground
+                        color: Theme.text
                         font.weight: Font.Bold
                         font.pixelSize: Theme.fontSizeLg
                     }
@@ -76,7 +76,7 @@ BaseWidget {
                     Rectangle {
                         width: 300
                         height: 24
-                        color: index % 2 === 0 ? Theme.background : Theme.backgroundAltSolid
+                        color: index % 2 === 0 ? Theme.base : Theme.mantleSolid
 
                         Row {
                             anchors.fill: parent
@@ -84,7 +84,7 @@ BaseWidget {
 
                             Text {
                                 text: networkWidget.serverData[index].Name
-                                color: Theme.foreground
+                                color: Theme.text
                                 width: 150
                                 height: 20
                                 font.pixelSize: Theme.fontSizeBase
@@ -92,7 +92,7 @@ BaseWidget {
 
                             Text {
                                 text: networkWidget.serverData[index].Status
-                                color: Theme.foreground
+                                color: Theme.text
                                 width: 150
                                 height: 20
                                 font.pixelSize: Theme.fontSizeBase

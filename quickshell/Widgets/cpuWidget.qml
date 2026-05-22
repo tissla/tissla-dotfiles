@@ -9,10 +9,10 @@ BaseWidget {
     widgetHeight: 220
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: 3
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Rectangle {
             width: parent.width - 30
@@ -35,7 +35,7 @@ BaseWidget {
                         text: "CPU%"
                         font.family: Theme.fontMain
                         font.pixelSize: 16
-                        color: Theme.primary
+                        color: Theme.accent
                         font.weight: Font.Bold
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -46,7 +46,7 @@ BaseWidget {
                         width: 80
                         height: 80
                         value: PerformanceDataProvider.cpuUsage
-                        gaugeColor: Theme.primary
+                        gaugeColor: Theme.accent
                     }
 
                     Text {
@@ -54,7 +54,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -68,7 +68,7 @@ BaseWidget {
                         text: "RAM"
                         font.family: Theme.fontMain
                         font.pixelSize: 16
-                        color: Theme.primary
+                        color: Theme.accent
                         font.weight: Font.Bold
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -79,7 +79,7 @@ BaseWidget {
                         width: 80
                         height: 80
                         value: PerformanceDataProvider.ramUsage
-                        gaugeColor: Theme.accent
+                        gaugeColor: Theme.warning
                     }
 
                     Text {
@@ -87,7 +87,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -101,7 +101,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.primary
+                        color: Theme.accent
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -119,7 +119,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -134,7 +134,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.primary
+                        color: Theme.accent
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -145,7 +145,7 @@ BaseWidget {
                         height: 80
                         temperature: PerformanceDataProvider.cpuTemp
                         maxTemp: 100
-                        thermoColor: Theme.accent
+                        thermoColor: Theme.warning
                     }
 
                     Text {
@@ -153,7 +153,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -167,7 +167,7 @@ BaseWidget {
                         text: "LIQ 💧"
                         font.family: Theme.fontMain
                         font.pixelSize: 16
-                        color: Theme.primary
+                        color: Theme.accent
                         font.weight: Font.Bold
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -187,7 +187,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 

@@ -1,0 +1,34 @@
+{
+  "id": "tissla-cosmic",
+  "palette": {
+    "base": "#0b0430",
+    "mantle": "#090328",
+    "crust": "#060220",
+    "surface0": "#2a2144",
+    "surface1": "#2d1f55",
+    "surface2": "#3a2f6e",
+    "overlay0": "#4a3d80",
+    "overlay1": "#6b5d88",
+    "text": "#feeafc",
+    "subtext1": "#cfc3e6",
+    "subtext0": "#b0a3d4",
+    "mauve": "#5b4bb2",
+    "lavender": "#9980f2",
+    "peach": "#ff9e64",
+    "green": "#7cffb0",
+    "red": "#f87171",
+    "yellow": "#fbbf24",
+    "blue": "#7ab7ff",
+    "teal": "#22d3ee",
+    "pink": "#ff8bea",
+    "white": "#feeafc",
+    "black": "#040210"
+  },
+  "roles": {
+    "accent": "mauve",
+    "warning": "pink",
+    "success": "green",
+    "info": "blue",
+    "muted": "overlay1"
+  }
+}

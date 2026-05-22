@@ -9,10 +9,10 @@ BaseWidget {
     widgetHeight: 300
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: Theme.borderWidth
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Column {
             anchors.fill: parent
@@ -25,7 +25,7 @@ BaseWidget {
                 font.family: Theme.fontMain
                 font.pixelSize: Theme.fontSizeLg
                 font.weight: Font.Bold
-                color: Theme.foreground
+                color: Theme.text
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -58,12 +58,12 @@ BaseWidget {
                     font.pixelSize: 64
                     color: {
                         if (BatteryDataProvider.isCharging)
-                            return Theme.active;
+                            return Theme.success;
 
                         if (BatteryDataProvider.batteryLevel <= 20)
-                            return Theme.accent;
+                            return Theme.warning;
 
-                        return Theme.primary;
+                        return Theme.accent;
                     }
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -73,7 +73,7 @@ BaseWidget {
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeXxl
                     font.weight: Font.Bold
-                    color: Theme.foreground
+                    color: Theme.text
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
@@ -84,7 +84,7 @@ BaseWidget {
                 text: BatteryDataProvider.batteryStatus
                 font.family: Theme.fontMain
                 font.pixelSize: Theme.fontSizeMd
-                color: BatteryDataProvider.isCharging ? Theme.active : Theme.foregroundAlt
+                color: BatteryDataProvider.isCharging ? Theme.success : Theme.subtext1
                 anchors.horizontalCenter: parent.horizontalCenter
             }
 
@@ -92,7 +92,7 @@ BaseWidget {
             Rectangle {
                 width: parent.width
                 height: 1
-                color: Theme.primary
+                color: Theme.accent
             }
 
             // Details
@@ -109,7 +109,7 @@ BaseWidget {
                         text: BatteryDataProvider.isCharging ? "Time to full:" : "Time remaining:"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         width: parent.width * 0.5
                     }
 
@@ -118,7 +118,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         width: parent.width * 0.5
                         horizontalAlignment: Text.AlignRight
                     }
@@ -134,7 +134,7 @@ BaseWidget {
                         text: BatteryDataProvider.isCharging ? "Charge rate:" : "Power draw:"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         width: parent.width * 0.5
                     }
 
@@ -143,7 +143,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         width: parent.width * 0.5
                         horizontalAlignment: Text.AlignRight
                     }
@@ -158,7 +158,7 @@ BaseWidget {
                         text: "Battery health:"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         width: parent.width * 0.5
                     }
 
@@ -169,12 +169,12 @@ BaseWidget {
                         font.weight: Font.Bold
                         color: {
                             if (BatteryDataProvider.health >= 80)
-                                return Theme.active;
+                                return Theme.success;
 
                             if (BatteryDataProvider.health >= 60)
                                 return Theme.info;
 
-                            return Theme.accent;
+                            return Theme.warning;
                         }
                         width: parent.width * 0.5
                         horizontalAlignment: Text.AlignRight
@@ -190,7 +190,7 @@ BaseWidget {
                         text: "Capacity:"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         width: parent.width * 0.5
                     }
 
@@ -198,7 +198,7 @@ BaseWidget {
                         text: BatteryDataProvider.capacity.toFixed(1) + " / " + BatteryDataProvider.capacityDesign.toFixed(1) + " Wh"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeXxs
-                        color: Theme.foreground
+                        color: Theme.text
                         width: parent.width * 0.5
                         horizontalAlignment: Text.AlignRight
                     }
@@ -214,7 +214,7 @@ BaseWidget {
                         text: "Model:"
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeXxs
-                        color: Theme.inactive
+                        color: Theme.muted
                         width: parent.width * 0.5
                     }
 
@@ -222,7 +222,7 @@ BaseWidget {
                         text: BatteryDataProvider.battery ? (BatteryDataProvider.battery.vendor + " " + BatteryDataProvider.battery.model) : ""
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeXxs
-                        color: Theme.inactive
+                        color: Theme.muted
                         width: parent.width * 0.5
                         horizontalAlignment: Text.AlignRight
                         elide: Text.ElideRight

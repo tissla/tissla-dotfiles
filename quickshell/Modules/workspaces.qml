@@ -8,12 +8,12 @@ Rectangle {
 
     property var screen: null
 
-    color: Theme.backgroundAlt
+    color: Theme.mantle
     radius: Theme.radius
     width: workspaceRow ? workspaceRow.width : 0
     height: workspaceRow ? workspaceRow.height : 0
     border.width: Theme.borderWidth
-    border.color: Theme.primary
+    border.color: Theme.accent
 
     Row {
         id: workspaceRow
@@ -54,8 +54,8 @@ Rectangle {
                 height: Theme.moduleHeight
                 radius: Theme.radius
                 border.width: Theme.borderWidth
-                border.color: wsRect.isActive ? Theme.primary : "transparent"
-                color: wsRect.isActive ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.3) : "transparent"
+                border.color: wsRect.isActive ? Theme.accent : "transparent"
+                color: wsRect.isActive ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.3) : "transparent"
                 scale: wsRect.isActive ? 1 : 0.8
 
                 Text {
@@ -64,7 +64,7 @@ Rectangle {
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeBase
                     font.weight: Font.Bold
-                    color: wsRect.isActive ? Theme.foreground : Theme.foregroundAlt
+                    color: wsRect.isActive ? Theme.text : Theme.subtext1
                 }
 
                 MouseArea {

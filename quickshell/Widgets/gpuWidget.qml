@@ -9,10 +9,10 @@ BaseWidget {
     widgetWidth: 340
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: 3
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Rectangle {
             width: parent.width - 30
@@ -36,7 +36,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.primary
+                        color: Theme.accent
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -46,7 +46,7 @@ BaseWidget {
                         width: 80
                         height: 80
                         value: GpuDataProvider.gpuUsage
-                        gaugeColor: Theme.active
+                        gaugeColor: Theme.success
                     }
 
                     Text {
@@ -54,7 +54,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -68,7 +68,7 @@ BaseWidget {
                         text: "VRAM"
                         font.family: Theme.fontMain
                         font.pixelSize: 16
-                        color: Theme.primary
+                        color: Theme.accent
                         font.weight: Font.Bold
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -79,7 +79,7 @@ BaseWidget {
                         width: 80
                         height: 80
                         value: GpuDataProvider.vramUsage
-                        gaugeColor: Theme.active
+                        gaugeColor: Theme.success
                     }
 
                     Text {
@@ -87,7 +87,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 
@@ -101,7 +101,7 @@ BaseWidget {
                         text: "GPU°"
                         font.family: Theme.fontMain
                         font.pixelSize: 16
-                        color: Theme.primary
+                        color: Theme.accent
                         font.weight: Font.Bold
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
@@ -113,7 +113,7 @@ BaseWidget {
                         height: 80
                         temperature: GpuDataProvider.gpuTemp
                         maxTemp: 90
-                        thermoColor: Theme.active
+                        thermoColor: Theme.success
                     }
 
                     Text {
@@ -121,7 +121,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 16
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         anchors.horizontalCenter: parent.horizontalCenter
                     }
 

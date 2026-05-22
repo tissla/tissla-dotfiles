@@ -11,8 +11,9 @@ QtObject {
     property Process generateProcess
     property Process getAvailableThemesProcess
     property Process saveProcess
+    property Process hyprctlProcess
     // path
-    property string themesPath: Quickshell.shellDir + "/../themes/themes.json"
+    property string themesPath: Quickshell.shellDir + "/../themes/index.json"
     // theme params
     property var availableThemes: []
     property string activeTheme: SettingsManager.theme
@@ -44,17 +45,11 @@ QtObject {
         stdout: StdioCollector {
             onStreamFinished: {
                 let data = JSON.parse(text);
-                let themes = [];
-                if (data.themes && Array.isArray(data.themes)) {
-                    for (let i = 0; i < data.themes.length; i++) {
-                        let theme = data.themes[i];
-                        if (theme.id && themes.indexOf(theme.id) === -1)
-                            themes.push(theme.id);
-
-                    }
-                }
-                themeManager.availableThemes = themes;
-                console.log("[ThemeManager] Available themes:", themes.join(", "));
+                if (data.themes && Array.isArray(data.themes))
+                    themeManager.availableThemes = data.themes;
+                else
+                    themeManager.availableThemes = [];
+                console.log("[ThemeManager] Available themes:", themeManager.availableThemes.join(", "));
             }
         }
 
@@ -67,11 +62,21 @@ QtObject {
         running: false
         command: ["bash", "-c", Quickshell.shellDir + "/../build-theme.sh " + themeId + " >/dev/null 2>&1"]
 
+        onRunningChanged: {
+            if (!running && themeId !== "")
+                hyprctlProcess.running = true;
+        }
+
         stdout: SplitParser {
             onRead: (data) => {
             }
         }
 
+    }
+
+    hyprctlProcess: Process {
+        running: false
+        command: ["hyprctl", "reload"]
     }
 
 }

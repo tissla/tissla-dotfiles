@@ -6,8 +6,8 @@ Canvas {
 
     property real value: 0
     property real lineWidthRatio: 0.15
-    property color gaugeColor: Theme.primary
-    property color bgColor: Theme.backgroundAlt
+    property color gaugeColor: Theme.accent
+    property color bgColor: Theme.mantle
 
     onValueChanged: requestPaint()
     onGaugeColorChanged: requestPaint()

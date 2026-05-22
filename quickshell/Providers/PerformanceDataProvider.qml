@@ -86,10 +86,18 @@ QtObject {
 
     }
 
-    // Single timer
+    function startPolling() {
+        updateTimer.running = true;
+    }
+
+    function stopPolling() {
+        updateTimer.running = false;
+    }
+
+    // Single timer — started by cpu module on load
     updateTimer: Timer {
         interval: 3000
-        running: true
+        running: false
         repeat: true
         triggeredOnStart: true
         onTriggered: {
@@ -100,7 +108,7 @@ QtObject {
     // All data in one process
     getAllDataProcess: Process {
         running: false
-        command: ["sh", "-c", "cat /proc/stat | head -1; " + "echo '---'; " + "free -m | awk 'NR==2{printf \"%s %s\", $3,$2}'; " + "echo '---'; " + "/usr/bin/sensors -A 2>/dev/null || echo 'sensors not found'"]
+        command: ["sh", "-c", "head -1 /proc/stat; " + "echo '---'; " + "free -m | awk 'NR==2{printf \"%s %s\", $3,$2}'; " + "echo '---'; " + "/usr/bin/sensors -A 2>/dev/null || echo 'sensors not found'"]
 
         stdout: StdioCollector {
             onStreamFinished: {

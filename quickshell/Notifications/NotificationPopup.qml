@@ -51,8 +51,8 @@ PanelWindow {
                 width: 280
                 implicitHeight: 140
                 radius: Theme.radius
-                color: Theme.background
-                border.color: Theme.primary
+                color: Theme.base
+                border.color: Theme.accent
                 border.width: Theme.borderWidth
 
                 ColumnLayout {
@@ -63,7 +63,7 @@ PanelWindow {
                         // A
                         Text {
                             text: notif.summary
-                            color: Theme.foreground
+                            color: Theme.text
                             font.weight: Font.Bold
                             Layout.alignment: Qt.AlignLeft
                             font.pixelSize: 16
@@ -74,7 +74,7 @@ PanelWindow {
                         // B
                         Text {
                             text: notif.appName
-                            color: Theme.foreground
+                            color: Theme.text
                             font.weight: Font.Bold
                             font.pixelSize: 18
                             Layout.fillWidth: true
@@ -100,7 +100,7 @@ PanelWindow {
                             text: notif.body
                             Layout.leftMargin: 10
                             wrapMode: Text.Wrap
-                            color: Theme.foreground
+                            color: Theme.text
                         }
 
                     }

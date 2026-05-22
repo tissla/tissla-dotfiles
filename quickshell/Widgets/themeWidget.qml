@@ -9,10 +9,10 @@ BaseWidget {
     widgetHeight: 400
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: Theme.borderWidth
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Row {
             anchors.fill: parent
@@ -34,7 +34,7 @@ BaseWidget {
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeLg
                     font.weight: Font.Bold
-                    color: Theme.foreground
+                    color: Theme.text
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
@@ -50,7 +50,7 @@ BaseWidget {
                     // scrollbar customization
                     Component.onCompleted: {
                         ScrollBar.horizontal.height = 18;
-                        ScrollBar.horizontal.contentItem.color = Theme.surface;
+                        ScrollBar.horizontal.contentItem.color = Theme.surface1;
                         ScrollBar.horizontal.contentItem.radius = Theme.radiusAlt;
                     }
 
@@ -89,7 +89,7 @@ BaseWidget {
                                     return height;
                                 }
                                 radius: Theme.radiusAlt
-                                color: Theme.surface
+                                color: Theme.surface1
 
                                 Image {
                                     id: wallpaperImage
@@ -122,7 +122,7 @@ BaseWidget {
                                     anchors.topMargin: Theme.spacingMd
                                     anchors.right: parent.right
                                     anchors.rightMargin: Theme.spacingLg
-                                    color: Theme.background
+                                    color: Theme.base
                                     width: Theme.spacingXl
                                     height: Theme.spacingXl
                                     radius: Theme.radiusAlt
@@ -133,7 +133,7 @@ BaseWidget {
                                         font.pixelSize: Theme.fontSizeSm
                                         font.family: Theme.fontMain
                                         font.weight: Font.Bold
-                                        color: Theme.primary
+                                        color: Theme.accent
                                         anchors.centerIn: parent
                                     }
 
@@ -149,7 +149,7 @@ BaseWidget {
                                     anchors.bottomMargin: Theme.spacingMd
                                     anchors.horizontalCenter: parent.horizontalCenter
                                     radius: Theme.radiusAlt
-                                    color: Theme.background
+                                    color: Theme.base
                                     width: buttonRow.width + Theme.spacingXs * 2
                                     height: buttonRow.height + Theme.spacingXs * 2
 
@@ -171,12 +171,12 @@ BaseWidget {
                                                 radius: Theme.radiusAlt
                                                 color: {
                                                     if (SettingsManager.wallpapers[index] === wallpaperRect.wpFilename)
-                                                        return Theme.primary;
+                                                        return Theme.accent;
 
                                                     if (screenMouse.containsMouse)
-                                                        return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.2);
+                                                        return Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2);
 
-                                                    return Theme.surface;
+                                                    return Theme.surface1;
                                                 }
 
                                                 Text {
@@ -185,7 +185,7 @@ BaseWidget {
                                                     font.pixelSize: Theme.fontSizeSm
                                                     font.family: Theme.fontMain
                                                     font.weight: Font.Bold
-                                                    color: Theme.foregroundAlt
+                                                    color: Theme.subtext1
                                                     anchors.centerIn: parent
                                                 }
 
@@ -235,7 +235,7 @@ BaseWidget {
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeLg
                     font.weight: Font.Bold
-                    color: Theme.foreground
+                    color: Theme.text
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
@@ -253,12 +253,12 @@ BaseWidget {
                             radius: Theme.radiusAlt
                             color: {
                                 if (modelData === ThemeManager.activeTheme)
-                                    return Theme.primary;
+                                    return Theme.accent;
 
                                 if (mouseArea.containsMouse)
-                                    return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.5);
+                                    return Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.5);
 
-                                return Theme.surface;
+                                return Theme.surface1;
                             }
 
                             Row {
@@ -271,7 +271,7 @@ BaseWidget {
                                     font.family: Theme.fontMain
                                     font.pixelSize: Theme.fontSizeMd
                                     font.weight: Font.Bold
-                                    color: modelData === ThemeManager.activeTheme ? Theme.backgroundSolid : Theme.foreground
+                                    color: modelData === ThemeManager.activeTheme ? Theme.baseSolid : Theme.text
                                     anchors.verticalCenter: parent.verticalCenter
                                 }
 
@@ -280,7 +280,7 @@ BaseWidget {
                                     visible: modelData === ThemeManager.activeTheme
                                     text: "✓"
                                     font.pixelSize: Theme.fontSizeLg
-                                    color: Theme.backgroundSolid
+                                    color: Theme.baseSolid
                                     font.weight: Font.Bold
                                     anchors.verticalCenter: parent.verticalCenter
                                 }

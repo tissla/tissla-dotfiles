@@ -24,7 +24,7 @@ BaseModule {
             ColorOverlay {
                 anchors.fill: logoImage
                 source: logoImage
-                color: Theme.foregroundAlt
+                color: Theme.subtext1
             }
 
         }

@@ -85,7 +85,7 @@ Item {
                         id: weatherInfoTime
 
                         text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         font.pixelSize: 30
                         font.family: Theme.fontMain
                         style: Text.Outline
@@ -97,7 +97,7 @@ Item {
                         id: weatherInfoTemp
 
                         text: weatherInfo.temp + " °C"
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         font.pixelSize: 40
                         font.family: Theme.fontMain
                         style: Text.Outline
@@ -108,7 +108,7 @@ Item {
                         id: weatherInfoText
 
                         text: weatherInfo.wText
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         font.pixelSize: 20
                         font.family: Theme.fontMain
                         style: Text.Outline
@@ -126,7 +126,7 @@ Item {
                         id: weatherInfoIcon
 
                         text: weatherInfo.icon
-                        color: Theme.foregroundAlt
+                        color: Theme.subtext1
                         font.pixelSize: 130
                         font.family: Theme.fontMain
                         anchors.centerIn: parent
@@ -158,7 +158,7 @@ Item {
                             //weatherdata
                             Text {
                                 text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
-                                color: Theme.foregroundAlt
+                                color: Theme.subtext1
                                 font.pixelSize: 18
                                 font.family: Theme.fontMain
                                 style: Text.Outline
@@ -170,7 +170,7 @@ Item {
                             Text {
                                 //icon
                                 text: modelData.icon
-                                color: Theme.foregroundAlt
+                                color: Theme.subtext1
                                 font.pixelSize: 34
                                 font.family: Theme.fontMain
                                 style: Text.Outline
@@ -181,7 +181,7 @@ Item {
 
                             Text {
                                 text: modelData.wText
-                                color: Theme.foregroundAlt
+                                color: Theme.subtext1
                                 font.pixelSize: 12
                                 font.family: Theme.fontMain
                                 font.italic: true
@@ -193,7 +193,7 @@ Item {
 
                             Text {
                                 text: modelData.temp + " °C"
-                                color: Theme.foregroundAlt
+                                color: Theme.subtext1
                                 font.pixelSize: 20
                                 font.family: Theme.fontMain
                                 style: Text.Outline
@@ -255,7 +255,7 @@ Item {
                     const minutes = dateDisplay.date.getMinutes().toString().padStart(2, '0');
                     return `${hours}:${minutes}`;
                 }
-                color: Theme.foregroundAlt
+                color: Theme.subtext1
                 font.pixelSize: 200
                 font.family: Theme.fontMain
                 style: Text.Outline
@@ -269,7 +269,7 @@ Item {
                 id: dateLabel
 
                 text: Qt.formatDateTime(dateDisplay.date, "d MMMM, yyyy")
-                color: Theme.foregroundAlt
+                color: Theme.subtext1
                 font.pixelSize: 40
                 font.family: Theme.fontMain
                 style: Text.Outline
@@ -361,7 +361,7 @@ Item {
             visible: root.context.showFailure || root.context.authPending
             text: root.context.authPending ? "" : ""
             rotation: root.context.authPending ? rotate : 0
-            color: Theme.accent
+            color: Theme.warning
             font.pixelSize: 150
 
             Behavior on rotate {

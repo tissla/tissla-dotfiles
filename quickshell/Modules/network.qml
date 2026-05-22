@@ -23,7 +23,7 @@ BaseModule {
                     return NetworkDataProvider.connected ? icon : "󰲜";
                 }
                 font.pixelSize: 20
-                color: networkModule.isPressed ? Theme.backgroundSolid : Theme.primary
+                color: networkModule.isPressed ? Theme.baseSolid : Theme.accent
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: Theme.fontMain
             }
@@ -38,7 +38,7 @@ BaseModule {
                     font.family: Theme.fontMain
                     font.pixelSize: 15
                     font.weight: Font.Bold
-                    color: networkModule.isPressed ? Theme.backgroundSolid : Theme.foregroundAlt
+                    color: networkModule.isPressed ? Theme.baseSolid : Theme.subtext1
                     width: 70
                     horizontalAlignment: Text.AlignRight
                     anchors.verticalCenter: parent.verticalCenter
@@ -47,7 +47,7 @@ BaseModule {
                 Text {
                     text: "↓"
                     font.pixelSize: 20
-                    color: networkModule.isPressed ? Theme.backgroundSolid : Theme.primary
+                    color: networkModule.isPressed ? Theme.baseSolid : Theme.accent
                     font.weight: Font.Bold
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -59,14 +59,14 @@ BaseModule {
                     width: 70
                     font.weight: Font.Bold
                     horizontalAlignment: Text.AlignRight
-                    color: networkModule.isPressed ? Theme.backgroundSolid : Theme.foregroundAlt
+                    color: networkModule.isPressed ? Theme.baseSolid : Theme.subtext1
                     anchors.verticalCenter: parent.verticalCenter
                 }
 
                 Text {
                     text: "↑"
                     font.pixelSize: 20
-                    color: networkModule.isPressed ? Theme.backgroundSolid : Theme.primary
+                    color: networkModule.isPressed ? Theme.baseSolid : Theme.accent
                     font.weight: Font.Bold
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -79,7 +79,7 @@ BaseModule {
                 font.family: Theme.fontMain
                 font.pixelSize: 13
                 font.weight: Font.Bold
-                color: Theme.accent
+                color: Theme.warning
                 anchors.verticalCenter: parent.verticalCenter
             }
 

@@ -6,6 +6,7 @@ data
 Lazy
 .qmlls.ini
 theme
+quickshell/Theme.qml
 
 user.conf
 workspaces.conf

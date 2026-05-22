@@ -18,7 +18,7 @@ configuration {
 
 /***** Global *****/
 * {
-    font:         @font-mono;
+    font:         @font-main;
 
     background:   @bg;
     background-alt:@bg-alt;

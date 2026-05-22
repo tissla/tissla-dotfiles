@@ -1,10 +1,10 @@
 local colors = {
-	bg = "rgb(1e1b29)",
-	fg = "rgb(c9c7d4)",
-	primary = "rgb(8b5cf6)",
-	secondary = "rgb(2b263b)",
-	bgalpha = "0xee1e1b29",
-	mutedalpha = "0xaa342e4a",
+    base       = "rgb(1e1b29)",
+    text       = "rgb(c9c7d4)",
+    accent     = "rgb(8b5cf6)",
+    surface1   = "rgb(342e4a)",
+    bgalpha    = "0xee1e1b29",
+    mutedalpha = "0xaa342e4a",
 }
 
 return colors

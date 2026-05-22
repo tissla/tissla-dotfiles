@@ -173,10 +173,10 @@ BaseWidget {
 
     // component
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: Theme.radius
         border.width: 3
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         // Main content - use Column since Grid doesn't support colspan
         Column {
@@ -194,7 +194,7 @@ BaseWidget {
 
                 width: parent.width
                 height: 80
-                color: Theme.surface
+                color: Theme.surface1
                 radius: Theme.radius
 
                 // Function to time display based on current settings
@@ -214,7 +214,7 @@ BaseWidget {
                         font.family: Theme.fontMain
                         font.pixelSize: 48
                         font.weight: Font.Bold
-                        color: Theme.foreground
+                        color: Theme.text
                         text: Qt.formatDateTime(clock.date, "hh:mm:ss")
                     }
 
@@ -232,7 +232,7 @@ BaseWidget {
                 Rectangle {
                     width: 380
                     height: parent.height
-                    color: Theme.surface
+                    color: Theme.surface1
                     radius: Theme.radius
 
                     Column {
@@ -258,7 +258,7 @@ BaseWidget {
                                 height: 30
                                 text: "‹"
                                 font.pixelSize: 30
-                                color: Theme.foreground
+                                color: Theme.text
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
 
@@ -292,7 +292,7 @@ BaseWidget {
                                 height: 30
                                 text: "›"
                                 font.pixelSize: 30
-                                color: Theme.foreground
+                                color: Theme.text
                                 horizontalAlignment: Text.AlignHCenter
                                 verticalAlignment: Text.AlignVCenter
 
@@ -333,7 +333,7 @@ BaseWidget {
                                     font.family: Theme.fontMain
                                     font.pixelSize: 14
                                     font.weight: Font.Bold
-                                    color: Theme.foreground
+                                    color: Theme.text
                                     width: 40
                                     height: 24
                                     horizontalAlignment: Text.AlignHCenter
@@ -442,16 +442,16 @@ BaseWidget {
                                         border.width: 2
                                         color: {
                                             if (isSelectedDay)
-                                                return Theme.inactive;
+                                                return Theme.muted;
 
                                             if (isHovered)
-                                                return Theme.primary;
+                                                return Theme.accent;
 
                                             return "transparent";
                                         }
                                         border.color: {
                                             if (isDayInMonth && isCurrentDay)
-                                                return Theme.primary;
+                                                return Theme.accent;
 
                                             return "transparent";
                                         }
@@ -483,15 +483,15 @@ BaseWidget {
                                             font.pixelSize: 13
                                             color: {
                                                 if (parent.isSelectedDay)
-                                                    return Theme.foreground;
+                                                    return Theme.text;
 
                                                 if (parent.isDayInMonth && parent.isCurrentDay)
-                                                    return Theme.active;
+                                                    return Theme.success;
 
                                                 if (!parent.isDayInMonth)
-                                                    return Theme.inactive;
+                                                    return Theme.muted;
 
-                                                return Theme.foreground;
+                                                return Theme.text;
                                             }
                                             font.weight: parent.isDayInMonth ? Font.Bold : Font.Normal
                                         }
@@ -529,7 +529,7 @@ BaseWidget {
                     // fill remaining space, 380 is calendar and 12 for spacing
                     width: parent.width - 380 - 12
                     height: parent.height
-                    color: Theme.surface
+                    color: Theme.surface1
                     radius: Theme.radius
 
                     Column {
@@ -555,7 +555,7 @@ BaseWidget {
                             font.pixelSize: 16
                             font.weight: Font.Bold
                             horizontalAlignment: Text.AlignHCenter
-                            color: Theme.foreground
+                            color: Theme.text
                         }
 
                         // Day of week
@@ -584,14 +584,14 @@ BaseWidget {
                                 return "Week " + root.getWeekNumber(date);
                             }
                             font.pixelSize: Theme.fontSizeXxs
-                            color: Theme.foregroundAlt
+                            color: Theme.subtext1
                         }
 
                         // Separator
                         Rectangle {
                             width: parent.width
                             height: 1
-                            color: Theme.primary
+                            color: Theme.accent
                         }
 
                         Row {

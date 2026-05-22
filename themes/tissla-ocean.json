@@ -1,0 +1,35 @@
+{
+  "id": "tissla-ocean",
+  "palette": {
+    "base": "#051d2c",
+    "mantle": "#041620",
+    "crust": "#020d14",
+    "surface0": "#0a2f45",
+    "surface1": "#0d4060",
+    "surface2": "#155f80",
+    "overlay0": "#1e7a9f",
+    "overlay1": "#4a6e85",
+    "text": "#d6eeff",
+    "subtext1": "#99c7e8",
+    "subtext0": "#6aa8cc",
+    "mauve": "#8b5cf6",
+    "lavender": "#a78bfa",
+    "peach": "#ffb347",
+    "green": "#00c9a7",
+    "red": "#ff6b6b",
+    "yellow": "#ffd166",
+    "blue": "#2da0d8",
+    "sky": "#87ceeb",
+    "teal": "#00b4d8",
+    "pink": "#c084fc",
+    "white": "#e0f4ff",
+    "black": "#020d14"
+  },
+  "roles": {
+    "accent": "teal",
+    "warning": "peach",
+    "success": "green",
+    "info": "sky",
+    "muted": "overlay1"
+  }
+}

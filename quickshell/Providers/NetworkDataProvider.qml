@@ -12,12 +12,6 @@ QtObject {
     // speed
     property real downloadSpeed: 0
     property real uploadSpeed: 0
-    // history
-    property var downloadHistory: []
-    property var uploadHistory: []
-    // 3600 / 5
-    property int maxHistoryLength: 720
-    property int historyIndex: 0
     // status
     property bool connected: false
     // processes
@@ -73,13 +67,6 @@ QtObject {
                         networkData.downloadSpeed = (rx - getNetworkProcess.lastRx) / timeDelta / 1024;
                         networkData.uploadSpeed = (tx - getNetworkProcess.lastTx) / timeDelta / 1024;
                         networkData.connected = true;
-                        // Add to history
-                        if (networkData.downloadHistory.length >= networkData.maxHistoryLength) {
-                            networkData.downloadHistory.shift();
-                            networkData.uploadHistory.shift();
-                        }
-                        networkData.downloadHistory.push(networkData.downloadSpeed);
-                        networkData.uploadHistory.push(networkData.uploadSpeed);
                     } else if (rx === 0 && tx === 0) {
                         // Interface might have changed, re-detect
                         networkData.connected = false;

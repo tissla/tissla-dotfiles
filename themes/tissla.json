@@ -1,0 +1,34 @@
+{
+  "id": "tissla",
+  "palette": {
+    "base": "#1e1b29",
+    "mantle": "#1d1a29",
+    "crust": "#14111e",
+    "surface0": "#2b263b",
+    "surface1": "#342e4a",
+    "surface2": "#58498d",
+    "overlay0": "#4a436b",
+    "overlay1": "#7a82ab",
+    "text": "#c9c7d4",
+    "subtext1": "#9ca3af",
+    "subtext0": "#7a82ab",
+    "mauve": "#8b5cf6",
+    "lavender": "#d4abf8",
+    "peach": "#ff9e64",
+    "green": "#76b900",
+    "red": "#f87171",
+    "yellow": "#fbbf24",
+    "blue": "#569cd6",
+    "teal": "#22d3ee",
+    "pink": "#c084fc",
+    "white": "#f9fafb",
+    "black": "#0d0b13"
+  },
+  "roles": {
+    "accent": "mauve",
+    "warning": "peach",
+    "success": "green",
+    "info": "lavender",
+    "muted": "overlay1"
+  }
+}

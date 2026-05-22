@@ -9,10 +9,10 @@ BaseWidget {
     widgetId: "volume"
 
     widgetComponent: Rectangle {
-        color: Theme.background
+        color: Theme.base
         radius: 20
         border.width: Theme.borderWidth
-        border.color: Theme.primary
+        border.color: Theme.accent
 
         Column {
             anchors.fill: parent
@@ -27,7 +27,7 @@ BaseWidget {
                     anchors.margins: 6
                     width: parent.width - 12
                     height: (parent.height - 12) * (VolumeProvider.volume / 100)
-                    color: Theme.surface
+                    color: Theme.surface1
                     radius: 20
                 }
 

@@ -49,10 +49,10 @@ Item {
         radius: Theme.radiusAlt
         color: {
             if (baseModule.isPressed)
-                return Theme.primary;
+                return Theme.accent;
 
             if (mouseArea.containsMouse)
-                return Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.2);
+                return Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2);
 
             return "transparent";
         }
@@ -71,7 +71,7 @@ Item {
                 font.pixelSize: Theme.fontSizeLg
                 width: Theme.spacingLg
                 font.family: Theme.fontMain
-                color: baseModule.isPressed ? Theme.backgroundSolid : Theme.primary
+                color: baseModule.isPressed ? Theme.baseSolid : Theme.accent
                 anchors.verticalCenter: parent.verticalCenter
             }
 
@@ -82,7 +82,7 @@ Item {
                 font.family: Theme.fontMain
                 font.pixelSize: Theme.fontSizeBase
                 font.weight: Font.Bold
-                color: baseModule.isPressed ? Theme.backgroundSolid : Theme.foregroundAlt
+                color: baseModule.isPressed ? Theme.baseSolid : Theme.subtext1
                 anchors.verticalCenter: parent.verticalCenter
             }
 
