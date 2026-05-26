@@ -162,55 +162,6 @@ else
     echo "  skipping .bashrc (already exists)"
 fi
 
-# fastfetch config
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/fastfetch/config.jsonc" >/dev/null <<EOF
-{
-  "\$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-
-  "logo": {
-    "type": "file",
-    "source": "$USER_HOME/.config/fastfetch/tissla.txt",
-    "color": {
-      "1": "#8b5cf6",
-      "2": "#f9fafb",
-      "3": "#374151"
-    }
-  },
-
-  "display": {
-    "separator": " : ",
-    "color": {
-      "keys": "#8b5cf6",
-      "title": "#8b5cf6",
-      "separator": "#374151",
-      "output": "#f9fafb"
-    },
-    "key": { "width": 12 }
-  },
-
-  "modules": [
-    { "type": "title" },
-
-    "separator",
-
-    { "type": "os",     "key": "OS",     "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "kernel", "key": "Kernel", "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "uptime", "key": "Uptime", "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "wm",     "key": "WM",     "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "theme",  "key": "Theme",  "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "font",   "key": "Font",   "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "cpu",    "key": "CPU",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "gpu",    "key": "GPU",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "memory", "key": "Mem",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-    { "type": "disk",   "key": "Disk",   "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
-
-    "break",
-
-    { "type": "colors", "symbol": "block", "paddingLeft": 1, "block": { "width": 3 } }
-  ]
-}
-EOF
-
 # setup symlinks
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"

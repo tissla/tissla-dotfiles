@@ -168,6 +168,59 @@ family = "$(get_font mono)"
 style  = "$(capitalize "$(get_font style)")"
 EOF
 
+# Generate fastfetch config
+ACCENT=$(get_role accent)
+FG=$(get_palette white)
+MUTED=$(get_role muted)
+
+cat >"$DOTFILES/fastfetch/config.jsonc" <<EOF
+{
+  "\$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+  "logo": {
+    "type": "file",
+    "source": "$HOME/.config/fastfetch/tissla.txt",
+    "color": {
+      "1": "$ACCENT",
+      "2": "$FG",
+      "3": "$MUTED"
+    }
+  },
+
+  "display": {
+    "separator": " : ",
+    "color": {
+      "keys":      "$ACCENT",
+      "title":     "$ACCENT",
+      "separator": "$MUTED",
+      "output":    "$FG"
+    },
+    "key": { "width": 12 }
+  },
+
+  "modules": [
+    { "type": "title" },
+
+    "separator",
+
+    { "type": "os",     "key": "OS",     "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "kernel", "key": "Kernel", "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "uptime", "key": "Uptime", "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "wm",     "key": "WM",     "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "theme",  "key": "Theme",  "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "font",   "key": "Font",   "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "cpu",    "key": "CPU",    "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "gpu",    "key": "GPU",    "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "memory", "key": "Mem",    "keyColor": "$ACCENT", "outputColor": "$FG" },
+    { "type": "disk",   "key": "Disk",   "keyColor": "$ACCENT", "outputColor": "$FG" },
+
+    "break",
+
+    { "type": "colors", "symbol": "block", "paddingLeft": 1, "block": { "width": 3 } }
+  ]
+}
+EOF
+
 # Generate Rofi theme
 cat >"$DOTFILES/theme/theme.rasi" <<EOF
 * {

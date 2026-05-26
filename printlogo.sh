@@ -20,4 +20,4 @@ centerfile() {
     done < "$1"
 }
 
-centerfile fastfetch/tissla.txt
+centerfile "$(dirname "$0")/fastfetch/tissla.txt
