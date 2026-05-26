@@ -6,6 +6,7 @@ QtObject {
 
     property Timer throttleTimer
     property bool noPlay: false
+    // TODO: move sound files to local assets, find and use new sound files
     property var map: ({
         "login": "/usr/share/sounds/freedesktop/stereo/service-login.oga",
         "logout": "/usr/share/sounds/freedesktop/stereo/service-logout.oga",

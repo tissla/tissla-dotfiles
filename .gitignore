@@ -8,7 +8,4 @@ Lazy
 theme
 quickshell/Theme.qml
 
-user.conf
-workspaces.conf
-monitors.conf
-settings.json
+fastfetch/config.jsonc

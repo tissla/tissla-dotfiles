@@ -62,7 +62,25 @@
   },
   "2026-06-08": {
     "noteColors": [
-      "orange"
+      "green"
+    ]
+  },
+  "2026-06-15": {
+    "noteColors": [
+      "orange",
+      "red",
+      "green"
+    ]
+  },
+  "2026-06-13": {
+    "noteColors": [
+      "red"
+    ]
+  },
+  "2026-07-05": {
+    "noteColors": [
+      "orange",
+      "red"
     ]
   }
 }

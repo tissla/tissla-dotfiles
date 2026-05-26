@@ -28,7 +28,7 @@ PKGS=(
     qt5ct                   # qt framework
     qt6-5compat             # qt framework compat layer
     jq                      # json parser
-    ewww                    # wallpapermanager
+    awww                    # wallpapermanager
     wl-clipboard            # clipboard
     grimblast               # screenshots
     tesseract               # base
@@ -43,12 +43,15 @@ PKGS=(
     libnotify               # notify-send
     uwsm                    # wayland session manager
     hyprland                # wm / compositor
-    hyprlock                # lockscreen
-    hyprpaper               # wallpapers
     rofi                    # launcher
     neovim                  # editor
     quickshell              # de
     alacritty               # terminal
+    dolphin
+    playerctl
+    brightnessctl
+    noto-fonts
+    wireplumber
 )
 
 echo "==> Installing packages:"
@@ -72,44 +75,16 @@ install_aur() {
 echo "==> Installing AUR packages:"
 install_aur kvantum-theme-catppuccin-git
 
-# create dotfile structure (needed)
+# create dotfile structure
 echo "==> Creating Dotfiles structure..."
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,wallpapers,alacritty,rofi,nvim,Kvantum,scripts}
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,wallpapers,alacritty,rofi,nvim,Kvantum}
 
 # create config files
 echo "==> Creating config files..."
 
 # Hypr configs
-sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/hypr/user.conf" >/dev/null <<EOF
-user = $USER_NAME
-EOF
-
-MONITORS_CONF="$USER_HOME/Dotfiles/hypr/monitors.conf"
-if [[ ! -f "$MONITORS_CONF" ]]; then
-    sudo -u "$USER_NAME" tee "$MONITORS_CONF" >/dev/null <<'EOF'
-monitor = ,preferred,auto,1
-EOF
-else
-    echo "  skipping monitors.conf (already exists)"
-fi
-
-# workspaces
-WORKSPACES_CONF="$USER_HOME/Dotfiles/hypr/workspaces.conf"
-if [[ ! -f "$WORKSPACES_CONF" ]]; then
-    sudo -u "$USER_NAME" tee "$WORKSPACES_CONF" >/dev/null <<'EOF'
-workspace = 1
-workspace = 2
-workspace = 3
-workspace = 4
-workspace = 5
-workspace = 6
-workspace = 7
-workspace = 8
-workspace = 9
-EOF
-else
-    echo "  skipping workspaces.conf (already exists)"
-fi
+# REMOVED
+# TODO: Add hypr default configs compatible with the new lua-format
 
 # quickshell settings
 SETTINGS_JSON="$USER_HOME/Dotfiles/quickshell/settings.json"
@@ -186,6 +161,56 @@ EOF
 else
     echo "  skipping .bashrc (already exists)"
 fi
+
+# fastfetch config
+sudo -u "$USER_NAME" tee "$USER_HOME/Dotfiles/fastfetch/config.jsonc" >/dev/null <<EOF
+{
+  "\$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+  "logo": {
+    "type": "file",
+    "source": "$USER_HOME/.config/fastfetch/tissla.txt",
+    "color": {
+      "1": "#8b5cf6",
+      "2": "#f9fafb",
+      "3": "#374151"
+    }
+  },
+
+  "display": {
+    "separator": " : ",
+    "color": {
+      "keys": "#8b5cf6",
+      "title": "#8b5cf6",
+      "separator": "#374151",
+      "output": "#f9fafb"
+    },
+    "key": { "width": 12 }
+  },
+
+  "modules": [
+    { "type": "title" },
+
+    "separator",
+
+    { "type": "os",     "key": "OS",     "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "kernel", "key": "Kernel", "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "uptime", "key": "Uptime", "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "wm",     "key": "WM",     "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "theme",  "key": "Theme",  "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "font",   "key": "Font",   "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "cpu",    "key": "CPU",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "gpu",    "key": "GPU",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "memory", "key": "Mem",    "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+    { "type": "disk",   "key": "Disk",   "keyColor": "#8b5cf6", "outputColor": "#f9fafb" },
+
+    "break",
+
+    { "type": "colors", "symbol": "block", "paddingLeft": 1, "block": { "width": 3 } }
+  ]
+}
+EOF
+
 # setup symlinks
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
@@ -196,6 +221,7 @@ sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quic
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/fastfetch" "$USER_CONFIG/fastfetch"
 
 #generate default theme
 
