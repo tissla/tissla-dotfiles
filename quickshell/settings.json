@@ -5,53 +5,28 @@
     "position": "bottom"
   },
   "theme": "tissla",
-  "wallpapers": [
-    "japan.png",
-    "japan.png"
-  ],
+  "wallpapers": ["japan.png", "tree.jpg"],
   "wallpapersPath": "/../wallpapers",
-  "weatherCoords": [
-    59.07276,
-    17.01436
-  ],
+  "weatherCoords": [59.07276, 17.01436],
   "screens": [
     {
       "name": "DP-2",
       "isPrimary": true,
       "modules": {
-        "left": [
-          "workspaces"
-        ],
-        "center": [
-          "audiowave"
-        ],
-        "right": [
-          "systemtray",
-          "vpn",
-          "network",
-          "theme"
-        ]
+        "left": ["workspaces"],
+        "center": ["audiowave"],
+        "right": ["systemtray", "vpn", "network", "theme"]
       }
     },
     {
       "name": "HDMI-A-1",
       "isPrimary": false,
       "modules": {
-        "left": [
-          "workspaces"
-        ],
-        "center": [
-          "mpris"
-        ],
-        "right": [
-          "devices",
-          "gpu",
-          "cpu",
-          "volume",
-          "calendar",
-          "clock"
-        ]
+        "left": ["workspaces"],
+        "center": ["mpris"],
+        "right": ["devices", "gpu", "cpu", "volume", "calendar", "clock"]
       }
     }
   ]
 }
+

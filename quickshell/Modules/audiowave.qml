@@ -118,6 +118,10 @@ Item {
 
         id: canvas
 
+        // cache
+        property var cachedGradient: null
+        property color lastAccentColor: "transparent"
+
         anchors.fill: parent
         onPaint: {
             var ctx = getContext("2d");
@@ -125,18 +129,21 @@ Item {
                 return ;
 
             // GRADIENT FOR LINE STROKE
-            let gradient = ctx.createLinearGradient(0, 0, width, 0);
-            let gw = audiowaveModule.width / 4;
-            gradient.addColorStop(0, "transparent");
-            gradient.addColorStop(gw / width, Theme.accent);
-            gradient.addColorStop(1 - gw / width, Theme.accent);
-            gradient.addColorStop(1, "transparent");
+            if (cachedGradient === null || lastAccentColor !== Theme.accent) {
+                cachedGradient = ctx.createLinearGradient(0, 0, width, 0);
+                let gw = audiowaveModule.width / 4;
+                cachedGradient.addColorStop(0, "transparent");
+                cachedGradient.addColorStop(gw / width, Theme.accent);
+                cachedGradient.addColorStop(1 - gw / width, Theme.accent);
+                cachedGradient.addColorStop(1, "transparent");
+                lastAccentColor = Theme.accent;
+            }
             // canvas ctx
             ctx.clearRect(0, 0, width, height);
             let centerY = height / 2;
             let maxHeight = height * 0.5 - 1;
             ctx.beginPath();
-            ctx.strokeStyle = gradient;
+            ctx.strokeStyle = cachedGradient;
             ctx.lineWidth = audiowaveModule.lineThickness;
             ctx.lineCap = "round";
             ctx.lineJoin = "round";

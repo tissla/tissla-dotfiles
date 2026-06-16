@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell.Io
 pragma Singleton
 
 QtObject {
@@ -15,22 +16,22 @@ QtObject {
         "error": "/usr/share/sounds/freedesktop/stereo/dialog-error.oga",
         "message": "/usr/share/sounds/freedesktop/stereo/message.oga"
     })
-
-    function runCommand(cmdArray) {
-        var process = Qt.createQmlObject('import Quickshell.Io; Process { running: true }', root);
-        process.command = cmdArray;
-    }
+    property Process soundProcess
 
     function playSound(key) {
         if (!noPlay) {
             let sound = map[key];
-            // pw-play or paplay depending on sound routing
-            runCommand(["paplay", sound]);
+            soundProcess.command = ["paplay", sound];
+            soundProcess.running = true;
             noPlay = true;
             if (!throttleTimer.running)
                 throttleTimer.start();
 
         }
+    }
+
+    soundProcess: Process {
+        running: false
     }
 
     throttleTimer: Timer {
