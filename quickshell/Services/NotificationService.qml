@@ -9,6 +9,8 @@ QtObject {
     property var notifications: []
     property NotificationServer server
 
+    property int maxMessageSize: 80
+
     function removeNotif(item) {
         notifications = notifications.filter(n => n && n.id !== item.id);
         
@@ -27,10 +29,12 @@ QtObject {
             appName: notif.appName || "",
             image: notif.image || null,
             summary: notif.summary || "",
-            body: notif.body || "",
+            body: notif.body.slice(0, maxMessageSize) || "",
             sourceNotif: notif
         }
 
+        // sound (maybe move??)
+        PlaySoundService.playSound("message")
         notifications = [item, ...notifications.filter(n => n && n.id !== item.id)]
         const timer = Qt.createQmlObject(`
             import QtQuick

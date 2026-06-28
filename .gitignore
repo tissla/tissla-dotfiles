@@ -9,6 +9,10 @@ theme
 quickshell/Theme.qml
 *.bak
 
+#heaptrack
+*.zst
+heaptrack.*
+
 fastfetch/config.jsonc
 
 

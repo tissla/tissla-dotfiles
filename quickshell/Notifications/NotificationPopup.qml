@@ -9,29 +9,17 @@ PanelWindow {
     id: root
 
     property var notifications: NotificationService.notifications
-    property var cards: []
 
     screen: Quickshell.screens[0]
     color: "transparent"
     exclusiveZone: 0
     implicitWidth: 300
     implicitHeight: 700
-    visible: cards.length > 0
+    visible: notifications.length > 0
 
     anchors {
         top: true
         right: true
-    }
-
-    Connections {
-        function onNotificationsChanged() {
-            if (notifications.length > cards.length)
-                cards = notifications.slice();
-            else
-                cards = notifications.slice();
-        }
-
-        target: NotificationService
     }
 
     Column {
@@ -51,7 +39,7 @@ PanelWindow {
                 width: 280
                 implicitHeight: 140
                 radius: Theme.radius
-                color: Theme.base
+                color: Theme.baseSolid
                 border.color: Theme.accent
                 border.width: Theme.borderWidth
 
