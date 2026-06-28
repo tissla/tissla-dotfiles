@@ -1,0 +1,22 @@
+// DEFAULT SETTINGS, rename to setttings.json
+{
+  "bar": {
+    "transparentBackground": false,
+    "height": 30,
+    "position": "bottom"
+  },
+  "theme": "tissla",
+  "wallpapers": ["default.png"],
+  "wallpapersPath": "/../wallpapers",
+  "screens": [
+    {
+      "name": "eDP-1",
+      "isPrimary": true,
+      "modules": {
+        "left": ["workspaces"],
+        "center": ["theme"],
+        "right": ["battery", "cpu", "volume", "calendar", "clock"]
+      }
+    }
+  ]
+}

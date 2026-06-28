@@ -7,6 +7,7 @@ Lazy
 .qmlls.ini
 theme
 quickshell/Theme.qml
+quickshell/settings.json
 *.bak
 
 #heaptrack
