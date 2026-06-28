@@ -48,6 +48,9 @@ BaseWidget 1.0 Core/BaseWidget.qml
 # modules
 BaseModule 1.0 Core/BaseModule.qml
 
+# audio test
+Audio 1.0 Core/Audio.qml
+
 ## lock
 LockContext 1.0 Lock/LockContext.qml
 LockSurface 1.0 Lock/LockSurface.qml

@@ -16,6 +16,9 @@ ShellRoot {
         NotificationService.server;
     }
 
+    //AudioCircle {
+    }
+
     // StatusBar
     Variants {
         model: Quickshell.screens
