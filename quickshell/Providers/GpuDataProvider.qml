@@ -11,6 +11,7 @@ QtObject {
     property real vramTotal: 1
     property real vramUsage: 0
     property Process nvidiaProcess
+    property Process vramProcess
 
     nvidiaProcess: Process {
         running: true
@@ -23,15 +24,13 @@ QtObject {
 
                 let parts = line.trim().split(/\s+/);
                 if (parts.length >= 4) {
-                    gpuData.gpuUsage = parseFloat(parts[1]) || 0;
-                    gpuData.gpuTemp = parseFloat(parts[3]) || 0;
+                    gpuData.gpuUsage = parseFloat(parts[4]) || 0;
+                    gpuData.gpuTemp = parseFloat(parts[2]) || 0;
                 }
             }
         }
 
     }
-
-    property Process vramProcess
 
     vramProcess: Process {
         running: true

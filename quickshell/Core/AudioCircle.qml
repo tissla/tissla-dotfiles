@@ -5,9 +5,11 @@ import Quickshell
 PanelWindow {
     id: audiocirc
 
-    property real waves: 0
+    property real freq: 20
     property real phase: 0
-    property real amplitude: 10
+    property real amplitude: 3
+    // -1 forward, 1 backward
+    property real direction: -1
 
     visible: true
     width: 200
@@ -41,8 +43,8 @@ PanelWindow {
             let cy = height / 2;
             let padd = 10;
             let r = (Math.min(width, height) / 2) - padd;
-            for (let t = 0; t <= Math.PI * 2; t += 0.05) {
-                let wobbledR = r + Math.sin(t * waves + phase) * amplitude;
+            for (let t = 0; t <= Math.PI * 2; t += 0.005) {
+                let wobbledR = r + Math.sin(t * freq + phase) * amplitude;
                 let x = cx + Math.cos(t) * wobbledR;
                 let y = cy + Math.sin(t) * wobbledR;
                 if (t === 0)
@@ -56,14 +58,15 @@ PanelWindow {
     }
 
     Timer {
-        interval: 50 // 20 fps
+        interval: 30 // 62 fps
         running: true
         repeat: true
         onTriggered: {
-            audiocirc.phase += 0.05;
+            audiocirc.phase += audiocirc.direction * 0.1;
             if (audiocirc.phase > Math.PI * 10)
                 audiocirc.phase -= Math.PI * 10;
-
+            else if (audiocirc.phase < 0)
+                audiocirc.phase += Math.PI * 10;
             canvas.requestPaint();
         }
     }

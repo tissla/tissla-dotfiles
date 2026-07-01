@@ -49,7 +49,7 @@ BaseWidget 1.0 Core/BaseWidget.qml
 BaseModule 1.0 Core/BaseModule.qml
 
 # audio test
-Audio 1.0 Core/Audio.qml
+AudioCircle 1.0 Core/AudioCircle.qml
 
 ## lock
 LockContext 1.0 Lock/LockContext.qml

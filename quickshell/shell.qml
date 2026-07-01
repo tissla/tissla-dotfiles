@@ -7,6 +7,7 @@ import Quickshell.Wayland
 
 ShellRoot {
     // Lock system
+    //AudioCircle {}
 
     id: shellRoot
 
@@ -14,9 +15,6 @@ ShellRoot {
     Component.onCompleted: {
         console.log("Forcing NotificationService load");
         NotificationService.server;
-    }
-
-    //AudioCircle {
     }
 
     // StatusBar
