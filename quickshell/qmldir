@@ -37,6 +37,8 @@ singleton NetworkDataProvider 1.0 Providers/NetworkDataProvider.qml
 singleton BatteryDataProvider 1.0 Providers/BatteryDataProvider.qml
 # weather
 singleton WeatherDataProvider 1.0 Providers/WeatherDataProvider.qml
+# timeshift
+singleton TimeshiftDataProvider 1.0 Providers/TimeshiftDataProvider.qml
 
 # resources
 Gauge 1.0 Components/Gauge.qml
