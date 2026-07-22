@@ -40,7 +40,7 @@ PanelWindow {
                 yPos = SettingsManager.barPosition === "top" ? targetScreen.height - widgetHeight - SettingsManager.barHeight - Theme.gap : Theme.gap;
                 let relativeX = pos.x - targetScreen.x;
                 xPos = Math.max(10, Math.min(relativeX - (widgetWidth / 2), targetScreen.width - widgetWidth - Theme.gap));
-                console.log("Displaying widget on screen:", targetScreen.name, "screen.x:", targetScreen.x, "relative X:", relativeX, "final xPos:", xPos);
+                console.log("[BaseWidget] Displaying widget on screen:", targetScreen.name, "screen.x:", targetScreen.x, "relative X:", relativeX, "final xPos:", xPos);
             }
         } else {
             yPos = Theme.gap;
@@ -56,7 +56,7 @@ PanelWindow {
         }
     }
     Component.onCompleted: {
-        console.log("[BaseWidget] Widget created = ", widgetId);
+        console.log("[BaseWidget] Widget created: ", widgetId);
         WidgetManager.registerWidget(widgetId, this);
     }
 

@@ -173,7 +173,7 @@ sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/fastfetch" "$USER_CONFIG/fastfetch"
-
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/matugen" "$USER_CONFIG/matugen"
 #generate default theme
 
 echo "==> Generating default theme (tissla)..."

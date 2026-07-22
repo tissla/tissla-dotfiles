@@ -1,4 +1,5 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 pragma Singleton
 
@@ -8,6 +9,7 @@ QtObject {
     property Timer processTimer
     property Process listProcess
     property Process configProcess
+    property SystemClock clock
     property date lastSnapshotDate: new Date(0)
     property string lastSnapshotTag: ""
     property int snapshotCount: 0
@@ -16,6 +18,9 @@ QtObject {
     property int scheduleIntervalMs: 24 * 60 * 60 * 1000
     property date nextSnapshotDate: new Date(lastSnapshotDate.getTime() + scheduleIntervalMs)
     property string moduleSnapshotDate: formatRelative(lastSnapshotDate)
+    // ticks every minute so anything calling formatRelative() re-evaluates
+    // even when lastSnapshotDate/nextSnapshotDate haven't changed
+    property date now: clock.date
 
     function parseSnapshotDate(name) {
         let m = name.match(/^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})$/);
@@ -26,6 +31,8 @@ QtObject {
     }
 
     function formatRelative(date) {
+        // read "now" so every binding calling this re-evaluates on each clock tick
+        void timeshiftData.now;
         if (!date || isNaN(date.getTime()) || date.getTime() === 0)
             return "never";
 
@@ -43,6 +50,10 @@ QtObject {
         else
             label = Math.max(mins, 1) + "m";
         return future ? "in " + label : label + " ago";
+    }
+
+    clock: SystemClock {
+        precision: SystemClock.Minutes
     }
 
     // Read schedule settings to estimate the next snapshot time
@@ -140,11 +151,12 @@ QtObject {
     processTimer: Timer {
         running: true
         repeat: true
-        interval: 10 * 60 * 1000
+        interval: 10 * 60 * 1000 // 10 minutes
         triggeredOnStart: true
         onTriggered: {
-            listProcess.running = true;
-            configProcess.running = true;
+            console.log("[TimeshiftDataProvider] Updating data");
+            timeshiftData.listProcess.running = true;
+            timeshiftData.configProcess.running = true;
         }
     }
 

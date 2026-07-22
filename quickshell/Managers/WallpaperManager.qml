@@ -8,7 +8,14 @@ QtObject {
     id: wpManager
 
     property var availableWallpapers: []
-    property var wallpapers: SettingsManager.wallpapers
+    property var wallpapers: {
+        let result = ({
+        });
+        for (let name in SettingsManager.screenConfigs) {
+            result[name] = SettingsManager.screenConfigs[name].wallpaper || "";
+        }
+        return result;
+    }
     property string wallpapersPath: Quickshell.shellDir + SettingsManager.wallpapersPath
     property Process setWallpaperProcess
     property Process loadAvailableWallpaperProcess
@@ -18,25 +25,25 @@ QtObject {
         loadAvailableWallpaperProcess.running = true;
     }
 
-    function setWallpaper(path, screenName) {
-        setWallpaperProcess.screenName = screenName;
-        setWallpaperProcess.wpPath = path;
-        setWallpaperProcess.running = true;
-    }
-
     function setAllWallpapers() {
-        if (wallpapers.length === 0)
+        if (Object.keys(wallpapers).length === 0)
             return ;
 
         let commands = [];
         for (let i = 0; i < Quickshell.screens.length; i++) {
-            let wp = wallpapersPath + "/" + wallpapers[i % wallpapers.length];
             let screen = Quickshell.screens[i].name;
-            // errorcheck
+            let wpFile = wallpapers[screen];
+            if (!wpFile)
+                continue;
+
+            let wp = wallpapersPath + "/" + wpFile;
             if (wallpapersPath != Quickshell.shellDir)
-                commands.push(`awww img -o ${screen} "${wp}" --transition-type random`);
+                commands.push(`twp-cli set -output ${screen} -path "${wp}"`);
 
         }
+        if (commands.length === 0)
+            return ;
+
         let fullCommand = commands.join(" && ");
         setAllWallpapersProcess.command = ["sh", "-c", fullCommand];
         setAllWallpapersProcess.running = true;

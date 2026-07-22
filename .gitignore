@@ -8,6 +8,7 @@ Lazy
 theme
 quickshell/Theme.qml
 quickshell/settings.json
+themes/matugen.json
 *.bak
 
 #heaptrack

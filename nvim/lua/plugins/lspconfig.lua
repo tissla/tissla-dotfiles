@@ -96,16 +96,6 @@ return {
           filetypes = { "arduino" },
         },
       },
-      setup = {
-        gdscript = function(_, opts)
-          require("lspconfig").gdscript.setup({
-            cmd = vim.lsp.rpc.connect("127.0.0.1", 6005),
-            filetypes = { "gd" },
-            root_dir = require("lspconfig.util").root_pattern("project.godot", ".git"),
-          })
-          return true
-        end,
-      },
     },
   },
 }

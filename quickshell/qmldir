@@ -1,6 +1,9 @@
 # theme
 singleton Theme 1.0 Theme.qml
 
+# compositor detection
+singleton Compositor 1.0 Core/Compositor.qml
+
 # thememanager
 singleton ThemeManager 1.0 Managers/ThemeManager.qml
 
@@ -14,6 +17,8 @@ singleton WidgetManager 1.0 Managers/WidgetManager.qml
 singleton PlaySoundService 1.0 Services/PlaySoundService.qml
 # notifications
 singleton NotificationService 1.0 Services/NotificationService.qml
+# matugen
+singleton MatugenService 1.0 Services/MatugenService.qml
 
 # statusbar
 StatusBar 1.0 Layout/StatusBar.qml
@@ -39,6 +44,10 @@ singleton BatteryDataProvider 1.0 Providers/BatteryDataProvider.qml
 singleton WeatherDataProvider 1.0 Providers/WeatherDataProvider.qml
 # timeshift
 singleton TimeshiftDataProvider 1.0 Providers/TimeshiftDataProvider.qml
+# workspaces (compositor-agnostic facade + per-compositor backends)
+singleton WorkspaceProvider 1.0 Providers/WorkspaceProvider.qml
+singleton HyprlandWorkspaceProvider 1.0 Providers/HyprlandWorkspaceProvider.qml
+singleton NiriWorkspaceProvider 1.0 Providers/NiriWorkspaceProvider.qml
 
 # resources
 Gauge 1.0 Components/Gauge.qml

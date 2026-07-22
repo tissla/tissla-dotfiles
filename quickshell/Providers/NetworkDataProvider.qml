@@ -9,6 +9,7 @@ QtObject {
     property real downloadSpeed: 0
     property real uploadSpeed: 0
     property bool connected: false
+    property Timer detectTimer
     property Process detectProcess
     property Process netProcess
 
@@ -22,17 +23,40 @@ QtObject {
         return (kbps / 1024).toFixed(1) + " MB/s";
     }
 
-    detectProcess: Process {
+    // Re-checks the default route periodically so we recover once a
+    // connection appears (or switches interface) after startup, instead
+    // of only ever detecting it once.
+    detectTimer: Timer {
+        interval: 5000
         running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: detectProcess.running = true
+    }
+
+    detectProcess: Process {
+        running: false
         command: ["sh", "-c", "ip route show default | awk '/default/ {print $5}' | head -1"]
 
         stdout: StdioCollector {
             onStreamFinished: {
                 let iface = text.trim();
                 if (iface.length > 0) {
-                    networkData.nwInterface = iface;
+                    if (iface !== networkData.nwInterface) {
+                        networkData.nwInterface = iface;
+                        netProcess.resetStats();
+                        netProcess.running = false;
+                        netProcess.running = true;
+                    } else if (!netProcess.running) {
+                        netProcess.running = true;
+                    }
                     networkData.connected = true;
-                    netProcess.running = true;
+                } else {
+                    networkData.connected = false;
+                    networkData.nwInterface = "";
+                    networkData.downloadSpeed = 0;
+                    networkData.uploadSpeed = 0;
+                    netProcess.running = false;
                 }
             }
         }
@@ -45,6 +69,14 @@ QtObject {
         property real lastTime: Date.now()
         property real pendingRx: -1
         property real pendingTx: 0
+
+        function resetStats() {
+            lastRx = 0;
+            lastTx = 0;
+            lastTime = Date.now();
+            pendingRx = -1;
+            pendingTx = 0;
+        }
 
         running: false
         command: ["sh", "-c", `while true; do

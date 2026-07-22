@@ -11,7 +11,6 @@ QtObject {
     property string barPosition: "bottom"
     property string theme: "tissla"
     property var weatherCoords: []
-    property var wallpapers: []
     property string wallpapersPath: ""
     property var screenConfigs: ({
     })
@@ -37,7 +36,6 @@ QtObject {
                 "position": barPosition
             },
             "theme": theme,
-            "wallpapers": wallpapers,
             "wallpapersPath": wallpapersPath,
             "weatherCoords": weatherCoords,
             "screens": []
@@ -46,6 +44,7 @@ QtObject {
             json.screens.push({
                 "name": screenName,
                 "isPrimary": screenConfigs[screenName].isPrimary || false,
+                "wallpaper": screenConfigs[screenName].wallpaper,
                 "modules": {
                     "left": screenConfigs[screenName].left || [],
                     "center": screenConfigs[screenName].center || [],
@@ -72,6 +71,15 @@ QtObject {
                 "right": []
             };
         }
+    }
+
+    function getPrimaryWallpaper() {
+        for (let name in screenConfigs) {
+            if (screenConfigs[name].isPrimary === true)
+                return screenConfigs[name].wallpaper;
+
+        }
+        return "";
     }
 
     function getScreenModules(screenName) {
@@ -110,9 +118,6 @@ QtObject {
                             settings.barPosition = json.bar.position;
 
                     }
-                    if (json.wallpapers)
-                        settings.wallpapers = json.wallpapers;
-
                     if (json.theme)
                         settings.theme = json.theme;
 
@@ -134,7 +139,8 @@ QtObject {
                                 "left": screen.modules.left || [],
                                 "center": screen.modules.center || [],
                                 "right": screen.modules.right || [],
-                                "isPrimary": screen.isPrimary === true
+                                "isPrimary": screen.isPrimary === true,
+                                "wallpaper": screen.wallpaper || []
                             };
                         }
                         settings.screenConfigs = configs;

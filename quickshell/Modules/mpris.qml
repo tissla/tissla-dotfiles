@@ -2,15 +2,13 @@ import ".."
 import QtQuick
 import Quickshell.Services.Mpris
 
-Item {
+BaseModule {
     id: mprisModule
-
-    property var screen: null
 
     readonly property list<MprisPlayer> availablePlayers: Mpris.players.values
     property MprisPlayer player: availablePlayers.find(p => p.isPlaying) ?? availablePlayers.find(p => p.canControl && p.canPlay) ?? null
 
-    property string moduleIcon: {
+    moduleIcon: {
         if (!player)
             return "⏸";
 
@@ -22,7 +20,7 @@ Item {
 
         return "⏹";
     }
-    property string moduleText: {
+    moduleText: {
         if (!player)
             return "No media";
 
@@ -34,52 +32,10 @@ Item {
         return title;
     }
 
-    width: Math.min(mprisRow.width + 16, 600)
-    height: 40
     clip: true
 
-    Row {
-        id: mprisRow
 
-        anchors.centerIn: parent
-        spacing: 8
-
-
-        Text {
-            text: mprisModule.moduleIcon
-            font.pixelSize: Theme.fontSizeXl
-            width: 24
-            color: Theme.accent
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: -2
-            font.weight: Font.Bold
-        }
-
-        Text {
-            text: mprisModule.moduleText
-            width: Math.min(mprisModule.moduleText.length * Theme.fontSizeBase, 570)
-            font.family: Theme.fontMain
-            font.pixelSize: Theme.fontSizeBase
-            font.weight: Font.Bold
-            color: Theme.subtext1
-            elide: Text.ElideRight
-            maximumLineCount: 1
-            anchors.verticalCenter: parent.verticalCenter
-        }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: mouse => {
-            if (!mprisModule.player)
-                return;
-
-            if (mouse.button === Qt.RightButton && mprisModule.player.canGoNext)
-                mprisModule.player.next();
-            else if (mouse.button === Qt.LeftButton && mprisModule.player.canTogglePlaying)
-                mprisModule.player.togglePlaying();
-        }
+    onRightClickCallback: () => {
+        mprisModule.player.togglePlaying();
     }
 }

@@ -1,0 +1,5 @@
+[config]
+
+[templates.matugen]
+input_path = "~/.config/matugen/templates/tissla-theme.json"
+output_path = "~/Dotfiles/themes/matugen.json"

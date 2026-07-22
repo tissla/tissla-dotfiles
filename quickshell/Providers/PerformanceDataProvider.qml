@@ -5,6 +5,7 @@ pragma Singleton
 QtObject {
     id: performanceData
 
+    property bool run: false
     property real cpuUsage: 0
     property real cpuTemp: 0
     property real ramUsage: 0
@@ -23,6 +24,36 @@ QtObject {
         "steal": 0
     })
     property Process cpuProcess
+    // RAM via /proc/meminfo
+    property Process ramProcess
+    // sensors
+    property Process sensorsProcess
+
+    function startPolling() {
+        run = true;
+    }
+
+    function stopPolling() {
+        run = false;
+    }
+
+    function parseSensors(output) {
+        let tctlMatch = output.match(/Tctl:\s+\+([\d.]+)°C/);
+        if (tctlMatch)
+            cpuTemp = parseFloat(tctlMatch[1]);
+
+        let liquidMatch = output.match(/Coolant temp:\s+\+([\d.]+)°C/);
+        if (liquidMatch)
+            liquidTemp = parseFloat(liquidMatch[1]);
+
+        let pumpMatch = output.match(/Pump speed:\s+(\d+)\s+RPM/);
+        if (pumpMatch)
+            pumpSpeed = parseInt(pumpMatch[1]);
+
+        console.log("pump speed:", pumpSpeed);
+        console.log("cpu temp:", cpuTemp);
+        console.log("liquid temp:", liquidTemp);
+    }
 
     cpuProcess: Process {
         running: true
@@ -47,11 +78,8 @@ QtObject {
 
     }
 
-    // RAM via /proc/meminfo
-    property Process ramProcess
-
     ramProcess: Process {
-        running: true
+        running: performanceData.run
         command: ["sh", "-c", "while true; do grep -E '^(MemTotal|MemAvailable):' /proc/meminfo; echo '---'; sleep 2; done"]
 
         stdout: SplitParser {
@@ -73,40 +101,23 @@ QtObject {
 
     }
 
-    // sensors
-    property Process sensorsProcess
-
     sensorsProcess: Process {
-        running: true
+        running: performanceData.run
         command: ["sh", "-c", "while true; do sensors -A; echo '===END==='; sleep 3; done"]
 
         stdout: SplitParser {
             property string buffer: ""
 
             onRead: (line) => {
-                if (line === "===END===") {
-                    parseSensors(buffer);
+                if (line.endsWith("===END===")) {
+                    buffer += line.slice(0, line.length - "===END===".length);
+                    performanceData.parseSensors(buffer);
                     buffer = "";
                 } else {
                     buffer += line + "\n";
                 }
             }
         }
-
-    }
-
-    function parseSensors(output) {
-        let tctlMatch = output.match(/Tctl:\s+\+([\d.]+)°C/);
-        if (tctlMatch)
-            cpuTemp = parseFloat(tctlMatch[1]);
-
-        let liquidMatch = output.match(/Coolant temp:\s+\+([\d.]+)°C/);
-        if (liquidMatch)
-            liquidTemp = parseFloat(liquidMatch[1]);
-
-        let pumpMatch = output.match(/Pump speed:\s+(\d+)\s+RPM/);
-        if (pumpMatch)
-            pumpSpeed = parseInt(pumpMatch[1]);
 
     }
 

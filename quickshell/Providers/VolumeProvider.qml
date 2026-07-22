@@ -38,6 +38,7 @@ QtObject {
 
         sink.audio.muted = !sink.audio.muted;
         isMuted = sink.audio.muted;
+        PlaySoundService.playSound("volume-change");
     }
 
     onSinkChanged: refresh()

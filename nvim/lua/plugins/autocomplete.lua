@@ -1,33 +1,16 @@
 return {
-  "hrsh7th/nvim-cmp",
-  dependencies = {
-    "hrsh7th/cmp-cmdline",
+  "saghen/blink.cmp",
+  opts = {
+    cmdline = {
+      sources = function()
+        local type = vim.fn.getcmdtype()
+        if type == ":" then
+          return { "cmdline", "path" }
+        elseif type == "/" or type == "?" then
+          return { "buffer" }
+        end
+        return {}
+      end,
+    },
   },
-  opts = function(_, opts)
-    local cmp = require("cmp")
-
-    opts.mapping = opts.mapping or {}
-    opts.mapping["<C-Space>"] = cmp.mapping.complete()
-
-    cmp.setup.cmdline(":", {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = {
-        { name = "path" },
-        { name = "cmdline" },
-      },
-    })
-
-    cmp.setup.cmdline("/", {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = {
-        { name = "buffer" },
-        { name = "spell" },
-      },
-    })
-
-    opts.sources = cmp.config.sources({
-      { name = "spell" },
-      { name = "buffer" },
-    })
-  end,
 }

@@ -115,7 +115,7 @@ BaseWidget {
                                 Rectangle {
                                     id: isWpIndicator
 
-                                    property bool isVisible: SettingsManager.wallpapers && SettingsManager.wallpapers.indexOf(wallpaperRect.wpFilename) !== -1
+                                    property bool isVisible: Object.values(WallpaperManager.wallpapers).indexOf(wallpaperRect.wpFilename) !== -1
 
                                     visible: isVisible
                                     anchors.top: parent.top
@@ -170,7 +170,7 @@ BaseWidget {
                                                 height: Theme.spacingXl
                                                 radius: Theme.radiusAlt
                                                 color: {
-                                                    if (SettingsManager.wallpapers[index] === wallpaperRect.wpFilename)
+                                                    if (WallpaperManager.wallpapers[Quickshell.screens[index].name] === wallpaperRect.wpFilename)
                                                         return Theme.accent;
 
                                                     if (screenMouse.containsMouse)
@@ -196,10 +196,18 @@ BaseWidget {
                                                     preventStealing: true
                                                     cursorShape: Qt.PointingHandCursor
                                                     onClicked: {
-                                                        // mutate the whole array to trigger propertychange
-                                                        let newWallpapers = SettingsManager.wallpapers.slice();
-                                                        newWallpapers[index] = wallpaperRect.wpFilename;
-                                                        SettingsManager.wallpapers = newWallpapers;
+                                                        // mutate the whole object to trigger propertychange
+                                                        let screenName = Quickshell.screens[index].name;
+                                                        let newConfigs = Object.assign({}, SettingsManager.screenConfigs);
+                                                        let existing = newConfigs[screenName] || {
+                                                            "left": ["workspaces"],
+                                                            "center": [],
+                                                            "right": []
+                                                        };
+                                                        newConfigs[screenName] = Object.assign({}, existing, {
+                                                            "wallpaper": wallpaperRect.wpFilename
+                                                        });
+                                                        SettingsManager.screenConfigs = newConfigs;
                                                         SettingsManager.saveSettings();
                                                     }
                                                 }

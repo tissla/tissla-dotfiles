@@ -1,6 +1,5 @@
 import ".."
 import QtQuick
-import Quickshell.Hyprland
 
 pragma ComponentBehavior: Bound;
 Rectangle {
@@ -18,60 +17,38 @@ Rectangle {
     Row {
         id: workspaceRow
 
-        property bool isSpecialOpen: {
-            const m = Hyprland.focusedMonitor;
-            const sw = m && m.lastIpcObject ? m.lastIpcObject.specialWorkspace : null;
-            return !!(sw && sw.name && sw.name !== "");
-        }
-
         anchors.centerIn: parent
         spacing: 4
 
-        Connections {
-            function onRawEvent(ev) {
-                if (ev.name === "activespecial" || ev.name === "focusedmon")
-                    Hyprland.refreshMonitors();
-
-            }
-
-            target: Hyprland
-        }
-
         Repeater {
-            model: Hyprland.workspaces
+            model: root.screen ? WorkspaceProvider.workspaces.filter((ws) => ws.monitor === root.screen.name) : []
 
             delegate: Rectangle {
                 id: wsRect
 
                 required property var modelData
-                required property int index
-                property var targetScreen: root.screen
-                property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsRect.modelData.id
 
-                // Visibility
-                visible: wsRect.modelData.monitor && wsRect.modelData.monitor.name === wsRect.targetScreen.name && wsRect.modelData.id !== -98
                 width: Theme.moduleWidth
                 height: Theme.moduleHeight
                 radius: Theme.radius
                 border.width: Theme.borderWidth
-                border.color: wsRect.isActive ? Theme.accent : "transparent"
-                color: wsRect.isActive ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.3) : "transparent"
-                scale: wsRect.isActive ? 1 : 0.8
+                border.color: wsRect.modelData.active ? Theme.accent : "transparent"
+                color: wsRect.modelData.active ? Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.1) : "transparent"
+                scale: wsRect.modelData.active ? 1 : 0.8
 
                 Text {
                     anchors.centerIn: parent
-                    text: (workspaceRow.isSpecialOpen && wsRect.isActive) ? "" : wsRect.modelData.id
+                    text: wsRect.modelData.special ? "" : wsRect.modelData.idx
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeBase
                     font.weight: Font.Bold
-                    color: wsRect.isActive ? Theme.text : Theme.subtext1
+                    color: wsRect.modelData.active ? Theme.text : Theme.subtext1
                 }
 
                 MouseArea {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
-                    // fix for lua, go back to wsRect.modelData.activate() once quickshell updates
-                    onClicked: Hyprland.dispatch(`hl.dsp.focus({ workspace = "${wsRect.modelData.id}" })`)
+                    onClicked: WorkspaceProvider.activate(wsRect.modelData.id)
                 }
 
                 Behavior on scale {

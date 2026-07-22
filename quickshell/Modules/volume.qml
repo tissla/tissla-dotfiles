@@ -25,4 +25,7 @@ BaseModule {
         else
             VolumeProvider.setVolume(VolumeProvider.volume - 5);
     }
+    onRightClickCallback: () => {
+        VolumeProvider.toggleMute();
+    }
 }

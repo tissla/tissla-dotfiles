@@ -16,14 +16,11 @@ Item {
             if (!root.screen)
                 return "";
 
-            let len = Quickshell.screens.length;
-            for (let i = 0; i < len; i++) {
-                if (root.screen.name === Quickshell.screens[i].name)
-                    return WallpaperManager.wallpapersPath + "/" + WallpaperManager.wallpapers[i % SettingsManager.wallpapers.length];
+            let wp = WallpaperManager.wallpapers[root.screen.name];
+            if (!wp)
+                return "";
 
-            }
-            // default
-            return "";
+            return WallpaperManager.wallpapersPath + "/" + wp;
         }
         fillMode: Image.PreserveAspectCrop
         cache: true

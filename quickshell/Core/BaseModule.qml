@@ -13,6 +13,7 @@ Item {
     // mouse events
     property bool enableMouseArea: true
     property var onScrollCallback: null
+    property var onRightClickCallback: null
     // textWidth can be used to keep dynamic values from altering module position.
     // will default to implicitWidth of the text block if unset
     property int textWidth: 0
@@ -115,19 +116,27 @@ Item {
         anchors.fill: parent
         cursorShape: Qt.PointingHandCursor
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         onEntered: baseModule.isHovered = true
         onExited: baseModule.isHovered = false
+        // per module scroll interactions
         onWheel: (wheel) => {
             let delta = wheel.angleDelta.y / 120;
             if (baseModule.onScrollCallback)
                 baseModule.onScrollCallback(delta);
 
         }
+        // left click default interaction, and right click per module interaction
         onClicked: (mouse) => {
-            let position = mapToGlobal(moduleWidth / 2, 0);
-            WidgetManager.setMousePosition(position, screen);
-            WidgetManager.toggleWidget(widgetId);
-            console.log("TOGGLING WIDGET", baseModule.widgetId, "ON SCREEN", baseModule.screen);
+            if (mouse.button === Qt.LeftButton) {
+                let position = mapToGlobal(moduleWidth / 2, 0);
+                WidgetManager.setMousePosition(position, screen);
+                WidgetManager.toggleWidget(widgetId);
+            } else if (mouse.button === Qt.RightButton) {
+                if (baseModule.onRightClickCallback)
+                    baseModule.onRightClickCallback();
+
+            }
         }
     }
 

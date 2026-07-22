@@ -21,7 +21,12 @@ QtObject {
     // set theme from themesData
     function setTheme(themeId) {
         activeTheme = themeId;
-        generateThemeFiles(themeId);
+        if (themeId === "matugen") {
+            MatugenService.generateTheme();
+        } else {
+            generateThemeFiles(themeId);
+        }
+
         SettingsManager.setTheme(themeId);
     }
 
@@ -32,6 +37,13 @@ QtObject {
     function generateThemeFiles(themeId) {
         generateProcess.themeId = themeId;
         generateProcess.running = true;
+    }
+
+    // hyprland needs an explicit reload to pick up generated config, niri doesnt
+    function reloadCompositor() {
+        if (Compositor.isHyprland)
+            hyprctlProcess.running = true;
+
     }
 
     Component.onCompleted: {
@@ -46,9 +58,9 @@ QtObject {
             onStreamFinished: {
                 let data = JSON.parse(text);
                 if (data.themes && Array.isArray(data.themes))
-                    themeManager.availableThemes = data.themes;
+                    themeManager.availableThemes = ["matugen", ...data.themes];
                 else
-                    themeManager.availableThemes = [];
+                    themeManager.availableThemes = ["matugen"];
                 console.log("[ThemeManager] Available themes:", themeManager.availableThemes.join(", "));
             }
         }
@@ -61,10 +73,10 @@ QtObject {
 
         running: false
         command: ["bash", "-c", Quickshell.shellDir + "/../build-theme.sh " + themeId + " >/dev/null 2>&1"]
-
         onRunningChanged: {
             if (!running && themeId !== "")
-                hyprctlProcess.running = true;
+                themeManager.reloadCompositor();
+
         }
 
         stdout: SplitParser {
