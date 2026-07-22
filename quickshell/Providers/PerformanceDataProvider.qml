@@ -50,9 +50,6 @@ QtObject {
         if (pumpMatch)
             pumpSpeed = parseInt(pumpMatch[1]);
 
-        console.log("pump speed:", pumpSpeed);
-        console.log("cpu temp:", cpuTemp);
-        console.log("liquid temp:", liquidTemp);
     }
 
     cpuProcess: Process {
