@@ -10,6 +10,12 @@ fi
 # start logo
 "$(dirname "$0")/printlogo.sh"
 
+echo "== > Choose compositor:"
+select choice in "hyprland" "niri"; do
+    COMPOSITOR=$choice
+    break
+done
+
 #  Update
 echo "==> Updating (pacman -Syu)..."
 pacman -Syu --noconfirm
@@ -42,7 +48,7 @@ PKGS=(
     sddm                    # desktop manager
     libnotify               # notify-send
     uwsm                    # wayland session manager
-    hyprland                # wm / compositor
+    $COMPOSITOR             # wm / compositor
     rofi                    # launcher
     neovim                  # editor
     quickshell              # de
@@ -97,7 +103,6 @@ if [[ ! -f "$SETTINGS_JSON" ]]; then
     "position": "bottom"
   },
   "theme": "tissla",
-  "wallpapers": [ "default.png" ],
   "wallpapersPath": "/../wallpapers",
   "screens": [
     {
@@ -105,6 +110,7 @@ if [[ ! -f "$SETTINGS_JSON" ]]; then
       "isPrimary": true,
       "modules": {
         "left": ["workspaces"],
+        "wallpaper": "default.png",
         "center": ["theme"],
         "right": ["battery", "cpu", "volume", "calendar", "clock"]
       }
@@ -184,15 +190,21 @@ sudo -u "$USER_NAME" bash "$USER_HOME/Dotfiles/build-theme.sh" "tissla"
 
 echo "==> Configuring SDDM autologin for user: $USER_NAME"
 
+if [[ "$COMPOSITOR" == "hyprland" ]]; then
+    SESSION="hyprland-uwsm"
+else
+    SESSION="niri"
+fi
+
 sudo tee "/etc/sddm.conf" >/dev/null <<EOF
 [Autologin]
 User=$USER_NAME
-Session=hyprland-uwsm
+Session=$SESSION
 EOF
 
 echo "==> SDDM autologin configured!"
 echo "   User:    $USER_NAME"
-echo "   Session: hyprland-uwsm"
+echo "   Session: $SESSION"
 
 systemctl enable --now sddm
 
