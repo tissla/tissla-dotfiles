@@ -10,6 +10,7 @@ quickshell/Theme.qml
 quickshell/settings.json
 themes/matugen.json
 *.bak
+notes
 
 #heaptrack
 *.zst
