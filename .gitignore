@@ -12,6 +12,7 @@ themes/matugen.json
 hypr/theme.lua
 *.bak
 notes
+TODO.md
 
 #heaptrack
 *.zst
