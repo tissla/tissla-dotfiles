@@ -36,7 +36,6 @@ PKGS=(
     jq                      # json parser
     awww                    # wallpapermanager
     wl-clipboard            # clipboard
-    grimblast               # screenshots
     tesseract               # base
     tesseract-data-eng      # eng pack
     tesseract-data-swe      # swe pack
@@ -53,6 +52,7 @@ PKGS=(
     neovim                  # editor
     quickshell              # de
     alacritty               # terminal
+    matugen                 # custom themes
     dolphin
     playerctl
     brightnessctl
@@ -80,6 +80,7 @@ install_aur() {
 
 echo "==> Installing AUR packages:"
 install_aur kvantum-theme-catppuccin-git
+install_aur grimblast-git
 
 # create dotfile structure
 echo "==> Creating Dotfiles structure..."
