@@ -20,17 +20,19 @@ BaseModule {
 
         return "⏹";
     }
-    moduleText: {
-        if (!player)
-            return "No media";
+moduleText: {
+    if (!player)
+        return "No media";
 
-        let title = player.trackTitle || "Unknown";
-        let artist = player.trackArtist || "";
-        if (artist && title)
-            return artist + " - " + title;
+    let title = player.trackTitle || "Unknown";
+    let artist = player.trackArtist || "";
+    let fullText = (artist && title ? artist + " - " + title : title).trim();
 
-        return title;
-    }
+    const maxLength = 60;
+    return fullText.length > maxLength
+        ? fullText.substring(0, maxLength).trim() + "..."
+        : fullText;
+}
 
     clip: true
 
