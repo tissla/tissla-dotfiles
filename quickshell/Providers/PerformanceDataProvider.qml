@@ -54,7 +54,7 @@ QtObject {
 
     cpuProcess: Process {
         running: true
-        command: ["vmstat", "2"]
+        command: ["vmstat", "-n", "2"]
 
         stdout: SplitParser {
             property int lineCount: 0
@@ -68,7 +68,7 @@ QtObject {
                 let parts = line.trim().split(/\s+/);
                 if (parts.length >= 15) {
                     let idle = parseFloat(parts[14]);
-                    performanceData.cpuUsage = 100 - idle;
+                    performanceData.cpuUsage = (100 - idle);
                 }
             }
         }

@@ -9,7 +9,7 @@ BaseWidget {
     widgetHeight: 280
 
     widgetComponent: Rectangle {
-        color: Theme.base
+        color: Theme.baseSolid
         radius: Theme.radius
         border.width: Theme.borderWidth
         border.color: Theme.accent

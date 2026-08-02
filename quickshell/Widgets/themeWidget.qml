@@ -9,7 +9,7 @@ BaseWidget {
     widgetHeight: 400
 
     widgetComponent: Rectangle {
-        color: Theme.base
+        color: Theme.baseSolid
         radius: Theme.radius
         border.width: Theme.borderWidth
         border.color: Theme.accent
@@ -198,13 +198,15 @@ BaseWidget {
                                                     onClicked: {
                                                         // mutate the whole object to trigger propertychange
                                                         let screenName = Quickshell.screens[index].name;
-                                                        let newConfigs = Object.assign({}, SettingsManager.screenConfigs);
+                                                        let newConfigs = Object.assign({
+                                                        }, SettingsManager.screenConfigs);
                                                         let existing = newConfigs[screenName] || {
                                                             "left": ["workspaces"],
                                                             "center": [],
                                                             "right": []
                                                         };
-                                                        newConfigs[screenName] = Object.assign({}, existing, {
+                                                        newConfigs[screenName] = Object.assign({
+                                                        }, existing, {
                                                             "wallpaper": wallpaperRect.wpFilename
                                                         });
                                                         SettingsManager.screenConfigs = newConfigs;

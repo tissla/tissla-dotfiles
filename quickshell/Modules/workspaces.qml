@@ -38,7 +38,7 @@ Rectangle {
 
                 Text {
                     anchors.centerIn: parent
-                    text: wsRect.modelData.special ? "" : wsRect.modelData.idx
+                    text: wsRect.modelData.special ? "" : wsRect.modelData.idx
                     font.family: Theme.fontMain
                     font.pixelSize: Theme.fontSizeBase
                     font.weight: Font.Bold

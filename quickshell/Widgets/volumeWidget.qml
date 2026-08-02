@@ -9,7 +9,7 @@ BaseWidget {
     widgetId: "volume"
 
     widgetComponent: Rectangle {
-        color: Theme.base
+        color: Theme.baseSolid
         radius: 20
         border.width: Theme.borderWidth
         border.color: Theme.accent
