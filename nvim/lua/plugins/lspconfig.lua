@@ -51,6 +51,7 @@ return {
           },
         },
         -- QML
+        qmlls = false,
         qml = {
           name = "qml-language-server",
           cmd = { "/home/tissla/.local/bin/qml-language-server" },

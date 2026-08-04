@@ -20,6 +20,7 @@ Item {
     // visual state
     property bool isPressed: widgetActive
     property bool isHovered: false
+    property int maxFontSize: height - 16
     // default width
     property int moduleWidth: {
         if (customContents && customLoader.item)
@@ -81,7 +82,7 @@ Item {
                 text: baseModule.moduleText
                 width: baseModule.textWidth > 0 ? baseModule.textWidth : implicitWidth
                 font.family: Theme.fontMain
-                font.pixelSize: Theme.fontSizeBase
+                font.pixelSize: baseModule.maxFontSize < Theme.fontSizeBase ? baseModule.maxFontSize : Theme.fontSizeBase
                 font.weight: Font.Bold
                 color: baseModule.isPressed ? Theme.baseSolid : Theme.subtext1
                 anchors.verticalCenter: parent.verticalCenter

@@ -10,6 +10,7 @@ QtObject {
     property int barHeight: 40
     property string barPosition: "bottom"
     property string theme: "tissla"
+    property bool border: true
     property var weatherCoords: []
     property string wallpapersPath: ""
     property var screenConfigs: ({
@@ -33,7 +34,8 @@ QtObject {
             "bar": {
                 "transparentBackground": barTransparentBackground,
                 "height": barHeight,
-                "position": barPosition
+                "position": barPosition,
+                "border": border
             },
             "theme": theme,
             "wallpapersPath": wallpapersPath,
@@ -116,6 +118,9 @@ QtObject {
 
                         if (json.bar.position !== undefined)
                             settings.barPosition = json.bar.position;
+
+                        if (json.bar.border !== undefined)
+                            settings.border = json.bar.border;
 
                     }
                     if (json.theme)

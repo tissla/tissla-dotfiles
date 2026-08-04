@@ -15,10 +15,22 @@ Item {
     }
 
     Rectangle {
+        // Left modules container
+
         anchors.fill: parent
         color: SettingsManager.barTransparentBackground ? "transparent" : Theme.base
 
-        // Left modules container
+        // top border
+        Rectangle {
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.top: SettingsManager.barPosition === "bottom" ? parent.top : undefined
+            anchors.bottom: SettingsManager.barPosition === "top" ? parent.bottom : undefined
+            height: Theme.borderWidth
+            color: Theme.accent
+            visible: SettingsManager.border
+        }
+
         Rectangle {
             id: leftContainer
 
