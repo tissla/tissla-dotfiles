@@ -6,6 +6,5 @@ BaseModule {
 
     widgetId: "timeshift"
     moduleIcon: "󰁯"
-    textWidth: Theme.fontSizeBase * 4
     moduleText: TimeshiftDataProvider.hasAccess ? TimeshiftDataProvider.moduleSnapshotDate : "N/A"
 }
