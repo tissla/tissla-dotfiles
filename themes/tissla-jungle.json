@@ -2,7 +2,7 @@
   "id": "tissla-jungle",
   "palette": {
     "base": "#201712",
-    "mantle": "#2e5d3f",
+    "mantle": "#1d3b28",
     "crust": "#3a6b42",
     "surface0": "#162a14",
     "surface1": "#1f3d1b",
@@ -10,7 +10,7 @@
     "overlay0": "#3d6e34",
     "overlay1": "#527a47",
     "text": "#d8f0c0",
-    "subtext1": "#ccaa7d",
+    "subtext1": "#d8be9b",
     "subtext0": "#78a055",
     "mauve": "#8b5cf6",
     "lavender": "#a78bfa",

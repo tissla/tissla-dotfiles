@@ -52,6 +52,7 @@ singleton NiriWorkspaceProvider 1.0 Providers/NiriWorkspaceProvider.qml
 # resources
 Gauge 1.0 Components/Gauge.qml
 Thermometer 1.0 Components/Thermometer.qml
+ProgressCircle 1.0 Components/ProgressCircle.qml
 
 ## basewidget
 BaseWidget 1.0 Core/BaseWidget.qml
