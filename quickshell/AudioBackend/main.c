@@ -2,7 +2,6 @@
 #include "input/common.h"
 #include "input/pipewire.h"
 #include "output/raw.h"
-#include <math.h>
 #include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
@@ -10,6 +9,10 @@
 #include <string.h>
 #include <unistd.h>
 
+// TODO: process gets orphaned (and runs forever, writing into a dead pipe)
+// if quickshell dies uncleanly (crash/SIGKILL/OOM-kill) instead of destroying
+// the Process object normally. Fix: prctl(PR_SET_PDEATHSIG, SIGTERM) early in
+// main() so the kernel kills this process whenever its parent dies, plus
 static volatile sig_atomic_t g_running = 1;
 
 static void handle_sigint(int sig) {

@@ -26,6 +26,14 @@ QtObject {
         console.log("[WidgetManager] Registered widget:", widgetId);
     }
 
+    // unregisters a widget (call on destruction to avoid leaking dead references)
+    function unregisterWidget(widgetId, widgetRef) {
+        if (widgets[widgetId] === widgetRef) {
+            delete widgets[widgetId];
+            console.log("[WidgetManager] Unregistered widget:", widgetId);
+        }
+    }
+
     // registers a module to a widget
     function registerModule(widgetId, moduleRef) {
         if (!moduleRegistry[widgetId])
@@ -33,6 +41,19 @@ QtObject {
 
         moduleRegistry[widgetId].push(moduleRef);
         console.log("[WidgetManager] Registered module for widget:", widgetId, "| Total modules:", moduleRegistry[widgetId].length);
+    }
+
+    // unregisters a module (call on destruction to avoid leaking dead references)
+    function unregisterModule(widgetId, moduleRef) {
+        let list = moduleRegistry[widgetId];
+        if (!list)
+            return ;
+
+        let idx = list.indexOf(moduleRef);
+        if (idx >= 0) {
+            list.splice(idx, 1);
+            console.log("[WidgetManager] Unregistered module for widget:", widgetId, "| Total modules:", list.length);
+        }
     }
 
     // toggle widget visibility through the widget register

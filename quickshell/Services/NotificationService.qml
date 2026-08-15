@@ -8,6 +8,7 @@ QtObject {
 
     property var notifications: []
     property NotificationServer server
+    property Component notifTimerComponent
 
     property int maxMessageSize: 80
 
@@ -36,20 +37,20 @@ QtObject {
         // sound (maybe move??)
         PlaySoundService.playSound("message")
         notifications = [item, ...notifications.filter(n => n && n.id !== item.id)]
-        const timer = Qt.createQmlObject(`
-            import QtQuick
-
-            Timer {
-                interval: 5000
-                repeat: false
-                running: true
-            }
-        `, root, "notif_timer")
+        const timer = notifTimerComponent.createObject(root)
 
         timer.triggered.connect(function() {
             removeNotif(item);
             timer.destroy()
         });
+    }
+
+    notifTimerComponent: Component {
+        Timer {
+            interval: 5000
+            repeat: false
+            running: true
+        }
     }
 
     server: NotificationServer {

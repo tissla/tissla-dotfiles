@@ -17,6 +17,13 @@ QtObject {
     })
     property Process settingsLoader
     property Process settingsSaver
+    // caches the concatenated module list per screen so getScreenModules()
+    // returns the same array reference when left/center/right haven't
+    // actually changed — otherwise every screenConfigs reassignment (e.g.
+    // picking a wallpaper) would hand Repeater/Variants a brand-new array
+    // and force a full teardown/rebuild of every module and widget.
+    property var _moduleListCache: ({
+    })
 
     function loadSettings() {
         settingsLoader.running = true;
@@ -86,7 +93,20 @@ QtObject {
 
     function getScreenModules(screenName) {
         const cfg = getScreenConfig(screenName);
-        const mods = (cfg.left || []).concat(cfg.center || [], cfg.right || []);
+        const left = cfg.left || [];
+        const center = cfg.center || [];
+        const right = cfg.right || [];
+        const cached = _moduleListCache[screenName];
+        if (cached && cached.left === left && cached.center === center && cached.right === right)
+            return cached.result;
+
+        const mods = left.concat(center, right);
+        _moduleListCache[screenName] = {
+            "left": left,
+            "center": center,
+            "right": right,
+            "result": mods
+        };
         return mods;
     }
 

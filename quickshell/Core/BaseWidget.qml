@@ -59,6 +59,9 @@ PanelWindow {
         console.log("[BaseWidget] Widget created: ", widgetId);
         WidgetManager.registerWidget(widgetId, this);
     }
+    Component.onDestruction: {
+        WidgetManager.unregisterWidget(widgetId, baseWidget);
+    }
 
     anchors {
         bottom: true

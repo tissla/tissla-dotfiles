@@ -1,6 +1,11 @@
 return {
   "saghen/blink.cmp",
   opts = {
+    keymap = {
+      presets = "default",
+      ["<CR>"] = { "fallback" },
+      ["<Tab"] = { "accept", "fallback" },
+    },
     cmdline = {
       sources = function()
         local type = vim.fn.getcmdtype()

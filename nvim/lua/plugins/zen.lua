@@ -23,7 +23,6 @@ return {
         vim.api.nvim_set_hl(0, "FoldColumn", { bg = "none" })
         vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
 
-        -- Spell av (om du vill)
         vim.opt_local.spell = false
       end,
     },

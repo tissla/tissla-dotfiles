@@ -16,7 +16,7 @@ BaseWidget {
 
     widgetId: "network"
     widgetWidth: 400
-    widgetHeight: 400
+    widgetHeight: 150 + networkWidget.serverData.length * 20
     onVisibleChanged: {
         if (visible)
             fetchServerData();

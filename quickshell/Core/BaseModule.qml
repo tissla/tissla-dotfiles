@@ -42,6 +42,12 @@ Item {
 
         WidgetManager.registerModule(widgetId, this);
     }
+    Component.onDestruction: {
+        if (!widgetId || widgetId.length === 0)
+            return ;
+
+        WidgetManager.unregisterModule(widgetId, baseModule);
+    }
     width: moduleWidth
     height: Theme.moduleHeight
 
