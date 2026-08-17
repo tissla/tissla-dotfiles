@@ -78,7 +78,6 @@ Item {
         running: true
         // runs the binary that provides audio information
         command: [Quickshell.shellDir + "/AudioBackend/bin/audio-backend"]
-
         onExited: (exitCode, exitStatus) => {
             console.log("[AudioWave] audio-backend exited unexpectedly (code:", exitCode, ") — restarting in 2s");
             audiowaveModule.fftBars = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
