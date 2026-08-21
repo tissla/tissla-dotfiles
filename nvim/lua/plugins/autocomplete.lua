@@ -2,7 +2,7 @@ return {
   "saghen/blink.cmp",
   opts = {
     keymap = {
-      presets = "default",
+      preset = "default",
       ["<CR>"] = { "fallback" },
       ["<Tab"] = { "accept", "fallback" },
     },
