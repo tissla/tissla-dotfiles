@@ -8,6 +8,8 @@ Lazy
 theme
 quickshell/Theme.qml
 quickshell/settings.json
+quickshell/data
+*.cache
 themes/matugen.json
 hypr/theme.lua
 *.bak
