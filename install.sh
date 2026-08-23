@@ -84,7 +84,7 @@ install_aur kvantum-theme-catppuccin-git
 install_aur grimblast-git
 
 # github installations (from latest release)
-install_github() {
+install_github_binary() {
     local url="$1"
     local name="$2"
 
@@ -222,11 +222,11 @@ else
     START_CMD="niri-session"
 fi
 
+sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
 sudo tee "/etc/systemd/system/getty@tty1.service.d/autologin.conf" >/dev/null <<EOF
 [Service]
 ExecStart=
 ExecStart=-/usr/bin/agetty --autologin $USER_NAME --noclear %I $TERM
-Session=$SESSION
 EOF
 
 sudo -u "$USER_NAME" tee "$USER_HOME/.bash_profile" >/dev/null <<EOF
@@ -234,11 +234,5 @@ if [[ -z "\$WAYLAND_DISPLAY" && "\$XDG_VTNR" == "1" ]]; then
     exec $START_CMD
 fi
 EOF
-
-echo "==> SDDM autologin configured!"
-echo "   User:    $USER_NAME"
-echo "   Session: $SESSION"
-
-systemctl enable --now sddm
 
 echo "==> Finished! "

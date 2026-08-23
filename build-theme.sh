@@ -25,15 +25,15 @@ fi
 # Merge defaults with theme overrides — one jq parse for all token lookups
 MERGED=$(jq -s '.[0] * .[1]' "$DEFAULTS_FILE" "$THEME_FILE")
 
-get_palette()  { echo "$MERGED" | jq -r ".palette.$1"; }
-get_role()     { echo "$MERGED" | jq -r ".palette[.roles.$1]"; }
-get_font()     { echo "$MERGED" | jq -r ".fonts.$1"; }
-get_value()    { echo "$MERGED" | jq -r ".values.$1"; }
-get_spacing()  { echo "$MERGED" | jq -r ".spacing.$1"; }
+get_palette() { echo "$MERGED" | jq -r ".palette.$1"; }
+get_role() { echo "$MERGED" | jq -r ".palette[.roles.$1]"; }
+get_font() { echo "$MERGED" | jq -r ".fonts.$1"; }
+get_value() { echo "$MERGED" | jq -r ".values.$1"; }
+get_spacing() { echo "$MERGED" | jq -r ".spacing.$1"; }
 get_fontsize() { echo "$MERGED" | jq -r ".fontSizes.$1"; }
 
 strip_hash() { echo "${1#\#}"; }
-capitalize()  { echo "$1" | sed 's/.*/\u&/'; }
+capitalize() { echo "$1" | sed 's/.*/\u&/'; }
 
 mkdir -p "$DOTFILES/quickshell"
 mkdir -p "$DOTFILES/theme"
@@ -125,16 +125,19 @@ EOF
 
 # Generate Hyprland theme
 cat >"$DOTFILES/hypr/theme.lua" <<EOF
-local colors = {
+local theme = {
     base       = "rgb($(strip_hash "$(get_palette base)"))",
     text       = "rgb($(strip_hash "$(get_palette text)"))",
     accent     = "rgb($(strip_hash "$(get_role accent)"))",
     surface1   = "rgb($(strip_hash "$(get_palette surface1)"))",
     bgalpha    = "0xee$(strip_hash "$(get_palette base)")",
     mutedalpha = "0xaa$(strip_hash "$(get_palette surface1)")",
+
+    rounding = $(get_value radius),
+    roundingAlt = $(get_value radiusAlt),
 }
 
-return colors
+return theme
 EOF
 
 # Generate Alacritty theme

@@ -43,7 +43,7 @@ BaseModule {
                         anchors.horizontalCenterOffset: 1
                         text: ""
                         font.pixelSize: Theme.fontSizeSm
-                        font.family: Theme.fontMain
+                        font.family: Theme.fontMono
                         color: cpuModule.isPressed ? Theme.baseSolid : Theme.accent
                         anchors.verticalCenter: parent.verticalCenter
                     }

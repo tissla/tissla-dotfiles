@@ -34,9 +34,6 @@ input {
         accel-profile "flat"
     }
 
-    touchpad {
-        natural-scroll false
-    }
 
     // Niri follows pointer focus according to its own focus model.
     // Hyprland's follow_mouse=1 has no exact 1:1 setting here.

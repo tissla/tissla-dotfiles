@@ -78,7 +78,7 @@ Item {
                 text: baseModule.moduleIcon
                 font.pixelSize: Theme.fontSizeLg
                 width: Theme.spacingLg
-                font.family: Theme.fontMain
+                font.family: Theme.fontMono
                 color: baseModule.isPressed ? Theme.baseSolid : Theme.accent
                 anchors.verticalCenter: parent.verticalCenter
             }
