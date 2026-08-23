@@ -7,13 +7,15 @@ Rectangle {
 
     property var screen: null
 
-    color: Theme.mantle
+    
     radius: Theme.radius
     width: workspaceRow ? workspaceRow.width : 0
     height: workspaceRow ? workspaceRow.height : 0
-    border.width: Theme.borderWidth
-    border.color: Theme.accent
-
+    // color: Theme.mantle
+    // border.width: Theme.borderWidth
+    // border.color: Theme.accent
+    color: "transparent"
+    border.color: "transparent"
     Row {
         id: workspaceRow
 

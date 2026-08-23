@@ -59,6 +59,8 @@ PKGS=(
     brightnessctl
     noto-fonts
     wireplumber
+    unzip
+    go
 )
 
 echo "==> Installing packages:"
@@ -102,7 +104,7 @@ install_github_binary "https://github.com/tissla/tissla-wallpaper/releases/lates
 
 # create dotfile structure
 echo "==> Creating Dotfiles structure..."
-sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,wallpapers,alacritty,rofi,nvim,Kvantum}
+sudo -u "$USER_NAME" mkdir -p "$USER_HOME/Dotfiles/"{hypr,quickshell,theme,wallpapers,alacritty,rofi,nvim,Kvantum,bash}
 
 # create config files
 echo "==> Creating config files..."
@@ -178,9 +180,10 @@ if [[ ! -f "$BASHRC" ]]; then
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-PS1='\[\033[01;35m\]\u@\h \[\033[38;2;86;156;214m\]\W\[\033[00m\]$ '
+source="$HOME/Dotfiles/bash/colors"
+PS1="\[${ACCENT}\]\u@\h \[${BLUE}\]\W\[${RESET}\]$ "
 
-export LS_COLORS='di=38;5;74:ln=01;36:ex=01;32'
+export LS_COLORS="di=${LS_DIR}:ln=${LS_LINK}:ex=${LS_EXEC}"
 
 EOF
 else
