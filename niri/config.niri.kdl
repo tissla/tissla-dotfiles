@@ -1,0 +1,387 @@
+// ~/.config/niri/config.kdl
+//
+// Translated from tissla's Hyprland config.
+// Target: current niri KDL syntax (2026).
+//
+// NOTE: Replace the three theme colors below with the values from your
+// Hyprland Lua theme:
+//   accent   -> layout.border.active-color
+//   surface1 -> layout.border.inactive-color
+//   bgalpha  -> layout.shadow.color
+
+// ------------------------------------------------------------
+// ENVIRONMENT
+// ------------------------------------------------------------
+
+environment {
+    XCURSOR_SIZE "24"
+    // HYPRCURSOR_SIZE is Hyprland-specific and intentionally omitted.
+    QT_QPA_PLATFORMTHEME "qt6ct"
+}
+
+// ------------------------------------------------------------
+// INPUT
+// ------------------------------------------------------------
+
+input {
+    keyboard {
+        xkb {
+            layout "se"
+        }
+    }
+
+    mouse {
+        accel-profile "flat"
+    }
+
+    touchpad {
+        natural-scroll false
+    }
+
+    // Niri follows pointer focus according to its own focus model.
+    // Hyprland's follow_mouse=1 has no exact 1:1 setting here.
+}
+
+// ------------------------------------------------------------
+// OUTPUTS
+// ------------------------------------------------------------
+
+output "DP-2" {
+    mode "2560x1440@165"
+    scale 1
+    position x=1920 y=0
+}
+
+output "HDMI-A-1" {
+    mode "1920x1080@60"
+    scale 1
+    position x=0 y=0
+}
+
+// ------------------------------------------------------------
+// NAMED WORKSPACES
+// Mirrors your Hyprland workspace -> monitor mapping.
+// ------------------------------------------------------------
+
+workspace "1" {
+    open-on-output "DP-2"
+}
+
+workspace "2" {
+    open-on-output "DP-2"
+}
+
+workspace "3" {
+    open-on-output "HDMI-A-1"
+}
+
+workspace "4" {
+    open-on-output "HDMI-A-1"
+}
+
+workspace "5" {
+    open-on-output "HDMI-A-1"
+}
+
+workspace "6" {
+    open-on-output "DP-2"
+}
+
+workspace "7" {
+    open-on-output "DP-2"
+}
+
+workspace "8" {
+    open-on-output "DP-2"
+}
+
+workspace "9" {
+    open-on-output "DP-2"
+}
+
+// Your Hyprland config binds Super+0 to workspace 10,
+// but does not assign workspace 10 to a monitor.
+workspace "10"
+
+// Named scratch workspace. Niri has no exact Hyprland special-workspace toggle.
+workspace "magic"
+
+// ------------------------------------------------------------
+// LAYOUT / LOOK
+// ------------------------------------------------------------
+
+layout {
+    // Niri is inherently a scrolling tiling compositor.
+    gaps 10
+
+    // Hyprland had gaps_out=20 and gaps_in=10.
+    // Niri has one base gap value; struts add extra outer space.
+    struts {
+        left 10
+        right 10
+        top 10
+        bottom 10
+    }
+
+    center-focused-column "never"
+
+    // Similar spirit to Hyprland scrolling/fullscreen_on_one_column.
+    // New windows get a reasonable scrolling-layout width.
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+        proportion 1.0
+    }
+
+    default-column-width {
+        proportion 0.5
+    }
+
+    // Use borders rather than a focus ring to match Hyprland.
+    focus-ring {
+        off
+    }
+
+    border {
+        on
+        width 3
+
+        // TODO: replace with colors.accent
+        active-color "#89b4fa"
+
+        // TODO: replace with colors.surface1
+        inactive-color "#45475a"
+    }
+
+    shadow {
+        on
+        softness 4
+        spread 0
+        offset x=0 y=0
+
+        // TODO: replace with colors.bgalpha
+        color "#11111b80"
+    }
+}
+
+// Ask clients to avoid CSD where possible. This also makes Niri's own
+// borders / corner geometry behave more consistently.
+prefer-no-csd
+
+// Hyprland rounding=10 equivalent.
+window-rule {
+    geometry-corner-radius 10
+    clip-to-geometry true
+}
+
+// Hyprland suppressed application maximize requests.
+// Niri does not have the same suppress_event rule; prevent ordinary
+// app-requested maximize-to-edges behavior instead.
+window-rule {
+    open-maximized-to-edges false
+}
+
+// gamescope: open fullscreen.
+window-rule {
+    match app-id=r#"^gamescope$"#
+    open-fullscreen true
+}
+
+// ------------------------------------------------------------
+// AUTOSTART
+// ------------------------------------------------------------
+
+spawn-at-startup "twp-daemon"
+spawn-at-startup "quickshell"
+spawn-at-startup "qs" "ipc" "call" "lock" "lock"
+
+// ------------------------------------------------------------
+// ANIMATIONS
+// ------------------------------------------------------------
+
+// Niri has a different animation model from Hyprland.
+// Leaving this enabled uses Niri's native defaults, which fit the
+// scrolling layout better than a literal translation of Hypr curves.
+animations {
+}
+
+// ------------------------------------------------------------
+// MISC
+// ------------------------------------------------------------
+
+hotkey-overlay {
+    skip-at-startup
+}
+
+// ------------------------------------------------------------
+// KEYBINDS
+// ------------------------------------------------------------
+
+binds {
+    // Programs
+    Super+Return {
+        spawn "alacritty"
+    }
+
+    Super+Q repeat=false {
+        close-window
+    }
+
+    Super+E {
+        spawn "dolphin"
+    }
+
+    Super+D {
+        spawn-sh "rofi -theme \"$HOME/.config/rofi/tissla.rasi\" -show drun -drun-match-fields name"
+    }
+
+    // Hyprland togglesplit/pseudo have no direct Niri equivalents.
+    // Useful Niri-native replacements:
+    Super+U {
+        toggle-column-tabbed-display
+    }
+
+    Super+P {
+        switch-preset-column-width
+    }
+
+    // Vim focus.
+    // Niri's horizontal unit is a column; vertical focus moves between
+    // windows stacked inside a column.
+    Super+H {
+        focus-column-left
+    }
+
+    Super+L {
+        focus-column-right
+    }
+
+    Super+K {
+        focus-window-up
+    }
+
+    Super+J {
+        focus-window-down
+    }
+
+    // Screenshot: Niri has a native interactive screenshot action.
+    // This replaces grimblast copy area and copies through Niri's UI.
+    Super+Shift+S {
+        screenshot
+    }
+
+    // OCR screenshot: preserve your original grimblast/tesseract pipeline.
+    // If grimblast is Hyprland-only on your system, replace grimblast with
+    // grim+slurp or another Niri-compatible region capture tool.
+    Super+Shift+D {
+        spawn-sh "f=/tmp/ocr.png; grimblast save area \"$f\" && tesseract \"$f\" stdout -l eng+swe | wl-copy"
+    }
+
+    // Workspaces.
+    Super+1 { focus-workspace "1"; }
+    Super+2 { focus-workspace "2"; }
+    Super+3 { focus-workspace "3"; }
+    Super+4 { focus-workspace "4"; }
+    Super+5 { focus-workspace "5"; }
+    Super+6 { focus-workspace "6"; }
+    Super+7 { focus-workspace "7"; }
+    Super+8 { focus-workspace "8"; }
+    Super+9 { focus-workspace "9"; }
+    Super+0 { focus-workspace "10"; }
+
+    // Hyprland moved only the active window, so use Niri's
+    // move-window-to-workspace rather than move-column-to-workspace.
+    Super+Shift+1 { move-window-to-workspace "1"; }
+    Super+Shift+2 { move-window-to-workspace "2"; }
+    Super+Shift+3 { move-window-to-workspace "3"; }
+    Super+Shift+4 { move-window-to-workspace "4"; }
+    Super+Shift+5 { move-window-to-workspace "5"; }
+    Super+Shift+6 { move-window-to-workspace "6"; }
+    Super+Shift+7 { move-window-to-workspace "7"; }
+    Super+Shift+8 { move-window-to-workspace "8"; }
+    Super+Shift+9 { move-window-to-workspace "9"; }
+    Super+Shift+0 { move-window-to-workspace "10"; }
+
+    // Reload config + restart quickshell.
+    // Niri live-reloads config automatically, so only Quickshell needs restart.
+    Super+R {
+        spawn-sh "killall quickshell; quickshell &"
+    }
+
+    // Hypr fullscreen mode=1 ~ maximized tiled area.
+    Super+F {
+        maximize-column
+    }
+
+    // Hypr fullscreen mode=0 ~ real fullscreen.
+    Super+M {
+        fullscreen-window
+    }
+
+    // Lock through Quickshell.
+    Super+B {
+        spawn "qs" "ipc" "call" "lock" "lock"
+    }
+
+    // Hyprland special workspace has no exact Niri toggle.
+    // This jumps to the named "magic" workspace.
+    Super+S {
+        focus-workspace "magic"
+    }
+
+    // Scroll through workspaces.
+    Super+WheelScrollDown cooldown-ms=150 {
+        focus-workspace-down
+    }
+
+    Super+WheelScrollUp cooldown-ms=150 {
+        focus-workspace-up
+    }
+
+    // Niri handles Mod+mouse interactive move/resize natively;
+    // no explicit mouse:272 / mouse:273 bindings are needed.
+
+    // Volume
+    XF86AudioRaiseVolume allow-when-locked=true {
+        spawn-sh "wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"
+    }
+
+    XF86AudioLowerVolume allow-when-locked=true {
+        spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    }
+
+    XF86AudioMute allow-when-locked=true {
+        spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    }
+
+    XF86AudioMicMute allow-when-locked=true {
+        spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"
+    }
+
+    // Brightness
+    XF86MonBrightnessUp allow-when-locked=true {
+        spawn-sh "brightnessctl -e4 -n2 set 5%+"
+    }
+
+    XF86MonBrightnessDown allow-when-locked=true {
+        spawn-sh "brightnessctl -e4 -n2 set 5%-"
+    }
+
+    // Media
+    XF86AudioNext allow-when-locked=true {
+        spawn "playerctl" "next"
+    }
+
+    XF86AudioPause allow-when-locked=true {
+        spawn "playerctl" "play-pause"
+    }
+
+    XF86AudioPlay allow-when-locked=true {
+        spawn "playerctl" "play-pause"
+    }
+
+    XF86AudioPrev allow-when-locked=true {
+        spawn "playerctl" "previous"
+    }
+}

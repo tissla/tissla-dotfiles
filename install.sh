@@ -34,7 +34,6 @@ PKGS=(
     qt5ct                   # qt framework
     qt6-5compat             # qt framework compat layer
     jq                      # json parser
-    awww                    # wallpapermanager
     wl-clipboard            # clipboard
     tesseract               # base
     tesseract-data-eng      # eng pack
@@ -44,7 +43,8 @@ PKGS=(
     adwaita-icon-theme      # standard cursor/icons
     pipewire                # audio
     ttf-jetbrains-mono-nerd # font
-    sddm                    # desktop manager
+    ttf-ibm-plex            #
+    noto-fonts              #
     libnotify               # notify-send
     uwsm                    # wayland session manager
     $COMPOSITOR             # wm / compositor
@@ -53,6 +53,7 @@ PKGS=(
     quickshell              # de
     alacritty               # terminal
     matugen                 # custom themes
+    obsidian                # need
     dolphin
     playerctl
     brightnessctl
@@ -81,6 +82,23 @@ install_aur() {
 echo "==> Installing AUR packages:"
 install_aur kvantum-theme-catppuccin-git
 install_aur grimblast-git
+
+# github installations (from latest release)
+install_github() {
+    local url="$1"
+    local name="$2"
+
+    echo "==> Installing $name from github:"
+    local tmp
+    tmp="$(mktemp)"
+    curl -fL "$url" -o "$tmp"
+    install -Dm755 "$tmp" "/usr/bin/$name"
+
+    rm -f "$tmp"
+}
+
+install_github_binary "https://github.com/tissla/tissla-wallpaper/releases/latest/download/twp-cli-linux-amd64" "twp-cli"
+install_github_binary "https://github.com/tissla/tissla-wallpaper/releases/latest/download/twp-daemon-linux-amd64" "twp-daemon"
 
 # create dotfile structure
 echo "==> Creating Dotfiles structure..."
@@ -170,11 +188,18 @@ else
 fi
 
 # setup symlinks
+
+if [[ "$COMPOSITOR" == "hyprland" ]]; then
+    COMPFOLDER="hypr"
+else
+    COMPFOLDER="niri"
+fi
+
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/rofi" "$USER_CONFIG/rofi"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/Kvantum" "$USER_CONFIG/Kvantum"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/hypr" "$USER_CONFIG/hypr"
+sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/$COMPFOLDER" "$USER_CONFIG/$COMPFOLDER"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
@@ -189,18 +214,25 @@ sudo -u "$USER_NAME" bash "$USER_HOME/Dotfiles/build-theme.sh" "tissla"
 
 # Setup sddm
 
-echo "==> Configuring SDDM autologin for user: $USER_NAME"
+echo "==> Configuring autologin for user: $USER_NAME"
 
 if [[ "$COMPOSITOR" == "hyprland" ]]; then
-    SESSION="hyprland-uwsm"
+    START_CMD="uwsm start hyprland.desktop"
 else
-    SESSION="niri"
+    START_CMD="niri-session"
 fi
 
-sudo tee "/etc/sddm.conf" >/dev/null <<EOF
-[Autologin]
-User=$USER_NAME
+sudo tee "/etc/systemd/system/getty@tty1.service.d/autologin.conf" >/dev/null <<EOF
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin $USER_NAME --noclear %I $TERM
 Session=$SESSION
+EOF
+
+sudo -u "$USER_NAME" tee "$USER_HOME/.bash_profile" >/dev/null <<EOF
+if [[ -z "\$WAYLAND_DISPLAY" && "\$XDG_VTNR" == "1" ]]; then
+    exec $START_CMD
+fi
 EOF
 
 echo "==> SDDM autologin configured!"
