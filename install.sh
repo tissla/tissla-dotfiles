@@ -61,6 +61,9 @@ PKGS=(
     wireplumber
     unzip
     go
+    fzf
+    bash-completion
+    eza
 )
 
 echo "==> Installing packages:"
