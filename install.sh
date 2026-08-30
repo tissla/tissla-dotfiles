@@ -44,7 +44,9 @@ PKGS=(
     pipewire                # audio
     ttf-jetbrains-mono-nerd # font
     ttf-ibm-plex            #
-    noto-fonts              #
+    noto-fonts              # fonts
+    noto-fonts-emoji        #
+    noto-fonts-cjk          #
     libnotify               # notify-send
     uwsm                    # wayland session manager
     $COMPOSITOR             # wm / compositor
@@ -72,6 +74,7 @@ printf '  - %s\n' "${PKGS[@]}"
 pacman -S --needed --noconfirm "${PKGS[@]}"
 
 # AUR installations
+# TODO: fix auto-accept
 install_aur() {
     local pkg="$1"
     local build_dir="/tmp/aur-$pkg"
@@ -212,14 +215,13 @@ sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/fastfetch" "$USER_CONFIG/fastfetch"
 sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/matugen" "$USER_CONFIG/matugen"
-#generate default theme
 
+#generate default theme
 echo "==> Generating default theme (tissla)..."
 sudo -u "$USER_NAME" chmod +x "$USER_HOME/Dotfiles/build-theme.sh"
 sudo -u "$USER_NAME" bash "$USER_HOME/Dotfiles/build-theme.sh" "tissla"
 
-# Setup sddm
-
+# Setup autologin
 echo "==> Configuring autologin for user: $USER_NAME"
 
 if [[ "$COMPOSITOR" == "hyprland" ]]; then

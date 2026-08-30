@@ -40,7 +40,7 @@ Item {
         anchors.fill: parent
         visible: (SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1) && dataReceived
         Component.onCompleted: {
-            WeatherDataProvider.weatherDataReady.connect(function(data) {
+            WeatherDataProvider.weatherDataReady.connect(function (data) {
                 let current = data[0];
                 weatherInfo.temp = current.temp;
                 weatherInfo.icon = current.icon;
@@ -65,155 +65,154 @@ Item {
                 WeatherDataProvider.getWeatherData();
             }
         }
-
-        Column {
+        Rectangle {
+            id: weatherCard
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.leftMargin: 200
             anchors.topMargin: 200
+            width: weatherColumn.implicitWidth
+            height: weatherColumn.implicitHeight
+            radius: Theme.radius
+            // color: Qt.rgba(0, 0, 0, 0.35)
+            color: "transparent"
+            Column {
+                id: weatherColumn
+                padding: 30
+                Row {
+                    spacing: 50
 
-            Row {
-                spacing: 50
+                    Column {
+                        spacing: 0
 
-                Column {
-                    spacing: 0
+                        Text {
+                            id: weatherInfoTime
 
-                    Text {
-                        id: weatherInfoTime
+                            text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
+                            color: Theme.subtext1
+                            font.pixelSize: 30
+                            font.family: Theme.fontMain
+                            style: Text.Outline
+                            styleColor: Qt.rgba(0, 0, 0, 0.6)
+                        }
+                        // Temp
 
-                        text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
-                        color: Theme.subtext1
-                        font.pixelSize: 30
-                        font.family: Theme.fontMain
-                        style: Text.Outline
-                        styleColor: Qt.rgba(0, 0, 0, 0.6)
-                    }
-                    // Temp
+                        Text {
+                            id: weatherInfoTemp
 
-                    Text {
-                        id: weatherInfoTemp
-
-                        text: weatherInfo.temp + " °C"
-                        color: Theme.subtext1
-                        font.pixelSize: 40
-                        font.family: Theme.fontMain
-                        style: Text.Outline
-                        styleColor: Qt.rgba(0, 0, 0, 0.6)
-                    }
-
-                    Text {
-                        id: weatherInfoText
-
-                        text: weatherInfo.wText
-                        color: Theme.subtext1
-                        font.pixelSize: 20
-                        font.family: Theme.fontMain
-                        style: Text.Outline
-                        styleColor: Qt.rgba(0, 0, 0, 0.6)
-                    }
-
-                }
-                // Icon
-
-                Item {
-                    width: 140
-                    height: parent.height
-
-                    Text {
-                        id: weatherInfoIcon
-
-                        text: weatherInfo.icon
-                        color: Theme.subtext1
-                        font.pixelSize: 130
-                        font.family: Theme.fontMain
-                        anchors.centerIn: parent
-                        style: Text.Outline
-                        styleColor: Qt.rgba(0, 0, 0, 0.6)
-                    }
-
-                }
-
-            }
-
-            // future weather
-            Row {
-                topPadding: 20
-                spacing: 20
-
-                Repeater {
-                    model: weatherInfo.futureWeatherPoints
-
-                    Row {
-                        width: childrenRect.width
-                        height: childrenRect.height
-                        spacing: 20
-
-                        Column {
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            width: 100
-
-                            //weatherdata
-                            Text {
-                                text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
-                                color: Theme.subtext1
-                                font.pixelSize: 18
-                                font.family: Theme.fontMain
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                width: parent.width
-                                horizontalAlignment: Text.AlignHCenter
-                            }
-
-                            Text {
-                                //icon
-                                text: modelData.icon
-                                color: Theme.subtext1
-                                font.pixelSize: 34
-                                font.family: Theme.fontMain
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                horizontalAlignment: Text.AlignHCenter
-                                width: parent.width
-                            }
-
-                            Text {
-                                text: modelData.wText
-                                color: Theme.subtext1
-                                font.pixelSize: 12
-                                font.family: Theme.fontMain
-                                font.italic: true
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                horizontalAlignment: Text.AlignHCenter
-                                width: parent.width
-                            }
-
-                            Text {
-                                text: modelData.temp + " °C"
-                                color: Theme.subtext1
-                                font.pixelSize: 20
-                                font.family: Theme.fontMain
-                                style: Text.Outline
-                                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                horizontalAlignment: Text.AlignHCenter
-                                width: parent.width
-                            }
-
+                            text: weatherInfo.temp + " °C"
+                            color: Theme.subtext1
+                            font.pixelSize: 40
+                            font.family: Theme.fontMain
+                            style: Text.Outline
+                            styleColor: Qt.rgba(0, 0, 0, 0.6)
                         }
 
-                        Item {
-                            width: 40
-                            height: parent.height
+                        Text {
+                            id: weatherInfoText
+
+                            text: weatherInfo.wText
+                            color: Theme.subtext1
+                            font.pixelSize: 20
+                            font.family: Theme.fontMain
+                            style: Text.Outline
+                            styleColor: Qt.rgba(0, 0, 0, 0.6)
                         }
-
                     }
+                    // Icon
 
+                    Item {
+                        width: 140
+                        height: parent.height
+
+                        Text {
+                            id: weatherInfoIcon
+
+                            text: weatherInfo.icon
+                            color: Theme.subtext1
+                            font.pixelSize: 130
+                            font.family: Theme.fontMain
+                            anchors.centerIn: parent
+                            style: Text.Outline
+                            styleColor: Qt.rgba(0, 0, 0, 0.6)
+                        }
+                    }
                 }
 
-            }
+                // future weather
+                Row {
+                    topPadding: 20
+                    spacing: 20
 
+                    Repeater {
+                        model: weatherInfo.futureWeatherPoints
+
+                        Row {
+                            width: childrenRect.width
+                            height: childrenRect.height
+                            spacing: 20
+
+                            Column {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: 100
+
+                                //weatherdata
+                                Text {
+                                    text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
+                                    color: Theme.subtext1
+                                    font.pixelSize: 18
+                                    font.family: Theme.fontMain
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                    width: parent.width
+                                    horizontalAlignment: Text.AlignHCenter
+                                }
+
+                                Text {
+                                    //icon
+                                    text: modelData.icon
+                                    color: Theme.subtext1
+                                    font.pixelSize: 34
+                                    font.family: Theme.fontMain
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                    horizontalAlignment: Text.AlignHCenter
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: modelData.wText
+                                    color: Theme.subtext1
+                                    font.pixelSize: 12
+                                    font.family: Theme.fontMain
+                                    font.italic: true
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                    horizontalAlignment: Text.AlignHCenter
+                                    width: parent.width
+                                }
+
+                                Text {
+                                    text: modelData.temp + " °C"
+                                    color: Theme.subtext1
+                                    font.pixelSize: 20
+                                    font.family: Theme.fontMain
+                                    style: Text.Outline
+                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
+                                    horizontalAlignment: Text.AlignHCenter
+                                    width: parent.width
+                                }
+                            }
+
+                            Item {
+                                width: 40
+                                height: parent.height
+                            }
+                        }
+                    }
+                }
+            }
         }
-
     }
 
     // date
@@ -275,7 +274,6 @@ Item {
                 anchors.top: timeLabel.bottom
                 anchors.topMargin: -30
             }
-
         }
 
         // Password input
@@ -316,7 +314,6 @@ Item {
 
                     target: root.context
                 }
-
             }
 
             Behavior on opacity {
@@ -324,7 +321,6 @@ Item {
                     duration: 500
                     easing.type: Easing.OutCubic
                 }
-
             }
 
             Behavior on scale {
@@ -332,9 +328,7 @@ Item {
                     duration: 200
                     easing.type: Easing.OutCubic
                 }
-
             }
-
         }
 
         Text {
@@ -366,7 +360,6 @@ Item {
                     duration: 2000
                     easing.type: Easing.Linear
                 }
-
             }
 
             Behavior on shake {
@@ -374,7 +367,6 @@ Item {
                     duration: 1000
                     easing.type: Easing.OutCubic
                 }
-
             }
 
             Behavior on ampl {
@@ -382,11 +374,7 @@ Item {
                     duration: 1000
                     easing.type: Easing.Linear
                 }
-
             }
-
         }
-
     }
-
 }

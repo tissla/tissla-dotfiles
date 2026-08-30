@@ -45,7 +45,7 @@ window {
     enabled:          true;
     border:           3px solid;
     border-color:     @accent;
-    border-radius:    10px;
+    border-radius:    @radius;
     cursor:           "default";
     background-color: @background;
 
