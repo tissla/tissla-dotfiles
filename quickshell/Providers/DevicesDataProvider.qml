@@ -10,23 +10,34 @@ QtObject {
     property bool controllerWired: false
     property int controllerBattery: 0
     property string controllerIcon: "󰖻"
-    property bool isActive: false
+    property var consumers: []
+    readonly property bool isActive: consumers.length > 0
     property Process initialFetchProcess
     property Process btMonitorProcess
     property Timer lsusbTimer
     property Process lsusbProcess
 
-    function activate() {
-        isActive = true;
-        initialFetchProcess.running = true;
-        btMonitorProcess.running = true;
-        lsusbTimer.running = true;
+    function activate(owner) {
+        if (consumers.indexOf(owner) === -1)
+            consumers = consumers.concat([owner]);
     }
 
-    function deactivate() {
-        isActive = false;
-        btMonitorProcess.running = false;
-        lsusbTimer.running = false;
+    function deactivate(owner) {
+        consumers = consumers.filter(item => item !== owner);
+    }
+
+    onIsActiveChanged: {
+        if (isActive) {
+            // Events during an inactive period were not observed; fetch a fresh snapshot.
+            controllerConnected = false;
+            controllerWired = false;
+            controllerBattery = 0;
+            controllerIcon = "󰖻";
+            initialFetchProcess.running = true;
+        } else {
+            initialFetchProcess.running = false;
+            lsusbProcess.running = false;
+        }
     }
 
     // Fetch current BT state once on activation
@@ -49,7 +60,7 @@ QtObject {
 
     // Persistent bluetoothctl monitor — reacts to connect/disconnect/battery events
     btMonitorProcess: Process {
-        running: false
+        running: devicesData.isActive
         command: ["bluetoothctl", "monitor"]
 
         stdout: SplitParser {
@@ -79,7 +90,7 @@ QtObject {
     // lsusb polling for wired USB — no event system available for USB
     lsusbTimer: Timer {
         interval: 30000
-        running: false
+        running: devicesData.isActive
         repeat: true
         triggeredOnStart: true
         onTriggered: lsusbProcess.running = true;

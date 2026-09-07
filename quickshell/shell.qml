@@ -48,27 +48,19 @@ ShellRoot {
     NotificationPopup {
     }
 
-    // widgets
+    // Share one movable wrapper per popup across all configured screens.
     Variants {
-        model: Quickshell.screens
-
-        // per screen item wrapper for widgets
-        Item {
-            property var modelData
-
-            Variants {
-                model: SettingsManager.getScreenModules(modelData.name)
-
-                Loader {
-                    property var modelData
-
-                    source: Quickshell.shellDir + "/Widgets/" + modelData + "Widget.qml"
-                }
-
-            }
-
+        model: {
+            let modules = [];
+            for (const screen of Quickshell.screens)
+                modules = modules.concat(SettingsManager.getScreenModules(screen.name));
+            return WidgetManager.widgetIdsForModules(modules);
         }
 
+        Loader {
+            required property var modelData
+            source: Quickshell.shellDir + "/Widgets/" + WidgetManager.widgetSources[modelData]
+        }
     }
 
     LockContext {

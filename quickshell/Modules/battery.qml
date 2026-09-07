@@ -6,9 +6,6 @@ BaseModule {
 
     visible: BatteryDataProvider.hasBattery
     widgetId: "battery"
-    Component.onCompleted: {
-        WidgetManager.registerModule(widgetId, this);
-    }
     moduleIcon: {
         if (!BatteryDataProvider.hasBattery)
             return "";

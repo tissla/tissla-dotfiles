@@ -5,7 +5,10 @@ pragma Singleton
 QtObject {
     id: performanceData
 
-    property bool run: false
+    property var consumers: []
+    property var detailConsumers: []
+    readonly property bool run: consumers.length > 0 || detailConsumers.length > 0
+    readonly property bool detailsRunning: detailConsumers.length > 0
     property real cpuUsage: 0
     property real cpuTemp: 0
     property real ramUsage: 0
@@ -29,12 +32,22 @@ QtObject {
     // sensors
     property Process sensorsProcess
 
-    function startPolling() {
-        run = true;
+    function startPolling(owner) {
+        if (consumers.indexOf(owner) === -1)
+            consumers = consumers.concat([owner]);
     }
 
-    function stopPolling() {
-        run = false;
+    function stopPolling(owner) {
+        consumers = consumers.filter(item => item !== owner);
+    }
+
+    function startDetails(owner) {
+        if (detailConsumers.indexOf(owner) === -1)
+            detailConsumers = detailConsumers.concat([owner]);
+    }
+
+    function stopDetails(owner) {
+        detailConsumers = detailConsumers.filter(item => item !== owner);
     }
 
     function parseSensors(output) {
@@ -53,10 +66,13 @@ QtObject {
     }
 
     cpuProcess: Process {
-        running: true
+        running: performanceData.run
         command: ["vmstat", "-n", "2"]
 
+        onRunningChanged: if (running) cpuParser.lineCount = 0
+
         stdout: SplitParser {
+            id: cpuParser
             property int lineCount: 0
 
             onRead: (line) => {
@@ -76,7 +92,7 @@ QtObject {
     }
 
     ramProcess: Process {
-        running: performanceData.run
+        running: performanceData.detailsRunning
         command: ["sh", "-c", "while true; do grep -E '^(MemTotal|MemAvailable):' /proc/meminfo; echo '---'; sleep 2; done"]
 
         stdout: SplitParser {
@@ -99,10 +115,13 @@ QtObject {
     }
 
     sensorsProcess: Process {
-        running: performanceData.run
+        running: performanceData.detailsRunning
         command: ["sh", "-c", "while true; do sensors -A; echo '===END==='; sleep 3; done"]
 
+        onRunningChanged: sensorParser.buffer = ""
+
         stdout: SplitParser {
+            id: sensorParser
             property string buffer: ""
 
             onRead: (line) => {

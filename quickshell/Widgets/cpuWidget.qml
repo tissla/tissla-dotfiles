@@ -9,6 +9,10 @@ BaseWidget {
     widgetHeight: 220
 
     widgetComponent: Rectangle {
+        id: details
+        Component.onCompleted: PerformanceDataProvider.startDetails(details)
+        Component.onDestruction: PerformanceDataProvider.stopDetails(details)
+
         color: Theme.baseSolid
         radius: Theme.radius
         border.width: 3

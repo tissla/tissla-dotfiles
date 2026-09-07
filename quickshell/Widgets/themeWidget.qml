@@ -1,6 +1,7 @@
 import ".."
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import Quickshell
 
 BaseWidget {
@@ -38,184 +39,177 @@ BaseWidget {
                     anchors.horizontalCenter: parent.horizontalCenter
                 }
 
-                // wallpapers
-                ScrollView {
+                // Only visible thumbnails are instantiated and decoded.
+                ListView {
                     id: wallpaperScroll
+                    objectName: "wallpaperList"
 
                     width: parent.width
                     height: parent.height - wpHeader.height
-                    ScrollBar.vertical.policy: ScrollBar.AlwaysOff
-                    contentWidth: wallpaperRow.implicitWidth
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOn
-                    // scrollbar customization
-                    Component.onCompleted: {
-                        ScrollBar.horizontal.height = 18;
-                        ScrollBar.horizontal.contentItem.color = Theme.surface1;
-                        ScrollBar.horizontal.contentItem.radius = Theme.radiusAlt;
-                    }
+                    orientation: ListView.Horizontal
+                    spacing: Theme.spacingSm
+                    clip: true
+                    cacheBuffer: 0
+                    model: width > 0 && height > 0 ? WallpaperManager.availableWallpapers : []
 
-                    MouseArea {
-                        anchors.fill: parent
-                        acceptedButtons: Qt.NoButton
-                        onWheel: (wheel) => {
-                            let scrollBar = wallpaperScroll.ScrollBar.horizontal;
-                            let delta = wheel.angleDelta.y;
-                            let step = delta / 3000;
-                            let newPos = Math.max(0, Math.min(1 - scrollBar.size, scrollBar.position - step));
-                            scrollBar.position = newPos;
+                    ScrollBar.horizontal: ScrollBar {
+                        policy: ScrollBar.AlwaysOn
+                        height: 18
+                        contentItem: Rectangle {
+                            color: Theme.surface1
+                            radius: Theme.radiusAlt
+                            implicitWidth: 30
+                            implicitHeight: 18
                         }
                     }
 
-                    Row {
-                        id: wallpaperRow
+                    WheelHandler {
+                        target: null
+                        onWheel: event => {
+                            const delta = event.angleDelta.y || event.angleDelta.x;
+                            const maxX = Math.max(0, wallpaperScroll.contentWidth - wallpaperScroll.width);
+                            wallpaperScroll.contentX = wallpaperScroll.originX + Math.max(0, Math.min(maxX, wallpaperScroll.contentX - wallpaperScroll.originX - delta));
+                            event.accepted = true;
+                        }
+                    }
 
-                        spacing: Theme.spacingSm
-                        topPadding: Theme.spacingMd
-                        bottomPadding: Theme.spacingMd
+                    delegate: Rectangle {
+                        id: wallpaperRect
+                        objectName: "wallpaperPreview"
 
-                        Repeater {
-                            model: WallpaperManager.availableWallpapers
+                        required property string modelData
+                        property string wpFilename: modelData
 
-                            Rectangle {
-                                id: wallpaperRect
+                        height: Math.max(1, wallpaperScroll.height - Theme.spacingMd * 2 - 20)
+                        width: height * 16 / 9
+                        radius: Theme.radiusAlt
+                        color: Theme.surface1
 
-                                property string wpFilename: modelData
+                        Image {
+                            id: wallpaperImage
+                            objectName: "wallpaperImage"
 
-                                height: wallpaperScroll.height - Theme.spacingMd * 2 - 20
-                                width: {
-                                    if (wallpaperImage.sourceSize.width > 0 && wallpaperImage.sourceSize.height > 0)
-                                        return height * (wallpaperImage.sourceSize.width / wallpaperImage.sourceSize.height);
+                            anchors.fill: parent
+                            anchors.margins: Theme.spacingXs
+                            source: WallpaperManager.wallpapersPath + "/" + wallpaperRect.wpFilename
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                            sourceSize.width: Math.max(1, Math.ceil(width * Screen.devicePixelRatio))
+                            sourceSize.height: Math.max(1, Math.ceil(height * Screen.devicePixelRatio))
+                            cache: false
+                        }
 
-                                    return height;
-                                }
-                                radius: Theme.radiusAlt
-                                color: Theme.surface1
+                        MouseArea {
+                            id: wpRectMouse
 
-                                Image {
-                                    id: wallpaperImage
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            propagateComposedEvents: true
+                            acceptedButtons: Qt.NoButton
+                            onEntered: screenRow.isVisible = true
+                            onExited: screenRow.isVisible = false
+                        }
 
-                                    anchors.fill: parent
-                                    anchors.margins: Theme.spacingXs
-                                    source: WallpaperManager.wallpapersPath + "/" + modelData
-                                    fillMode: Image.PreserveAspectFit
-                                    asynchronous: true
-                                }
+                        Rectangle {
+                            id: isWpIndicator
 
-                                MouseArea {
-                                    id: wpRectMouse
+                            property bool isVisible: Object.values(WallpaperManager.wallpapers).indexOf(wallpaperRect.wpFilename) !== -1
 
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    propagateComposedEvents: true
-                                    acceptedButtons: Qt.NoButton
-                                    onEntered: screenRow.isVisible = true
-                                    onExited: screenRow.isVisible = false
-                                }
+                            visible: isVisible
+                            anchors.top: parent.top
+                            anchors.topMargin: Theme.spacingMd
+                            anchors.right: parent.right
+                            anchors.rightMargin: Theme.spacingLg
+                            color: Theme.base
+                            width: Theme.spacingXl
+                            height: Theme.spacingXl
+                            radius: Theme.radiusAlt
 
-                                Rectangle {
-                                    id: isWpIndicator
+                            Text {
+                                visible: parent.visible
+                                text: ""
+                                font.pixelSize: Theme.fontSizeSm
+                                font.family: Theme.fontMain
+                                font.weight: Font.Bold
+                                color: Theme.accent
+                                anchors.centerIn: parent
+                            }
 
-                                    property bool isVisible: Object.values(WallpaperManager.wallpapers).indexOf(wallpaperRect.wpFilename) !== -1
+                        }
 
-                                    visible: isVisible
-                                    anchors.top: parent.top
-                                    anchors.topMargin: Theme.spacingMd
-                                    anchors.right: parent.right
-                                    anchors.rightMargin: Theme.spacingLg
-                                    color: Theme.base
-                                    width: Theme.spacingXl
-                                    height: Theme.spacingXl
-                                    radius: Theme.radiusAlt
+                        Rectangle {
+                            id: screenRow
 
-                                    Text {
-                                        visible: parent.visible
-                                        text: ""
-                                        font.pixelSize: Theme.fontSizeSm
-                                        font.family: Theme.fontMain
-                                        font.weight: Font.Bold
-                                        color: Theme.accent
-                                        anchors.centerIn: parent
-                                    }
+                            property bool isVisible
 
-                                }
+                            visible: isVisible
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: Theme.spacingMd
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            radius: Theme.radiusAlt
+                            color: Theme.base
+                            width: buttonRow.width + Theme.spacingXs * 2
+                            height: buttonRow.height + Theme.spacingXs * 2
 
-                                Rectangle {
-                                    id: screenRow
+                            Row {
+                                id: buttonRow
 
-                                    property bool isVisible
+                                spacing: Theme.spacingXs
+                                padding: Theme.spacingXs
+                                anchors.centerIn: parent
 
-                                    visible: isVisible
-                                    anchors.bottom: parent.bottom
-                                    anchors.bottomMargin: Theme.spacingMd
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    radius: Theme.radiusAlt
-                                    color: Theme.base
-                                    width: buttonRow.width + Theme.spacingXs * 2
-                                    height: buttonRow.height + Theme.spacingXs * 2
+                                Repeater {
+                                    id: wpScreens
 
-                                    Row {
-                                        id: buttonRow
+                                    model: Quickshell.screens.length
 
-                                        spacing: Theme.spacingXs
-                                        padding: Theme.spacingXs
-                                        anchors.centerIn: parent
+                                    Rectangle {
+                                        width: Theme.spacingXl
+                                        height: Theme.spacingXl
+                                        radius: Theme.radiusAlt
+                                        color: {
+                                            if (WallpaperManager.wallpapers[Quickshell.screens[index].name] === wallpaperRect.wpFilename)
+                                                return Theme.accent;
 
-                                        Repeater {
-                                            id: wpScreens
+                                            if (screenMouse.containsMouse)
+                                                return Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2);
 
-                                            model: Quickshell.screens.length
+                                            return Theme.surface1;
+                                        }
 
-                                            Rectangle {
-                                                width: Theme.spacingXl
-                                                height: Theme.spacingXl
-                                                radius: Theme.radiusAlt
-                                                color: {
-                                                    if (WallpaperManager.wallpapers[Quickshell.screens[index].name] === wallpaperRect.wpFilename)
-                                                        return Theme.accent;
+                                        Text {
+                                            visible: parent.visible
+                                            text: index + 1
+                                            font.pixelSize: Theme.fontSizeSm
+                                            font.family: Theme.fontMain
+                                            font.weight: Font.Bold
+                                            color: Theme.subtext1
+                                            anchors.centerIn: parent
+                                        }
 
-                                                    if (screenMouse.containsMouse)
-                                                        return Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.2);
+                                        MouseArea {
+                                            id: screenMouse
 
-                                                    return Theme.surface1;
-                                                }
-
-                                                Text {
-                                                    visible: parent.visible
-                                                    text: index + 1
-                                                    font.pixelSize: Theme.fontSizeSm
-                                                    font.family: Theme.fontMain
-                                                    font.weight: Font.Bold
-                                                    color: Theme.subtext1
-                                                    anchors.centerIn: parent
-                                                }
-
-                                                MouseArea {
-                                                    id: screenMouse
-
-                                                    anchors.fill: parent
-                                                    preventStealing: true
-                                                    cursorShape: Qt.PointingHandCursor
-                                                    onClicked: {
-                                                        // mutate the whole object to trigger propertychange
-                                                        let screenName = Quickshell.screens[index].name;
-                                                        let newConfigs = Object.assign({
-                                                        }, SettingsManager.screenConfigs);
-                                                        let existing = newConfigs[screenName] || {
-                                                            "left": ["workspaces"],
-                                                            "center": [],
-                                                            "right": []
-                                                        };
-                                                        newConfigs[screenName] = Object.assign({
-                                                        }, existing, {
-                                                            "wallpaper": wallpaperRect.wpFilename
-                                                        });
-                                                        SettingsManager.screenConfigs = newConfigs;
-                                                        SettingsManager.saveSettings();
-                                                    }
-                                                }
-
+                                            anchors.fill: parent
+                                            preventStealing: true
+                                            cursorShape: Qt.PointingHandCursor
+                                            onClicked: {
+                                                // mutate the whole object to trigger propertychange
+                                                let screenName = Quickshell.screens[index].name;
+                                                let newConfigs = Object.assign({
+                                                }, SettingsManager.screenConfigs);
+                                                let existing = newConfigs[screenName] || {
+                                                    "left": ["workspaces"],
+                                                    "center": [],
+                                                    "right": []
+                                                };
+                                                newConfigs[screenName] = Object.assign({
+                                                }, existing, {
+                                                    "wallpaper": wallpaperRect.wpFilename
+                                                });
+                                                SettingsManager.screenConfigs = newConfigs;
+                                                SettingsManager.saveSettings();
                                             }
-
                                         }
 
                                     }
@@ -227,7 +221,6 @@ BaseWidget {
                         }
 
                     }
-
                 }
 
             }

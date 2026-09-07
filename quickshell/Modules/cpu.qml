@@ -8,10 +8,8 @@ BaseModule {
     // moduleText: Math.round(PerformanceDataProvider.cpuUsage) + "%"
     widgetId: "cpu"
     textWidth: Theme.fontSizeBase * 2
-    Component.onCompleted: Qt.callLater(() => {
-        return PerformanceDataProvider.startPolling();
-    })
-    Component.onDestruction: PerformanceDataProvider.stopPolling()
+    Component.onCompleted: PerformanceDataProvider.startPolling(cpuModule)
+    Component.onDestruction: PerformanceDataProvider.stopPolling(cpuModule)
     customContents: true
 
     customComponent: Component {

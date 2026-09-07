@@ -7,7 +7,6 @@ PanelWindow {
 
     id: baseWidget
 
-    property var screen: null
     // id of widget
     required property string widgetId
     // the actual widget component
@@ -37,6 +36,7 @@ PanelWindow {
                 }
             }
             if (targetScreen) {
+                baseWidget.screen = targetScreen;
                 yPos = SettingsManager.barPosition === "top" ? targetScreen.height - widgetHeight - SettingsManager.barHeight - Theme.gap : Theme.gap;
                 let relativeX = pos.x - targetScreen.x;
                 xPos = Math.max(10, Math.min(relativeX - (widgetWidth / 2), targetScreen.width - widgetWidth - Theme.gap));
@@ -50,7 +50,7 @@ PanelWindow {
             console.log("[BaseWidget] Notifying", modules.length, "modules for", widgetId);
             for (let i = 0; i < modules.length; i++) {
                 if (modules[i] && modules[i].onWidgetVisibilityChanged)
-                    modules[i].onWidgetVisibilityChanged(visible);
+                    modules[i].onWidgetVisibilityChanged(visible && modules[i].screen === baseWidget.screen);
 
             }
         }
@@ -76,6 +76,7 @@ PanelWindow {
     // actual widget logic
     Loader {
         anchors.fill: parent
+        active: baseWidget.visible
         sourceComponent: baseWidget.widgetComponent
     }
 

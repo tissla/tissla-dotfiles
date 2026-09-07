@@ -39,8 +39,11 @@ Item {
 
         anchors.fill: parent
         visible: (SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1) && dataReceived
-        Component.onCompleted: {
-            WeatherDataProvider.weatherDataReady.connect(function (data) {
+        Connections {
+            target: WeatherDataProvider
+            function onWeatherDataReady(data) {
+                if (!data || data.length === 0)
+                    return;
                 let current = data[0];
                 weatherInfo.temp = current.temp;
                 weatherInfo.icon = current.icon;
@@ -48,9 +51,7 @@ Item {
                 weatherInfo.latestUpdate = current.latestUpdate;
                 weatherInfo.futureWeatherPoints = data.slice(1);
                 weatherInfo.dataReceived = true;
-            });
-            // start timer
-            weatherUpdateTimer.running = true;
+            }
         }
 
         Timer {
@@ -58,7 +59,7 @@ Item {
 
             // 60 min
             interval: 1000 * 60 * 60
-            running: false
+            running: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
             triggeredOnStart: true
             repeat: true
             onTriggered: {
