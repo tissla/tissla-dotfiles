@@ -15,6 +15,7 @@ hypr/theme.lua
 *.bak
 notes
 TODO.md
+*.log
 
 #heaptrack
 *.zst
