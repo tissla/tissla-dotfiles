@@ -35,17 +35,17 @@ BaseModule {
 
                     // the offset is necessary as a quick fix for centering the icon in the progresscircle,
                     // but will likely not work the same on all systems, themes, or fonts.
+                    // Not currently needed
                     // TODO: come up with a better fix
                     Text {
                         anchors.centerIn: parent
-                        anchors.horizontalCenterOffset: 1
+                        anchors.horizontalCenterOffset: 0
                         text: ""
                         font.pixelSize: Theme.fontSizeSm
                         font.family: Theme.fontMono
                         color: cpuModule.isPressed ? Theme.baseSolid : Theme.accent
                         anchors.verticalCenter: parent.verticalCenter
                     }
-
                 }
 
                 Text {
@@ -57,11 +57,7 @@ BaseModule {
                     color: cpuModule.isPressed ? Theme.baseSolid : Theme.subtext1
                     anchors.verticalCenter: parent.verticalCenter
                 }
-
             }
-
         }
-
     }
-
 }
