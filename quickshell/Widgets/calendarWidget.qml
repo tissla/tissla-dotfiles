@@ -1,7 +1,7 @@
 import ".."
 import QtQuick
 import Quickshell
-import Quickshell.Io
+import QtQuick.Controls
 
 // Calendar widget - designed to fill parent window
 BaseWidget {
@@ -13,10 +13,31 @@ BaseWidget {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
     property var now: new Date()
-    property string notesFilePath: Quickshell.shellDir + "/data/calendar_notes.json"
-    property string selectedDayId: ""
-    property var notesData: ({
-    })
+    readonly property string selectedDayId: selectedDay < 0 ? "" : selectedYear + "-" + (selectedMonth + 1).toString().padStart(2, '0') + "-" + selectedDay.toString().padStart(2, '0')
+    readonly property var notesData: DBService.calendarNotes
+    property string noteText: ""
+    property var noteColors: []
+    property bool dirty: false
+
+    function saveNote() {
+        if (!dirty)
+            return true;
+        if (!DBService.saveCalendarNote(selectedDayId, noteText, noteColors))
+            return false;
+        dirty = false;
+        return true;
+    }
+
+    function selectDay(year, month, day) {
+        if (!saveNote())
+            return;
+        selectedYear = year;
+        selectedMonth = month;
+        selectedDay = day;
+        const note = notesData[selectedDayId];
+        noteText = note ? note.text : "";
+        noteColors = note ? note.noteColors.slice() : [];
+    }
 
     // function to change month/year
     function changeMonth(offset) {
@@ -31,33 +52,8 @@ BaseWidget {
     }
 
     function hasNoteForDay(dayId) {
-        return notesData[dayId] && notesData[dayId].noteColors && notesData[dayId].noteColors.length > 0;
-    }
-
-    function saveAllNotes() {
-        let json = JSON.stringify(notesData, null, 2);
-        saveNotesProcess.noteText = json;
-        saveNotesProcess.running = true;
-    }
-
-    function loadAllNotes() {
-        loadNotesProcess.running = true;
-    }
-
-    function cleanupEmptyNotes() {
-        let newData = {
-        };
-        for (let dayId in notesData) {
-            if (notesData[dayId].noteColors && notesData[dayId].noteColors.length > 0)
-                newData[dayId] = notesData[dayId];
-
-        }
-        notesData = newData;
-        saveAllNotes();
-    }
-
-    function isNullOrWhiteSpace(str) {
-        return !str || str.trim().length === 0;
+        const note = notesData[dayId];
+        return !!note && (note.text.trim().length > 0 || note.noteColors.length > 0);
     }
 
     //function to reset calendar display to current month
@@ -65,9 +61,7 @@ BaseWidget {
         now = new Date();
         displayMonth = now.getMonth();
         displayYear = now.getFullYear();
-        selectedDay = -1;
-        selectedMonth = -1;
-        selectedYear = -1;
+        selectDay(now.getFullYear(), now.getMonth(), now.getDate());
     }
 
     // calculate week number
@@ -95,81 +89,16 @@ BaseWidget {
             resetCalendar();
 
     }
-    onSelectedDayChanged: {
-        if (selectedDay !== -1) {
-            selectedDayId = selectedYear + "-" + (selectedMonth + 1).toString().padStart(2, '0') + "-" + selectedDay.toString().padStart(2, '0');
-            console.log("[Calendar] Selected day ID:", selectedDayId); // Debug
-        }
-    }
-    // update date on show
     onVisibleChanged: {
-        if (visible) {
+        if (visible && !dirty)
             resetCalendar();
-            loadAllNotes();
-        } else {
-            cleanupEmptyNotes();
-        }
+        else if (!visible)
+            saveNote();
     }
-    widgetWidth: 620
-    widgetHeight: 420
+    focusable: visible
+    widgetWidth: 820
+    widgetHeight: 470
     widgetId: "calendar"
-
-    Process {
-        id: saveNotesProcess
-
-        property string noteText: ""
-
-        running: false
-        command: ["sh", "-c", "mkdir -p '" + Quickshell.shellDir + "/data' && " + "echo '" + noteText.replace(/'/g, "'\\''") + "' > '" + notesFilePath + "'"]
-        onRunningChanged: {
-            if (!running)
-                console.log("[Calendar] Saved colors");
-
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.length > 0)
-                    console.error("[Calendar] Save error:", text);
-
-            }
-        }
-
-    }
-
-    Process {
-        id: loadNotesProcess
-
-        running: false
-        command: ["cat", notesFilePath]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text && text.trim().length > 0) {
-                    try {
-                        root.notesData = JSON.parse(text);
-                        console.log("[Calendar] Loaded colors");
-                    } catch (e) {
-                        root.notesData = {
-                        };
-                    }
-                } else {
-                    root.notesData = {
-                    };
-                }
-            }
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.includes("No such file"))
-                    root.notesData = {
-                };
-
-            }
-        }
-
-    }
 
     // component
     widgetComponent: Rectangle {
@@ -357,7 +286,9 @@ BaseWidget {
                                         anchors.fill: parent
                                         text: {
                                             // calc week
-                                            let date = new Date(root.displayYear, root.displayMonth, Math.floor(index / 7) * 7 + 1);
+                                            let first = new Date(root.displayYear, root.displayMonth, 1);
+                                            let offset = (first.getDay() + 6) % 7;
+                                            let date = new Date(root.displayYear, root.displayMonth, Math.floor(index / 8) * 7 + 1 - offset);
                                             return getWeekNumber(date);
                                         }
                                         font.family: Theme.fontMain
@@ -371,7 +302,7 @@ BaseWidget {
 
                                     // cell that represents a day
                                     Rectangle {
-                                        property int newIndex: index - ((index / 8))
+                                        property int newIndex: Math.floor(index / 8) * 7 + (index % 8) - 1
                                         // current day
                                         property int currentDay: root.now.getDate()
                                         // Calculate what day this cell represents
@@ -468,10 +399,7 @@ BaseWidget {
                                             }
                                             onClicked: {
                                                 if (parent.isDayInMonth) {
-                                                    root.selectedYear = root.displayYear;
-                                                    root.selectedMonth = root.displayMonth;
-                                                    root.selectedDay = parent.dayNumber;
-                                                    console.log("Selected:", root.selectedDay, root.selectedMonth, root.selectedYear);
+                                                    root.selectDay(root.displayYear, root.displayMonth, parent.dayNumber);
                                                 }
                                             }
                                         }
@@ -496,11 +424,19 @@ BaseWidget {
                                             font.weight: parent.isDayInMonth ? Font.Bold : Font.Normal
                                         }
 
+                                        Rectangle {
+                                            anchors.bottom: parent.bottom
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                            width: 5
+                                            height: 5
+                                            radius: 3
+                                            color: Theme.accent
+                                            visible: parent.hasNote
+                                        }
+
                                         // colored note indicators
                                         Repeater {
                                             model: root.notesData[parent.dayId] ? root.notesData[parent.dayId].noteColors : []
-                                            anchors.top: parent.top
-                                            anchors.left: parent.left
 
                                             Rectangle {
                                                 y: index * 10
@@ -545,12 +481,7 @@ BaseWidget {
                         // Date header
                         Text {
                             width: parent.width
-                            text: {
-                                if (root.selectedDay === -1)
-                                    return "Select a day";
-
-                                return root.selectedYear + "-" + (root.selectedMonth + 1).toString().padStart(2, '0') + "-" + root.selectedDay.toString().padStart(2, '0');
-                            }
+                            text: root.selectedDayId || "Select a day"
                             font.family: Theme.fontMain
                             font.pixelSize: 16
                             font.weight: Font.Bold
@@ -594,9 +525,44 @@ BaseWidget {
                             color: Theme.accent
                         }
 
+                        ScrollView {
+                            width: parent.width
+                            height: 140
+                            clip: true
+                            TextArea {
+                                objectName: "calendarNoteEditor"
+                                enabled: root.selectedDay !== -1 && DBService.ready
+                                text: root.noteText
+                                placeholderText: "Notes for this day…"
+                                wrapMode: TextEdit.Wrap
+                                color: Theme.text
+                                placeholderTextColor: Theme.subtext1
+                                selectionColor: Theme.accent
+                                font.family: Theme.fontMain
+                                font.pixelSize: Theme.fontSizeBase
+                                background: Rectangle { color: Theme.base; radius: Theme.radiusAlt }
+                                onTextChanged: {
+                                    if (activeFocus && text !== root.noteText) {
+                                        root.noteText = text;
+                                        root.dirty = true;
+                                        root.saveNote();
+                                    }
+                                }
+                            }
+                        }
+
+                        Text {
+                            width: parent.width
+                            text: DBService.errorMessage || (root.dirty ? "Unsaved changes" : "Saved automatically")
+                            color: DBService.errorMessage ? Theme.red : Theme.subtext1
+                            wrapMode: Text.Wrap
+                            font.pixelSize: Theme.fontSizeXxs
+                        }
+
                         Row {
                             spacing: 10
                             visible: root.selectedDay !== -1
+                            enabled: DBService.ready
                             anchors.horizontalCenter: parent.horizontalCenter
 
                             Repeater {
@@ -608,7 +574,7 @@ BaseWidget {
                                     border.width: 2
                                     border.color: modelData
                                     color: {
-                                        let colors = root.getNoteColorsForDay(root.selectedDayId);
+                                        let colors = root.noteColors;
                                         if (colors.indexOf(modelData) !== -1)
                                             return modelData;
                                         else
@@ -619,20 +585,15 @@ BaseWidget {
                                     MouseArea {
                                         anchors.fill: parent
                                         onClicked: {
-                                            if (!root.notesData[root.selectedDayId])
-                                                root.notesData[root.selectedDayId] = {
-                                                "noteColors": []
-                                            };
-
-                                            let colors = root.notesData[root.selectedDayId].noteColors;
+                                            let colors = root.noteColors.slice();
                                             let index = colors.indexOf(modelData);
                                             if (index !== -1)
                                                 colors.splice(index, 1);
                                             else
                                                 colors.push(modelData);
-                                            root.notesData[root.selectedDayId].noteColors = colors;
-                                            root.saveAllNotes();
-                                            root.notesDataChanged();
+                                            root.noteColors = colors;
+                                            root.dirty = true;
+                                            root.saveNote();
                                         }
                                     }
 

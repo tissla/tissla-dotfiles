@@ -67,3 +67,6 @@ AudioCircle 1.0 Core/AudioCircle.qml
 LockContext 1.0 Lock/LockContext.qml
 LockSurface 1.0 Lock/LockSurface.qml
 
+
+# SQLite notes storage
+singleton DBService 1.0 Services/DBService.qml

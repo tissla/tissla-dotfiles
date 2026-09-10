@@ -16,6 +16,7 @@ QtObject {
     readonly property var widgetSources: ({
         "battery": "batteryWidget.qml",
         "calendar": "calendarWidget.qml",
+        "scratchpad": "scratchpadWidget.qml",
         "cpu": "cpuWidget.qml",
         "devices": "devicesWidget.qml",
         "gpu": "gpuWidget.qml",
