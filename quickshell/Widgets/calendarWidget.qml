@@ -90,18 +90,27 @@ BaseWidget {
 
     }
     onVisibleChanged: {
+        if (!visible)
+            pointerInside = false;
         if (visible && !dirty)
             resetCalendar();
         else if (!visible)
             saveNote();
     }
-    focusable: visible
+    // Only request native keyboard focus while the pointer is in the popup.
+    // Taking focus during the module's opening click disrupts subsequent clicks.
+    property bool pointerInside: false
+    focusable: visible && pointerInside
     widgetWidth: 820
     widgetHeight: 470
     widgetId: "calendar"
 
     // component
     widgetComponent: Rectangle {
+        HoverHandler {
+            onHoveredChanged: root.pointerInside = hovered
+        }
+
         color: Theme.base
         radius: Theme.radius
         border.width: 3

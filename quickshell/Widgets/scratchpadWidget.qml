@@ -8,7 +8,10 @@ BaseWidget {
     widgetId: "scratchpad"
     widgetWidth: 520
     widgetHeight: 420
-    focusable: visible
+    // Only request native keyboard focus while the pointer is in the popup.
+    // Taking focus during the module's opening click disrupts subsequent clicks.
+    property bool pointerInside: false
+    focusable: visible && pointerInside
     property string draft: DBService.scratchpadText
     property bool dirty: false
 
@@ -19,10 +22,16 @@ BaseWidget {
 
     onVisibleChanged: {
         if (!visible)
+            pointerInside = false;
+        if (!visible)
             saveNote();
     }
 
     widgetComponent: Rectangle {
+        HoverHandler {
+            onHoveredChanged: root.pointerInside = hovered
+        }
+
         color: Theme.base
         radius: Theme.radius
         border.width: 3
