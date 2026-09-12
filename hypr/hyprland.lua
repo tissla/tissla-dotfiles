@@ -125,7 +125,7 @@ hl.config({
 		},
 
 		blur = {
-			enabled = false,
+			enabled = theme.blur,
 			size = 3,
 			passes = 1,
 			vibrancy = 0.1696,

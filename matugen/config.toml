@@ -1,5 +1,11 @@
 [config]
+# Choose a colorful seed without an interactive prompt.
+prefer = "saturation"
+contrast = 0.0
 
 [templates.matugen]
+# Keep this template colorful and dark even when called outside Quickshell.
+type = "SchemeVibrant"
+mode = "Dark"
 input_path = "~/.config/matugen/templates/tissla-theme.json"
 output_path = "~/Dotfiles/themes/matugen.json"

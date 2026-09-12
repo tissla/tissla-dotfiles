@@ -6,6 +6,7 @@
     "position": "bottom"
   },
   "theme": "tissla",
+  "terminal": { "opacity": 0.85, "blur": false },
   "wallpapers": ["default.png"],
   "wallpapersPath": "/../wallpapers",
   "screens": [

@@ -3,7 +3,6 @@ general.import = [
 ]
 
 [window]
-opacity = 0.85
 padding.x = 8
 padding.y = 8
 

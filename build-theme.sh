@@ -38,6 +38,79 @@ capitalize() { echo "$1" | sed 's/.*/\u&/'; }
 mkdir -p "$DOTFILES/quickshell"
 mkdir -p "$DOTFILES/theme"
 
+# Terminal preferences are global and survive palette changes.
+TERMINAL_SETTINGS='{"opacity":0.85,"blur":false}'
+if [[ -f "$DOTFILES/quickshell/settings.json" ]]; then
+    TERMINAL_SETTINGS=$(jq -ce '
+        (.terminal.opacity // 0.85) as $opacity |
+        (.terminal.blur // false) as $blur |
+        if ($opacity | type) == "number" and $opacity >= 0 and $opacity <= 1
+            and ($blur | type) == "boolean"
+        then {opacity: $opacity, blur: $blur}
+        else error("Invalid terminal opacity or blur setting") end
+    ' "$DOTFILES/quickshell/settings.json")
+fi
+TERMINAL_OPACITY=$(jq -r '.opacity' <<< "$TERMINAL_SETTINGS")
+TERMINAL_BLUR=$(jq -r '.blur' <<< "$TERMINAL_SETTINGS")
+
+# Generate Alacritty theme
+cat >"$DOTFILES/theme/theme.toml" <<EOF
+[window]
+opacity = $TERMINAL_OPACITY
+
+[colors.primary]
+background = "0x$(strip_hash "$(get_palette base)")"
+foreground = "0x$(strip_hash "$(get_palette text)")"
+
+[colors.normal]
+black   = "0x$(strip_hash "$(get_palette black)")"
+red     = "0x$(strip_hash "$(get_palette red)")"
+green   = "0x$(strip_hash "$(get_palette green)")"
+yellow  = "0x$(strip_hash "$(get_palette yellow)")"
+blue    = "0x$(strip_hash "$(get_palette blue)")"
+magenta = "0x$(strip_hash "$(get_role accent)")"
+cyan    = "0x$(strip_hash "$(get_palette teal)")"
+white   = "0x$(strip_hash "$(get_palette text)")"
+
+[colors.bright]
+black   = "0x$(strip_hash "$(get_palette surface1)")"
+red     = "0x$(strip_hash "$(get_palette red)")"
+green   = "0x$(strip_hash "$(get_palette green)")"
+yellow  = "0x$(strip_hash "$(get_palette yellow)")"
+blue    = "0x$(strip_hash "$(get_palette blue)")"
+magenta = "0x$(strip_hash "$(get_palette pink)")"
+cyan    = "0x$(strip_hash "$(get_palette teal)")"
+white   = "0x$(strip_hash "$(get_palette white)")"
+
+[font.normal]
+family = "$(get_font mono)"
+style  = "$(capitalize "$(get_font style)")"
+EOF
+
+# Generate Hyprland theme
+mkdir -p "$DOTFILES/hypr"
+cat >"$DOTFILES/hypr/theme.lua" <<EOF
+local theme = {
+    base       = "rgb($(strip_hash "$(get_palette base)"))",
+    text       = "rgb($(strip_hash "$(get_palette text)"))",
+    accent     = "rgb($(strip_hash "$(get_role accent)"))",
+    surface1   = "rgb($(strip_hash "$(get_palette surface1)"))",
+    bgalpha    = "0xee$(strip_hash "$(get_palette base)")",
+    mutedalpha = "0xaa$(strip_hash "$(get_palette surface1)")",
+
+    blur = $TERMINAL_BLUR,
+    rounding = $(get_value radius),
+    roundingAlt = $(get_value radiusAlt),
+}
+
+return theme
+EOF
+
+# Effect controls update Alacritty opacity and the Hyprland theme variables.
+if [[ "${2:-}" == "--terminal-only" ]]; then
+    exit 0
+fi
+
 # Generate bash/colors
 hex_to_rgb() {
     local hex="${1#\#}"
@@ -170,54 +243,6 @@ QtObject {
     property int fontSizeTiny:  $(get_fontsize tiny)
     property int fontSizeMicro: $(get_fontsize micro)
 }
-EOF
-
-# Generate Hyprland theme
-cat >"$DOTFILES/hypr/theme.lua" <<EOF
-local theme = {
-    base       = "rgb($(strip_hash "$(get_palette base)"))",
-    text       = "rgb($(strip_hash "$(get_palette text)"))",
-    accent     = "rgb($(strip_hash "$(get_role accent)"))",
-    surface1   = "rgb($(strip_hash "$(get_palette surface1)"))",
-    bgalpha    = "0xee$(strip_hash "$(get_palette base)")",
-    mutedalpha = "0xaa$(strip_hash "$(get_palette surface1)")",
-
-    rounding = $(get_value radius),
-    roundingAlt = $(get_value radiusAlt),
-}
-
-return theme
-EOF
-
-# Generate Alacritty theme
-cat >"$DOTFILES/theme/theme.toml" <<EOF
-[colors.primary]
-background = "0x$(strip_hash "$(get_palette base)")"
-foreground = "0x$(strip_hash "$(get_palette text)")"
-
-[colors.normal]
-black   = "0x$(strip_hash "$(get_palette black)")"
-red     = "0x$(strip_hash "$(get_palette red)")"
-green   = "0x$(strip_hash "$(get_palette green)")"
-yellow  = "0x$(strip_hash "$(get_palette yellow)")"
-blue    = "0x$(strip_hash "$(get_palette blue)")"
-magenta = "0x$(strip_hash "$(get_role accent)")"
-cyan    = "0x$(strip_hash "$(get_palette teal)")"
-white   = "0x$(strip_hash "$(get_palette text)")"
-
-[colors.bright]
-black   = "0x$(strip_hash "$(get_palette surface1)")"
-red     = "0x$(strip_hash "$(get_palette red)")"
-green   = "0x$(strip_hash "$(get_palette green)")"
-yellow  = "0x$(strip_hash "$(get_palette yellow)")"
-blue    = "0x$(strip_hash "$(get_palette blue)")"
-magenta = "0x$(strip_hash "$(get_palette pink)")"
-cyan    = "0x$(strip_hash "$(get_palette teal)")"
-white   = "0x$(strip_hash "$(get_palette white)")"
-
-[font.normal]
-family = "$(get_font mono)"
-style  = "$(capitalize "$(get_font style)")"
 EOF
 
 # Generate fastfetch config

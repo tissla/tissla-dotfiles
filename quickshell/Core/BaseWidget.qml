@@ -17,6 +17,7 @@ PanelWindow {
     // position data
     property int xPos: 0
     property int yPos: Theme.gap
+    property bool centered: false
 
     visible: false
     focusable: false
@@ -69,8 +70,8 @@ PanelWindow {
     }
 
     margins {
-        bottom: yPos
-        left: xPos
+        bottom: centered && baseWidget.screen ? Math.max(0, (baseWidget.screen.height - widgetHeight) / 2) : yPos
+        left: centered && baseWidget.screen ? Math.max(0, (baseWidget.screen.width - widgetWidth) / 2) : xPos
     }
 
     // actual widget logic

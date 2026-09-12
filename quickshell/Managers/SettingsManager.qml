@@ -1,3 +1,4 @@
+import ".."
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -10,6 +11,11 @@ QtObject {
     property int barHeight: 40
     property string barPosition: "bottom"
     property string theme: "tissla"
+    property real terminalOpacity: 0.85
+    property bool terminalBlur: false
+    property bool _rebuildTerminal: false
+    property string terminalSettingsError: ""
+    readonly property bool terminalSettingsBusy: settingsSaver.running || ThemeManager.generateProcess.running || ThemeManager.hyprctlProcess.running
     property bool border: true
     property var weatherCoords: []
     property string wallpapersPath: ""
@@ -35,6 +41,17 @@ QtObject {
         saveSettings();
     }
 
+    function setTerminalAppearance(opacity, blur) {
+        if (terminalSettingsBusy || !Number.isFinite(opacity) || typeof blur !== "boolean")
+            return;
+        const value = Math.max(0, Math.min(1, Math.round(opacity * 100) / 100));
+        terminalSettingsError = "";
+        terminalOpacity = value;
+        terminalBlur = blur;
+        _rebuildTerminal = true;
+        saveSettings();
+    }
+
     function saveSettings() {
         console.log("[SettingsManager] saveSettings START");
         let json = {
@@ -45,6 +62,7 @@ QtObject {
                 "border": border
             },
             "theme": theme,
+            "terminal": { "opacity": terminalOpacity, "blur": terminalBlur },
             "wallpapersPath": wallpapersPath,
             "weatherCoords": weatherCoords,
             "screens": []
@@ -143,6 +161,12 @@ QtObject {
                             settings.border = json.bar.border;
 
                     }
+                    if (json.terminal) {
+                        if (typeof json.terminal.opacity === "number" && Number.isFinite(json.terminal.opacity))
+                            settings.terminalOpacity = Math.max(0, Math.min(1, json.terminal.opacity));
+                        if (typeof json.terminal.blur === "boolean")
+                            settings.terminalBlur = json.terminal.blur;
+                    }
                     if (json.theme)
                         settings.theme = json.theme;
 
@@ -201,6 +225,15 @@ QtObject {
 
         running: false
         command: ["bash", "-c", "printf '%s' \"$1\" > \"$2\"", "--", jsonData, Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
+        onExited: (exitCode, exitStatus) => {
+            if (!settings._rebuildTerminal)
+                return;
+            settings._rebuildTerminal = false;
+            if (exitCode === 0 && exitStatus === 0)
+                ThemeManager.generateThemeFiles(settings.theme, true);
+            else
+                settings.terminalSettingsError = "Couldn't save terminal settings";
+        }
         onRunningChanged: {
             console.log("[SettingsManager] Saver running:", running);
             if (!running)

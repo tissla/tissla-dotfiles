@@ -34,15 +34,18 @@ QtObject {
         getAvailableThemesProcess.running = true;
     }
 
-    function generateThemeFiles(themeId) {
+    function generateThemeFiles(themeId, terminalOnly = false) {
+        generateProcess.terminalOnly = terminalOnly;
         generateProcess.themeId = themeId;
         generateProcess.running = true;
     }
 
     // hyprland needs an explicit reload to pick up generated config, niri doesnt
-    function reloadCompositor() {
-        if (Compositor.isHyprland)
+    function reloadCompositor(terminalOnly = false) {
+        if (Compositor.isHyprland) {
+            hyprctlProcess.terminalOnly = terminalOnly;
             hyprctlProcess.running = true;
+        }
 
     }
 
@@ -70,13 +73,19 @@ QtObject {
     // generates theme files for theme
     generateProcess: Process {
         property string themeId: ""
+        property bool terminalOnly: false
 
         running: false
-        command: ["bash", "-c", Quickshell.shellDir + "/../build-theme.sh " + themeId + " >/dev/null 2>&1"]
-        onRunningChanged: {
-            if (!running && themeId !== "")
+        command: ["bash", Quickshell.shellDir + "/../build-theme.sh", themeId].concat(terminalOnly ? ["--terminal-only"] : [])
+        onExited: (exitCode, exitStatus) => {
+            if (terminalOnly) {
+                SettingsManager.terminalSettingsError = exitCode === 0 && exitStatus === 0
+                    ? "" : "Couldn't apply terminal settings";
+                if (exitCode === 0 && exitStatus === 0)
+                    themeManager.reloadCompositor(true);
+            } else if (exitCode === 0 && exitStatus === 0) {
                 themeManager.reloadCompositor();
-
+            }
         }
 
         stdout: SplitParser {
@@ -87,8 +96,13 @@ QtObject {
     }
 
     hyprctlProcess: Process {
+        property bool terminalOnly: false
         running: false
         command: ["hyprctl", "reload"]
+        onExited: (exitCode, exitStatus) => {
+            if (terminalOnly && (exitCode !== 0 || exitStatus !== 0))
+                SettingsManager.terminalSettingsError = "Couldn't reload Hyprland";
+        }
     }
 
 }
