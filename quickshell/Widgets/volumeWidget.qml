@@ -13,9 +13,11 @@ BaseWidget {
     component DeviceCard: Rectangle {
         id: card
         required property var node
-        readonly property bool selected: node === (node.isSink ? VolumeProvider.sink : VolumeProvider.source)
-        readonly property bool muted: node.audio ? node.audio.muted : false
-        readonly property int percent: node.audio ? Math.round(node.audio.volume * 100) : 0
+        readonly property bool stream: node ? node.isStream : false
+        readonly property bool playback: node ? node.isSink : false
+        readonly property bool selected: node && !stream && node === (node.isSink ? VolumeProvider.sink : VolumeProvider.source)
+        readonly property bool muted: node && node.audio ? node.audio.muted : false
+        readonly property int percent: node && node.audio ? Math.round(node.audio.volume * 100) : 0
         implicitHeight: 110
         radius: Theme.radiusAlt
         color: selected ? Theme.surface1 : Theme.surface0
@@ -31,7 +33,7 @@ BaseWidget {
                 Layout.fillWidth: true
                 spacing: 10
                 Text {
-                    text: card.node.isSink ? "" : "󰍬"
+                    text: card.playback ? "" : "󰍬"
                     color: card.selected ? Theme.accent : Theme.subtext1
                     font.family: Theme.fontMono
                     font.pixelSize: Theme.fontSizeLg
@@ -41,7 +43,7 @@ BaseWidget {
                     spacing: 2
                     Text {
                         Layout.fillWidth: true
-                        text: VolumeProvider.deviceName(card.node)
+                        text: card.stream ? VolumeProvider.streamName(card.node) : VolumeProvider.deviceName(card.node)
                         elide: Text.ElideRight
                         color: Theme.text
                         font.family: Theme.fontMain
@@ -54,7 +56,10 @@ BaseWidget {
                         }
                     }
                     Text {
-                        text: card.selected ? "Default device" : "Available"
+                        Layout.fillWidth: true
+                        text: card.stream ? VolumeProvider.streamDescription(card.node) : card.selected ? "Default device" : "Available"
+                        visible: text !== ""
+                        elide: Text.ElideRight
                         color: card.selected ? Theme.accent : Theme.subtext1
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeXxs
@@ -62,8 +67,10 @@ BaseWidget {
                 }
                 Button {
                     id: defaultButton
+                    objectName: "defaultDevice"
+                    visible: !card.stream
                     text: card.selected ? "✓" : "Use"
-                    enabled: card.node.ready && !card.selected
+                    enabled: card.node !== null && card.node.ready && !card.selected && !card.stream
                     onClicked: VolumeProvider.selectDefault(card.node)
                     implicitWidth: 48
                     implicitHeight: 28
@@ -88,14 +95,16 @@ BaseWidget {
                 spacing: 10
                 Button {
                     id: muteButton
+                    objectName: "nodeMute"
                     implicitWidth: 32
                     implicitHeight: 30
-                    enabled: card.node.ready
+                    enabled: card.node !== null && card.node.ready
+                    Accessible.name: card.muted ? "Unmute" : "Mute"
                     onClicked: VolumeProvider.toggleNodeMute(card.node)
                     ToolTip.visible: hovered
                     ToolTip.text: card.muted ? "Unmute" : "Mute"
                     contentItem: Text {
-                        text: card.node.isSink ? (card.muted ? "󰝟" : "") : (card.muted ? "󰍭" : "󰍬")
+                        text: card.playback ? (card.muted ? "󰝟" : "") : (card.muted ? "󰍭" : "󰍬")
                         color: card.muted ? Theme.red : Theme.text
                         font.family: Theme.fontMono
                         font.pixelSize: Theme.fontSizeLg
@@ -109,11 +118,13 @@ BaseWidget {
                 }
                 Slider {
                     id: slider
+                    objectName: "nodeVolume"
                     Layout.fillWidth: true
                     from: 0
                     to: 100
                     stepSize: 1
-                    enabled: card.node.ready
+                    enabled: card.node !== null && card.node.ready
+                    Accessible.name: "Volume"
                     value: card.percent
                     onMoved: VolumeProvider.setNodeVolume(card.node, value)
                     background: Rectangle {
@@ -181,6 +192,7 @@ BaseWidget {
                 }
             }
             ScrollView {
+                objectName: "audioScroll"
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
@@ -237,6 +249,35 @@ BaseWidget {
                     Text {
                         visible: VolumeProvider.inputs.length === 0
                         text: "No input devices connected"
+                        color: Theme.subtext1
+                        font.family: Theme.fontMain
+                        font.pixelSize: Theme.fontSizeSm
+                    }
+                    Item {
+                        width: 1
+                        height: 4
+                    }
+                    Text {
+                        text: "PROGRAMS"
+                        color: Theme.accent
+                        font.family: Theme.fontMain
+                        font.pixelSize: Theme.fontSizeXxs
+                        font.letterSpacing: 1.5
+                        font.bold: true
+                    }
+                    Repeater {
+                        objectName: "programsList"
+                        model: VolumeProvider.playbackStreams
+                        DeviceCard {
+                            required property var modelData
+                            node: modelData
+                            width: parent.width
+                        }
+                    }
+                    Text {
+                        objectName: "programsEmpty"
+                        visible: VolumeProvider.playbackStreams.length === 0
+                        text: "No playback streams"
                         color: Theme.subtext1
                         font.family: Theme.fontMain
                         font.pixelSize: Theme.fontSizeSm

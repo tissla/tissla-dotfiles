@@ -10,22 +10,35 @@ QtObject {
     readonly property var source: Pipewire.defaultAudioSource
     readonly property var outputs: Pipewire.nodes.values.filter(node => node.audio && !node.isStream && node.isSink)
     readonly property var inputs: Pipewire.nodes.values.filter(node => node.audio && !node.isStream && !node.isSink)
+    readonly property var playbackStreams: Pipewire.nodes.values.filter(node => node.audio && node.type === PwNodeType.AudioOutStream)
     readonly property int volume: sink && sink.audio ? Math.round(sink.audio.volume * 100) : 0
     readonly property bool isMuted: sink && sink.audio ? sink.audio.muted : false
 
-    // Track device parameters so sliders and mute indicators also follow external changes.
+    // Bind streams too, so their metadata and audio controls stay up to date.
     property PwObjectTracker tracker: PwObjectTracker {
-        objects: root.outputs.concat(root.inputs)
+        objects: root.outputs.concat(root.inputs, root.playbackStreams)
     }
 
     function deviceName(node) {
         return node ? (node.description || node.nickname || node.name || "Audio device") : "No audio device";
     }
 
+    function streamName(node) {
+        const properties = node && node.ready ? node.properties : {};
+        return properties["application.name"] || deviceName(node);
+    }
+
+    function streamDescription(node) {
+        const properties = node && node.ready ? node.properties : {};
+        const media = properties["media.name"] || "";
+        return media !== streamName(node) ? media : "";
+    }
+
     function setNodeVolume(node, percent) {
         if (!node || !node.ready || !node.audio || !Number.isFinite(percent))
             return;
         node.audio.volume = Math.max(0, Math.min(100, percent)) / 100;
+        // Quickshell marks both playback streams and output devices as sinks.
         if (node.isSink)
             node.audio.muted = false;
     }

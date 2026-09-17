@@ -14,3 +14,5 @@ vim.opt.breakindent = true
 
 -- color
 vim.opt.termguicolors = true
+
+vim.g.root_spec = { "cwd" }
