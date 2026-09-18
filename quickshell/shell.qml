@@ -13,6 +13,8 @@ ShellRoot {
 
     objectName: "shellRoot"
     Component.onCompleted: {
+        // Start wallpaper restoration even while the theme widget is closed.
+        WallpaperManager.setAllWallpapers();
         console.log("Forcing NotificationService load");
         NotificationService.server;
     }
