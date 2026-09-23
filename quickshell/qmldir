@@ -70,3 +70,6 @@ LockSurface 1.0 Lock/LockSurface.qml
 
 # SQLite notes storage
 singleton DBService 1.0 Services/DBService.qml
+singleton CalendarReminderService 1.0 Services/CalendarReminderService.qml
+CalendarReminders 1.0 Components/CalendarReminders.qml
+CalendarReminderWindow 1.0 Components/CalendarReminderWindow.qml

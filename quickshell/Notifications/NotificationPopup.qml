@@ -1,9 +1,10 @@
+pragma ComponentBehavior: Bound
+
 import ".."
-import QtQml
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
-import Quickshell.Services.Notifications
 
 PanelWindow {
     id: root
@@ -13,8 +14,8 @@ PanelWindow {
     screen: Quickshell.screens[0]
     color: "transparent"
     exclusiveZone: 0
-    implicitWidth: 300
-    implicitHeight: 700
+    implicitWidth: 340
+    implicitHeight: Math.min(notificationList.contentHeight + Theme.gap * 2, screen ? screen.height - 80 : 700)
     visible: notifications.length > 0
 
     anchors {
@@ -22,83 +23,98 @@ PanelWindow {
         right: true
     }
 
-    Column {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: Theme.gap
-        anchors.rightMargin: Theme.gap
+    ListView {
+        id: notificationList
+        anchors.fill: parent
+        anchors.margins: Theme.gap
         spacing: 12
+        clip: true
+        model: root.notifications
+        boundsBehavior: Flickable.StopAtBounds
+        ScrollBar.vertical: ScrollBar {}
 
-        Repeater {
-            model: notifications
+        delegate: Rectangle {
+            id: card
+            required property var modelData
+            readonly property var notif: modelData
 
-            delegate: Rectangle {
-                required property var modelData
-                readonly property var notif: modelData
+            width: notificationList.width
+            implicitHeight: content.implicitHeight + 30
+            radius: Theme.radius
+            color: Theme.baseSolid
+            border.color: Theme.accent
+            border.width: Theme.borderWidth
 
-                width: 280
-                implicitHeight: 140
-                radius: Theme.radius
-                color: Theme.baseSolid
-                border.color: Theme.accent
-                border.width: Theme.borderWidth
+            ColumnLayout {
+                id: content
+                anchors.fill: parent
+                anchors.margins: 15
+                spacing: 8
 
-                ColumnLayout {
-                    anchors.fill: parent
-                    anchors.margins: 15
-
-                    RowLayout {
-                        // A
-                        Text {
-                            text: notif.summary
-                            color: Theme.text
-                            font.weight: Font.Bold
-                            Layout.alignment: Qt.AlignLeft
-                            font.pixelSize: 16
-                            Layout.preferredWidth: 130
-                            elide: Text.ElideRight
-                        }
-
-                        // B
-                        Text {
-                            text: notif.appName
-                            color: Theme.text
-                            font.weight: Font.Bold
-                            font.pixelSize: 18
-                            Layout.fillWidth: true
-                            horizontalAlignment: Text.AlignRight
-                        }
-
+                RowLayout {
+                    Layout.fillWidth: true
+                    Text {
+                        text: card.notif.appName
+                        textFormat: Text.PlainText
+                        color: Theme.subtext1
+                        font.family: Theme.fontMain
+                        font.pixelSize: Theme.fontSizeSm
+                        Layout.fillWidth: true
+                        elide: Text.ElideRight
                     }
-
-                    RowLayout {
-                        // C
-                        Image {
-                            Layout.preferredWidth: 50
-                            Layout.preferredHeight: 50
-                            source: notif.image
-                        }
-
-                        // D
-                        Text {
-                            Layout.fillWidth: true
-                            Layout.preferredWidth: 1
-                            Layout.maximumHeight: 100
-                            Layout.alignment: Qt.AlignTop
-                            text: notif.body
-                            Layout.leftMargin: 10
-                            wrapMode: Text.Wrap
+                    Button {
+                        id: dismissButton
+                        text: "×"
+                        implicitWidth: 28
+                        implicitHeight: 28
+                        Accessible.name: "Dismiss notification"
+                        onClicked: NotificationService.removeNotif(card.notif)
+                        contentItem: Text {
+                            text: "×"
                             color: Theme.text
+                            font.pixelSize: 20
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
                         }
-
+                        background: Rectangle {
+                            color: dismissButton.hovered ? Theme.surface2 : Theme.surface0
+                            radius: Theme.radiusAlt
+                        }
                     }
-
                 }
 
+                Text {
+                    Layout.fillWidth: true
+                    text: card.notif.summary
+                    textFormat: Text.PlainText
+                    wrapMode: Text.Wrap
+                    color: Theme.text
+                    font.family: Theme.fontMain
+                    font.weight: Font.Bold
+                    font.pixelSize: Theme.fontSizeMd
+                }
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: !!card.notif.image || card.notif.body.length > 0
+                    Image {
+                        visible: !!card.notif.image
+                        Layout.preferredWidth: 42
+                        Layout.preferredHeight: 42
+                        source: card.notif.image || ""
+                        fillMode: Image.PreserveAspectFit
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        text: card.notif.body
+                        textFormat: Text.PlainText
+                        wrapMode: Text.Wrap
+                        color: Theme.text
+                        font.family: Theme.fontMain
+                        font.pixelSize: Theme.fontSizeSm
+                    }
+                }
             }
-
         }
-
     }
-
 }

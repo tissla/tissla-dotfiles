@@ -13,12 +13,29 @@ QtObject {
     property int maxMessageSize: 80
 
     function removeNotif(item) {
+        if (item.onDismiss && item.onDismiss() === false)
+            return;
         notifications = notifications.filter(n => n && n.id !== item.id);
         
         if (item.sourceNotif)
             item.sourceNotif.tracked = false
 
         console.log("Removed notification id:", item.id);
+    }
+
+    // Local reminders stay visible until dismissed; string IDs cannot collide
+    // with the notification server's numeric IDs.
+    function showLocalNotification(key, appName, summary, body, soundKey, onDismiss) {
+        const id = "local:" + key;
+        const item = { id: id, appName: appName, summary: summary, body: body,
+            image: "", sourceNotif: null, onDismiss: onDismiss };
+        notifications = [item, ...notifications.filter(n => n && n.id !== id)];
+        if (soundKey)
+            PlaySoundService.playSound(soundKey);
+    }
+
+    function withdrawLocalNotification(key) {
+        notifications = notifications.filter(n => n && n.id !== "local:" + key);
     }
 
     function handleNotif(notif) {

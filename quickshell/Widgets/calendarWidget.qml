@@ -53,7 +53,8 @@ BaseWidget {
 
     function hasNoteForDay(dayId) {
         const note = notesData[dayId];
-        return !!note && (note.text.trim().length > 0 || note.noteColors.length > 0);
+        return (!!note && (note.text.trim().length > 0 || note.noteColors.length > 0))
+            || DBService.calendarReminders.some(r => r.day === dayId && !r.dismissed);
     }
 
     //function to reset calendar display to current month
@@ -100,10 +101,16 @@ BaseWidget {
     // Only request native keyboard focus while the pointer is in the popup.
     // Taking focus during the module's opening click disrupts subsequent clicks.
     property bool pointerInside: false
-    focusable: visible && pointerInside
+    focusable: visible && pointerInside && !reminderWindow.visible
     widgetWidth: 820
     widgetHeight: 470
     widgetId: "calendar"
+
+    CalendarReminderWindow {
+        id: reminderWindow
+        objectName: "calendarReminderWindow"
+        screen: root.screen
+    }
 
     // component
     widgetComponent: Rectangle {
@@ -496,6 +503,29 @@ BaseWidget {
                             font.weight: Font.Bold
                             horizontalAlignment: Text.AlignHCenter
                             color: Theme.text
+
+                            Button {
+                                id: addReminder
+                                objectName: "addReminderButton"
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 24
+                                height: 24
+                                enabled: root.selectedDay !== -1 && DBService.ready
+                                Accessible.name: "Add or edit reminders"
+                                onClicked: reminderWindow.open(root.selectedDayId)
+                                contentItem: Text {
+                                    text: "+"
+                                    color: addReminder.enabled ? Theme.text : Theme.muted
+                                    font.pixelSize: 20
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                                background: Rectangle {
+                                    color: addReminder.hovered || addReminder.activeFocus ? Theme.surface2 : "transparent"
+                                    radius: Theme.radiusAlt
+                                }
+                            }
                         }
 
                         // Day of week

@@ -17,6 +17,7 @@ ShellRoot {
         WallpaperManager.setAllWallpapers();
         console.log("Forcing NotificationService load");
         NotificationService.server;
+        CalendarReminderService.start();
     }
 
     // StatusBar
