@@ -96,6 +96,8 @@ return {
           },
           filetypes = { "arduino" },
         },
+        -- Java
+        jdtls = {},
       },
     },
   },

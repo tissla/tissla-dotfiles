@@ -16,3 +16,6 @@ vim.opt.breakindent = true
 vim.opt.termguicolors = true
 
 vim.g.root_spec = { "cwd" }
+
+-- SPELLCHECK (FU)
+vim.opt.spell = false

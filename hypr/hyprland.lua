@@ -52,7 +52,7 @@ local menu = [[rofi -theme "~/.config/rofi/tissla.rasi" -show drun -drun-match-f
 hl.on("hyprland.start", function()
 	hl.exec_cmd("twp-daemon")
 	hl.exec_cmd("quickshell")
-	hl.exec_cmd("qs ipc call lock lock")
+	hl.exec_cmd("hypridle")
 end)
 
 -------------------------------
