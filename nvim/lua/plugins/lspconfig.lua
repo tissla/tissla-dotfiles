@@ -3,6 +3,9 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
+        powershell_es = {
+          bundle_path = vim.fn.stdpath("data") .. "/mason/packages/powershell-editor-services",
+        },
         -- Python
         pylsp = {
           settings = {

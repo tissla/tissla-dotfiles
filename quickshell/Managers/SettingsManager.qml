@@ -1,8 +1,8 @@
+pragma Singleton
 import ".."
 import QtQuick
 import Quickshell
 import Quickshell.Io
-pragma Singleton
 
 QtObject {
     id: settings
@@ -19,21 +19,16 @@ QtObject {
     property bool border: true
     property var weatherCoords: []
     property string wallpapersPath: ""
-    property var screenConfigs: ({
-    })
-    property Process settingsLoader
+    property var screenConfigs: ({})
+    property string notificationPosition: ""
+    property var settingsFile
     property Process settingsSaver
     // caches the concatenated module list per screen so getScreenModules()
     // returns the same array reference when left/center/right haven't
     // actually changed — otherwise every screenConfigs reassignment (e.g.
     // picking a wallpaper) would hand Repeater/Variants a brand-new array
     // and force a full teardown/rebuild of every module and widget.
-    property var _moduleListCache: ({
-    })
-
-    function loadSettings() {
-        settingsLoader.running = true;
-    }
+    property var _moduleListCache: ({})
 
     function setTheme(themeId) {
         console.log("[SettingsManager] setTheme called:", themeId);
@@ -62,7 +57,10 @@ QtObject {
                 "border": border
             },
             "theme": theme,
-            "terminal": { "opacity": terminalOpacity, "blur": terminalBlur },
+            "terminal": {
+                "opacity": terminalOpacity,
+                "blur": terminalBlur
+            },
             "wallpapersPath": wallpapersPath,
             "weatherCoords": weatherCoords,
             "screens": []
@@ -79,10 +77,8 @@ QtObject {
                 }
             });
         }
-        let jsonString = JSON.stringify(json, null, 2);
-        console.log("[SettingsManager] About to save JSON (first 100 chars):", jsonString.substring(0, 100));
-        settingsSaver.jsonData = jsonString;
-        settingsSaver.running = true;
+
+        settingsFile.setText(JSON.stringify(json, null, 2));
     }
 
     function getScreenConfig(screenName) {
@@ -104,7 +100,6 @@ QtObject {
         for (let name in screenConfigs) {
             if (screenConfigs[name].isPrimary === true)
                 return screenConfigs[name].wallpaper;
-
         }
         return "";
     }
@@ -135,120 +130,69 @@ QtObject {
 
     Component.onCompleted: {
         console.log("[SettingsManager] SettingsManager initialized");
-        loadSettings();
     }
 
-    settingsLoader: Process {
-        property string buffer: ""
+    settingsFile: FileView {
+        path: Quickshell.shellDir + "/settings.json"
+        watchChanges: true
+        onFileChanged: this.reload()
+        blockLoading: true
 
-        running: false
-        command: ["cat", Quickshell.shellDir + "/settings.json"]
-        onRunningChanged: {
-            if (!running && buffer !== "") {
-                try {
-                    const json = JSON.parse(buffer);
-                    if (json.bar) {
-                        if (json.bar.transparentBackground !== undefined)
-                            settings.barTransparentBackground = json.bar.transparentBackground;
+        onLoaded: {
+            const json = JSON.parse(this.text());
+            if (json.bar) {
+                if (json.bar.transparentBackground !== undefined)
+                    settings.barTransparentBackground = json.bar.transparentBackground;
 
-                        if (json.bar.height !== undefined)
-                            settings.barHeight = json.bar.height;
+                if (json.bar.height !== undefined)
+                    settings.barHeight = json.bar.height;
 
-                        if (json.bar.position !== undefined)
-                            settings.barPosition = json.bar.position;
+                if (json.bar.position !== undefined)
+                    settings.barPosition = json.bar.position;
 
-                        if (json.bar.border !== undefined)
-                            settings.border = json.bar.border;
+                if (json.bar.border !== undefined)
+                    settings.border = json.bar.border;
+            }
+            if (json.terminal) {
+                if (typeof json.terminal.opacity === "number" && Number.isFinite(json.terminal.opacity))
+                    settings.terminalOpacity = Math.max(0, Math.min(1, json.terminal.opacity));
+                if (typeof json.terminal.blur === "boolean")
+                    settings.terminalBlur = json.terminal.blur;
+            }
+            if (json.theme)
+                settings.theme = json.theme;
 
-                    }
-                    if (json.terminal) {
-                        if (typeof json.terminal.opacity === "number" && Number.isFinite(json.terminal.opacity))
-                            settings.terminalOpacity = Math.max(0, Math.min(1, json.terminal.opacity));
-                        if (typeof json.terminal.blur === "boolean")
-                            settings.terminalBlur = json.terminal.blur;
-                    }
-                    if (json.theme)
-                        settings.theme = json.theme;
+            if (json.weatherCoords)
+                settings.weatherCoords = json.weatherCoords;
 
-                    if (json.weatherCoords)
-                        settings.weatherCoords = json.weatherCoords;
+            if (json.wallpapersPath)
+                settings.wallpapersPath = json.wallpapersPath;
 
-                    if (json.wallpapersPath)
-                        settings.wallpapersPath = json.wallpapersPath;
+            if (json.screens && Array.isArray(json.screens)) {
+                let configs = {};
+                for (let i = 0; i < json.screens.length; i++) {
+                    let screen = json.screens[i];
+                    if (!screen.name || !screen.modules)
+                        continue;
 
-                    if (json.screens && Array.isArray(json.screens)) {
-                        let configs = {
-                        };
-                        for (let i = 0; i < json.screens.length; i++) {
-                            let screen = json.screens[i];
-                            if (!screen.name || !screen.modules)
-                                continue;
-
-                            configs[screen.name] = {
-                                "left": screen.modules.left || [],
-                                "center": screen.modules.center || [],
-                                "right": screen.modules.right || [],
-                                "isPrimary": screen.isPrimary === true,
-                                "wallpaper": screen.wallpaper || []
-                            };
-                        }
-                        settings.screenConfigs = configs;
-                        console.log("[SettingsManager] Loaded", Object.keys(configs).length, "screen configs");
-                    }
-                } catch (e) {
-                    console.log("Error parsing settings.json:", e);
+                    configs[screen.name] = {
+                        "left": screen.modules.left || [],
+                        "center": screen.modules.center || [],
+                        "right": screen.modules.right || [],
+                        "isPrimary": screen.isPrimary === true,
+                        "wallpaper": screen.wallpaper || []
+                    };
                 }
-                buffer = "";
-            } else if (running) {
-                buffer = "";
+                settings.screenConfigs = configs;
+                console.log("[SettingsManager] Loaded", Object.keys(configs).length, "screen configs");
             }
         }
 
-        stdout: SplitParser {
-            onRead: (data) => {
-                settingsLoader.buffer += data;
-            }
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.includes("No such file"))
-                    console.log("[SettingsManager] settings.json not found");
-
-            }
-        }
-
-    }
-
-    settingsSaver: Process {
-        property string jsonData: ""
-
-        running: false
-        command: ["bash", "-c", "printf '%s' \"$1\" > \"$2\"", "--", jsonData, Quickshell.env("HOME") + "/.config/quickshell/settings.json"]
-        onExited: (exitCode, exitStatus) => {
+        onSaved: {
             if (!settings._rebuildTerminal)
                 return;
             settings._rebuildTerminal = false;
-            if (exitCode === 0 && exitStatus === 0)
-                ThemeManager.generateThemeFiles(settings.theme, true);
-            else
-                settings.terminalSettingsError = "Couldn't save terminal settings";
+            ThemeManager.generateThemeFiles(settings.theme, true);
         }
-        onRunningChanged: {
-            console.log("[SettingsManager] Saver running:", running);
-            if (!running)
-                console.log("[SettingsManager] Saved settings.json");
-
-        }
-
-        stderr: StdioCollector {
-            onStreamFinished: {
-                if (text.length > 0)
-                    console.error("[SettingsManager] Save ERROR:", text);
-
-            }
-        }
-
     }
-
 }

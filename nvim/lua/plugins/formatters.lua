@@ -32,5 +32,6 @@ return {
       ino = { "clang-format" },
       cs = { "dotnet_format" },
     },
+    default_format_opts = { lsp_format = "fallback" },
   },
 }

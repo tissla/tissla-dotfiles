@@ -20,7 +20,7 @@ PanelWindow {
 
     anchors {
         top: true
-        right: true
+        left: true
     }
 
     ListView {
