@@ -1,381 +1,165 @@
-// LockSurface.qml
 import ".."
 import QtQuick
 import Quickshell
 
-Item {
+FocusScope {
     id: root
-
     required property var context
     required property var screen
+    required property var scene
+    readonly property bool showHud: screen !== null && screen.name === scene.primaryName
+    property bool promptRequested: false
+    readonly property bool promptVisible: promptRequested || context.currentText.length > 0 || context.authPending || context.showFailure || context.capsLock
+    focus: true
+    clip: true
 
-    // wallpapers
-    Image {
+    Starfield {
+        objectName: "starfield"
         anchors.fill: parent
-        source: {
-            if (!root.screen)
-                return "";
-
-            let wp = WallpaperManager.wallpapers[root.screen.name];
-            if (!wp)
-                return "";
-
-            return WallpaperManager.wallpapersPath + "/" + wp;
-        }
-        fillMode: Image.PreserveAspectCrop
-        cache: true
+        scene: root.scene
+        screen: root.screen
     }
 
-    // weather
-    Item {
-        id: weatherInfo
-
-        property date latestUpdate
-        property string temp: ""
-        property string icon: ""
-        property string wText: ""
-        property var futureWeatherPoints: []
-        property bool dataReceived: false
-
-        anchors.fill: parent
-        visible: (SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1) && dataReceived
+    // Each native lock surface can receive keyboard focus. Only the primary
+    // surface renders feedback, but the first key works on every monitor.
+    TextInput {
+        id: input
+        objectName: "lockInput"
+        width: 1
+        height: 1
+        opacity: 0
+        focus: true
+        readOnly: root.context.unlockInProgress
+        echoMode: TextInput.Password
+        passwordMaskDelay: 0
+        maximumLength: 256
+        cursorVisible: false
+        text: root.context.currentText
+        Accessible.ignored: !root.showHud
+        onTextChanged: {
+            if (!root.context.unlockInProgress && root.context.currentText !== text)
+                root.context.currentText = text;
+        }
+        onAccepted: root.context.tryUnlock()
+        Keys.onPressed: event => {
+            if (event.key === Qt.Key_Escape) {
+                if (!root.context.unlockInProgress) {
+                    root.context.currentText = "";
+                    root.context.showFailure = false;
+                    root.promptRequested = false;
+                }
+                event.accepted = true;
+            } else if (event.key === Qt.Key_CapsLock && !event.isAutoRepeat) {
+                root.context.capsLock = !root.context.capsLock;
+                root.context.refreshCapsLock();
+            }
+        }
         Connections {
-            target: WeatherDataProvider
-            function onWeatherDataReady(data) {
-                if (!data || data.length === 0)
-                    return;
-                let current = data[0];
-                weatherInfo.temp = current.temp;
-                weatherInfo.icon = current.icon;
-                weatherInfo.wText = current.wText;
-                weatherInfo.latestUpdate = current.latestUpdate;
-                weatherInfo.futureWeatherPoints = data.slice(1);
-                weatherInfo.dataReceived = true;
+            target: root.context
+            function onCurrentTextChanged() {
+                if (input.text !== root.context.currentText)
+                    input.text = root.context.currentText;
             }
-        }
-
-        Timer {
-            id: weatherUpdateTimer
-
-            // 60 min
-            interval: 1000 * 60 * 60
-            running: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
-            triggeredOnStart: true
-            repeat: true
-            onTriggered: {
-                WeatherDataProvider.getWeatherData();
-            }
-        }
-        Rectangle {
-            id: weatherCard
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.leftMargin: 200
-            anchors.topMargin: 200
-            width: weatherColumn.implicitWidth
-            height: weatherColumn.implicitHeight
-            radius: Theme.radius
-            // color: Qt.rgba(0, 0, 0, 0.35)
-            color: "transparent"
-            Column {
-                id: weatherColumn
-                padding: 30
-                Row {
-                    spacing: 50
-
-                    Column {
-                        spacing: 0
-
-                        Text {
-                            id: weatherInfoTime
-
-                            text: Qt.formatDateTime(weatherInfo.latestUpdate, "hh:mm")
-                            color: Theme.subtext1
-                            font.pixelSize: 30
-                            font.family: Theme.fontMain
-                            style: Text.Outline
-                            styleColor: Qt.rgba(0, 0, 0, 0.6)
-                        }
-                        // Temp
-
-                        Text {
-                            id: weatherInfoTemp
-
-                            text: weatherInfo.temp + " °C"
-                            color: Theme.subtext1
-                            font.pixelSize: 40
-                            font.family: Theme.fontMain
-                            style: Text.Outline
-                            styleColor: Qt.rgba(0, 0, 0, 0.6)
-                        }
-
-                        Text {
-                            id: weatherInfoText
-
-                            text: weatherInfo.wText
-                            color: Theme.subtext1
-                            font.pixelSize: 20
-                            font.family: Theme.fontMain
-                            style: Text.Outline
-                            styleColor: Qt.rgba(0, 0, 0, 0.6)
-                        }
-                    }
-                    // Icon
-
-                    Item {
-                        width: 140
-                        height: parent.height
-
-                        Text {
-                            id: weatherInfoIcon
-
-                            text: weatherInfo.icon
-                            color: Theme.subtext1
-                            font.pixelSize: 130
-                            font.family: Theme.fontMain
-                            anchors.centerIn: parent
-                            style: Text.Outline
-                            styleColor: Qt.rgba(0, 0, 0, 0.6)
-                        }
-                    }
-                }
-
-                // future weather
-                Row {
-                    topPadding: 20
-                    spacing: 20
-
-                    Repeater {
-                        model: weatherInfo.futureWeatherPoints
-
-                        Row {
-                            width: childrenRect.width
-                            height: childrenRect.height
-                            spacing: 20
-
-                            Column {
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                width: 100
-
-                                //weatherdata
-                                Text {
-                                    text: Qt.formatDateTime(modelData.latestUpdate, "hh:mm")
-                                    color: Theme.subtext1
-                                    font.pixelSize: 18
-                                    font.family: Theme.fontMain
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                    width: parent.width
-                                    horizontalAlignment: Text.AlignHCenter
-                                }
-
-                                Text {
-                                    //icon
-                                    text: modelData.icon
-                                    color: Theme.subtext1
-                                    font.pixelSize: 34
-                                    font.family: Theme.fontMain
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                    horizontalAlignment: Text.AlignHCenter
-                                    width: parent.width
-                                }
-
-                                Text {
-                                    text: modelData.wText
-                                    color: Theme.subtext1
-                                    font.pixelSize: 12
-                                    font.family: Theme.fontMain
-                                    font.italic: true
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                    horizontalAlignment: Text.AlignHCenter
-                                    width: parent.width
-                                }
-
-                                Text {
-                                    text: modelData.temp + " °C"
-                                    color: Theme.subtext1
-                                    font.pixelSize: 20
-                                    font.family: Theme.fontMain
-                                    style: Text.Outline
-                                    styleColor: Qt.rgba(0, 0, 0, 0.6)
-                                    horizontalAlignment: Text.AlignHCenter
-                                    width: parent.width
-                                }
-                            }
-
-                            Item {
-                                width: 40
-                                height: parent.height
-                            }
-                        }
-                    }
-                }
+            function onShowFailureChanged() {
+                if (root.context.showFailure)
+                    failureShake.restart();
             }
         }
     }
-
-    // date
-    Item {
-        anchors.fill: parent
-        // clock on primary screen only, or show if only one screen available
-        visible: SettingsManager.isPrimary(root.screen.name) || Quickshell.screens.length === 1
-
-        // TODO: move params to a config file
-        Column {
-            // date
-
-            id: dateDisplay
-
-            property var date: new Date()
-
-            anchors.left: parent.left
-            anchors.bottom: parent.bottom
-            anchors.leftMargin: 200
-            anchors.bottomMargin: 200
-            spacing: 0
-
-            Timer {
-                running: true
-                repeat: true
-                interval: 60000
-                onTriggered: dateDisplay.date = new Date()
-            }
-
-            // Clock
-            Text {
-                id: timeLabel
-
-                text: {
-                    const hours = dateDisplay.date.getHours().toString().padStart(2, '0');
-                    const minutes = dateDisplay.date.getMinutes().toString().padStart(2, '0');
-                    return `${hours}:${minutes}`;
-                }
-                color: Theme.subtext1
-                font.pixelSize: 200
-                font.family: Theme.fontMain
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                anchors.left: parent.left
-                anchors.bottom: parent.bottom
-            }
-
-            // Date
-            Text {
-                id: dateLabel
-
-                text: Qt.formatDateTime(dateDisplay.date, "d MMMM, yyyy")
-                color: Theme.subtext1
-                font.pixelSize: 40
-                font.family: Theme.fontMain
-                style: Text.Outline
-                styleColor: Qt.rgba(0, 0, 0, 0.6)
-                anchors.left: parent.left
-                anchors.top: timeLabel.bottom
-                anchors.topMargin: -30
-            }
+    TapHandler {
+        onTapped: {
+            input.forceActiveFocus();
+            root.promptRequested = true;
+            promptTimeout.restart();
         }
+    }
+    Timer {
+        id: promptTimeout
+        interval: 5000
+        onTriggered: root.promptRequested = false
+    }
 
-        // Password input
+    Column {
+        id: hud
+        objectName: "lockHud"
+        visible: root.showHud
+        width: Math.min(420, root.width - 48)
+        anchors.centerIn: parent
+        spacing: 10
+
+        SystemClock {
+            id: clock
+            precision: SystemClock.Minutes
+        }
+        Text {
+            objectName: "lockClock"
+            width: parent.width
+            text: Qt.formatDateTime(clock.date, "HH:mm")
+            color: Theme.text
+            font.family: Theme.fontMain
+            font.pixelSize: Math.min(96, root.width * 0.12)
+            font.weight: Font.Light
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Text {
+            width: parent.width
+            text: Qt.formatDateTime(clock.date, "dddd, d MMMM")
+            color: Theme.subtext1
+            font.family: Theme.fontMain
+            font.pixelSize: 18
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Item {
+            width: 1
+            height: 22
+        }
         Rectangle {
-            width: 350
-            height: 50
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: 80
-            color: Qt.rgba(0, 0, 0, 0.4)
-            radius: 25
-            opacity: passwordInput.text.length > 0 ? 1 : 0
-            scale: passwordInput.text.length > 0 ? 1 : 0.9
-
-            TextInput {
-                id: passwordInput
-
-                anchors.fill: parent
-                anchors.margins: 12
-                echoMode: TextInput.Password
-                cursorVisible: false
-                color: "white"
-                font.pixelSize: 16
-                verticalAlignment: TextInput.AlignVCenter
-                horizontalAlignment: TextInput.AlignHCenter
-                focus: true
-                enabled: !root.context.unlockInProgress
-                onTextChanged: {
-                    root.context.currentText = this.text;
-                }
-                onAccepted: root.context.tryUnlock()
-
-                Connections {
-                    function onCurrentTextChanged() {
-                        passwordInput.cursorVisible = false;
-                        passwordInput.text = root.context.currentText;
-                    }
-
-                    target: root.context
-                }
+            id: passwordBox
+            property real shake: 0
+            width: parent.width
+            height: 54
+            color: Qt.alpha(Theme.surface0, 0.85)
+            radius: 12
+            border.width: 1
+            border.color: root.context.showFailure ? Theme.red : Theme.accent
+            opacity: root.promptVisible ? 1 : 0
+            transform: Translate {
+                x: passwordBox.shake
             }
-
             Behavior on opacity {
                 NumberAnimation {
-                    duration: 500
-                    easing.type: Easing.OutCubic
+                    duration: 150
                 }
             }
-
-            Behavior on scale {
-                NumberAnimation {
-                    duration: 200
-                    easing.type: Easing.OutCubic
-                }
+            Text {
+                objectName: "passwordDots"
+                anchors.centerIn: parent
+                text: "●".repeat(Math.min(root.context.currentText.length, 28))
+                color: Theme.text
+                font.pixelSize: 16
+                font.letterSpacing: 4
+                textFormat: Text.PlainText
+            }
+            NumberAnimation {
+                id: failureShake
+                target: passwordBox
+                property: "shake"
+                from: -8
+                to: 0
+                duration: 350
+                easing.type: Easing.OutElastic
             }
         }
-
         Text {
-            id: noText
-
-            property real shake: root.context.showFailure ? 4 * Math.PI : 0
-            property real ampl: root.context.showFailure ? 0 : 50
-            property real rotate: root.context.authPending ? 0 : 360
-
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.horizontalCenterOffset: Math.sin(shake) * ampl
-            // 0 == 0
-            // pi / 2 == 0 > 1 == ampl = 50
-            // pi ==  -0 == ampl = 0
-            // pi* 3/2 == ampl = -50
-            // 2*pi == 0
-            anchors.top: parent.verticalCenter
-            anchors.topMargin: -20
-            style: Text.Outline
-            styleColor: Qt.rgba(0, 0, 0, 0.6)
-            visible: root.context.showFailure || root.context.authPending
-            text: root.context.authPending ? "" : ""
-            rotation: root.context.authPending ? rotate : 0
-            color: Theme.warning
-            font.pixelSize: 150
-
-            Behavior on rotate {
-                NumberAnimation {
-                    duration: 2000
-                    easing.type: Easing.Linear
-                }
-            }
-
-            Behavior on shake {
-                NumberAnimation {
-                    duration: 1000
-                    easing.type: Easing.OutCubic
-                }
-            }
-
-            Behavior on ampl {
-                NumberAnimation {
-                    duration: 1000
-                    easing.type: Easing.Linear
-                }
-            }
+            objectName: "lockStatus"
+            width: parent.width
+            height: 24
+            text: root.context.authPending ? "Verifying…" : root.context.showFailure ? root.context.failureMessage : root.context.capsLock ? "Caps Lock" : ""
+            color: root.context.showFailure ? Theme.red : root.context.capsLock ? Theme.warning : Theme.subtext1
+            font.family: Theme.fontMain
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignHCenter
+            textFormat: Text.PlainText
         }
     }
 }

@@ -66,6 +66,8 @@ AudioCircle 1.0 Core/AudioCircle.qml
 ## lock
 LockContext 1.0 Lock/LockContext.qml
 LockSurface 1.0 Lock/LockSurface.qml
+LockScene 1.0 Lock/LockScene.qml
+Starfield 1.0 Lock/Starfield.qml
 
 
 # SQLite notes storage

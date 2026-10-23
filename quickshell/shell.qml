@@ -68,10 +68,16 @@ ShellRoot {
 
     LockContext {
         id: lockContext
+        active: sessionLock.locked
 
         onUnlocked: {
             sessionLock.locked = false;
         }
+    }
+
+    LockScene {
+        id: lockScene
+        active: sessionLock.locked
     }
 
     // session lock
@@ -86,6 +92,7 @@ ShellRoot {
             LockSurface {
                 anchors.fill: parent
                 context: lockContext
+                scene: lockScene
                 screen: lockSurface.screen
             }
 
@@ -97,6 +104,8 @@ ShellRoot {
         property bool isLocked: sessionLock.locked
 
         function lock() {
+            if (sessionLock.locked)
+                return;
             sessionLock.locked = true;
             console.log("LOCK");
             PlaySoundService.playSound("logout");
