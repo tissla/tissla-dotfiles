@@ -21,6 +21,7 @@ QtObject {
         "devices": "devicesWidget.qml",
         "gpu": "gpuWidget.qml",
         "network": "networkWidget.qml",
+        "kubernetes": "kubernetesWidget.qml",
         "theme": "themeWidget.qml",
         "timeshift": "timeshiftWidget.qml",
         "volume": "volumeWidget.qml"

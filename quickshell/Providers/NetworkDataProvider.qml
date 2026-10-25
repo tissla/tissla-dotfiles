@@ -1,116 +1,84 @@
+pragma Singleton
 import QtQuick
 import Quickshell.Io
-pragma Singleton
 
 QtObject {
     id: networkData
-
+    property bool pollingEnabled: true
     property string nwInterface: ""
     property real downloadSpeed: 0
     property real uploadSpeed: 0
     property bool connected: false
-    property Timer detectTimer
-    property Process detectProcess
-    property Process netProcess
+    property var history: []
+    readonly property int historySeconds: 180
+    property real lastRx: -1
+    property real lastTx: -1
+    property double lastTime: 0
 
     function formatSpeed(kbps) {
-        if (kbps < 1)
-            return "0 KB/s";
-
-        if (kbps < 1024)
-            return Math.round(kbps) + " KB/s";
-
-        return (kbps / 1024).toFixed(1) + " MB/s";
+        if (!Number.isFinite(kbps) || kbps < 1) return "0 KB/s";
+        if (kbps < 1024) return Math.round(kbps) + " KB/s";
+        if (kbps < 1048576) return (kbps / 1024).toFixed(1) + " MB/s";
+        return (kbps / 1048576).toFixed(1) + " GB/s";
     }
-
-    // Re-checks the default route periodically so we recover once a
-    // connection appears (or switches interface) after startup, instead
-    // of only ever detecting it once.
-    detectTimer: Timer {
-        interval: 5000
-        running: true
-        repeat: true
+    function disconnect() {
+        connected = false;
+        nwInterface = "";
+        downloadSpeed = 0;
+        uploadSpeed = 0;
+        lastRx = -1;
+        lastTx = -1;
+        lastTime = 0;
+        history = [];
+    }
+    function acceptCounters(iface, rx, tx, at) {
+        if (!iface || !Number.isFinite(rx) || !Number.isFinite(tx) || rx < 0 || tx < 0 || !Number.isFinite(at)) {
+            disconnect();
+            return;
+        }
+        if (iface !== nwInterface) {
+            disconnect();
+            nwInterface = iface;
+        }
+        connected = true;
+        if (lastRx >= 0 && at > lastTime && rx >= lastRx && tx >= lastTx) {
+            const seconds = (at - lastTime) / 1000;
+            downloadSpeed = (rx - lastRx) / seconds / 1024;
+            uploadSpeed = (tx - lastTx) / seconds / 1024;
+            history = history.filter(p => p.at > at - historySeconds * 1000).concat([
+                {at: at, download: downloadSpeed, upload: uploadSpeed}
+            ]).slice(-90);
+        } else {
+            downloadSpeed = 0;
+            uploadSpeed = 0;
+            history = [];
+        }
+        lastRx = rx;
+        lastTx = tx;
+        lastTime = at;
+    }
+    property Timer pollTimer: Timer {
+        interval: 2000
+        running: networkData.pollingEnabled
         triggeredOnStart: true
-        onTriggered: detectProcess.running = true
+        repeat: true
+        onTriggered: if (!networkData.netProcess.running) networkData.netProcess.running = true
     }
-
-    detectProcess: Process {
-        running: false
-        command: ["sh", "-c", "ip route show default | awk '/default/ {print $5}' | head -1"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let iface = text.trim();
-                if (iface.length > 0) {
-                    if (iface !== networkData.nwInterface) {
-                        networkData.nwInterface = iface;
-                        netProcess.resetStats();
-                        netProcess.running = false;
-                        netProcess.running = true;
-                    } else if (!netProcess.running) {
-                        netProcess.running = true;
-                    }
-                    networkData.connected = true;
-                } else {
-                    networkData.connected = false;
-                    networkData.nwInterface = "";
-                    networkData.downloadSpeed = 0;
-                    networkData.uploadSpeed = 0;
-                    netProcess.running = false;
-                }
-            }
+    // Read the route and counters together. Each invocation exits, so changing interfaces
+    // cannot leave the previous interface's reader alive or mix its baseline with a new one.
+    property Process netProcess: Process {
+        command: ["sh", "-c", `
+            iface=$( { ip -o -4 route show default; ip -o -6 route show default; } 2>/dev/null | awk '{for(i=1;i<=NF;i++) if($i=="dev") {print $(i+1); exit}}')
+            [ -n "$iface" ] || exit 1
+            printf '%s\\n' "$iface"
+            cat "/sys/class/net/$iface/statistics/rx_bytes" "/sys/class/net/$iface/statistics/tx_bytes"
+        `]
+        stdout: StdioCollector { id: counters }
+        stderr: StdioCollector {}
+        onExited: (exitCode, exitStatus) => {
+            const values = counters.text.trim().split("\n");
+            if (exitCode || exitStatus || values.length !== 3) networkData.disconnect();
+            else networkData.acceptCounters(values[0], Number(values[1]), Number(values[2]), Date.now());
         }
-
     }
-
-    netProcess: Process {
-        property real lastRx: 0
-        property real lastTx: 0
-        property real lastTime: Date.now()
-        property real pendingRx: -1
-        property real pendingTx: 0
-
-        function resetStats() {
-            lastRx = 0;
-            lastTx = 0;
-            lastTime = Date.now();
-            pendingRx = -1;
-            pendingTx = 0;
-        }
-
-        running: false
-        command: ["sh", "-c", `while true; do
-            cat /sys/class/net/${networkData.nwInterface}/statistics/rx_bytes
-            cat /sys/class/net/${networkData.nwInterface}/statistics/tx_bytes
-            echo '---'
-            sleep 2
-        done`]
-
-        stdout: SplitParser {
-            onRead: (line) => {
-                if (line === "---") {
-                    if (netProcess.pendingRx >= 0) {
-                        let rx = netProcess.pendingRx;
-                        let tx = netProcess.pendingTx;
-                        let now = Date.now();
-                        if (netProcess.lastRx > 0) {
-                            let dt = (now - netProcess.lastTime) / 1000;
-                            networkData.downloadSpeed = (rx - netProcess.lastRx) / dt / 1024;
-                            networkData.uploadSpeed = (tx - netProcess.lastTx) / dt / 1024;
-                        }
-                        netProcess.lastRx = rx;
-                        netProcess.lastTx = tx;
-                        netProcess.lastTime = now;
-                        netProcess.pendingRx = -1;
-                    }
-                } else if (netProcess.pendingRx < 0) {
-                    netProcess.pendingRx = parseFloat(line);
-                } else {
-                    netProcess.pendingTx = parseFloat(line);
-                }
-            }
-        }
-
-    }
-
 }
