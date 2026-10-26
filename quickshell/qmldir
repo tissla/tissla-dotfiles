@@ -32,7 +32,7 @@ NotificationPopup 1.0 Notifications/NotificationPopup.qml
 singleton VolumeProvider 1.0 Providers/VolumeProvider.qml
 # gpu
 singleton GpuDataProvider 1.0 Providers/GpuDataProvider.qml
-# usb devices
+# peripherals (USB and Bluetooth)
 singleton DevicesDataProvider 1.0 Providers/DevicesDataProvider.qml
 # performance (cpu, ram, cooling)
 singleton PerformanceDataProvider 1.0 Providers/PerformanceDataProvider.qml

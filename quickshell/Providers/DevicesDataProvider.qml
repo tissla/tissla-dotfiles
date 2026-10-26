@@ -1,21 +1,27 @@
-import QtQuick
-import Quickshell.Io
 pragma Singleton
+import QtQuick
+import Quickshell
+import Quickshell.Io
+import Quickshell.Bluetooth
 
 QtObject {
-    id: devicesData
+    id: root
 
-    property bool isVisible: false
-    property bool controllerConnected: false
-    property bool controllerWired: false
-    property int controllerBattery: 0
-    property string controllerIcon: "󰖻"
+    property bool monitoringEnabled: true
     property var consumers: []
-    readonly property bool isActive: consumers.length > 0
-    property Process initialFetchProcess
-    property Process btMonitorProcess
-    property Timer lsusbTimer
-    property Process lsusbProcess
+    readonly property bool isActive: monitoringEnabled && consumers.length > 0
+    property var hardwareDevices: []
+    property var bluetoothDevices: Bluetooth.devices.values
+    property string errorMessage: ""
+    property bool refreshPending: false
+    readonly property bool refreshing: snapshotProcess.running
+    readonly property var devices: mergeDevices(hardwareDevices, bluetoothDevices)
+    readonly property int connectedCount: devices.length
+    readonly property int lowBatteryCount: devices.filter(d => d.battery !== null && d.battery <= 20 && !d.charging).length
+    readonly property int lowestBattery: {
+        const levels = devices.filter(d => d.battery !== null && !d.charging).map(d => d.battery);
+        return levels.length ? Math.min.apply(null, levels) : -1;
+    }
 
     function activate(owner) {
         if (consumers.indexOf(owner) === -1)
@@ -26,91 +32,134 @@ QtObject {
         consumers = consumers.filter(item => item !== owner);
     }
 
+    function kindForIcon(icon) {
+        if (/gaming|gamepad|joystick/.test(icon)) return "controller";
+        if (/tablet|touchscreen/.test(icon)) return "tablet";
+        if (/touchpad/.test(icon)) return "touchpad";
+        if (/keyboard/.test(icon)) return "keyboard";
+        if (/mouse/.test(icon)) return "mouse";
+        if (/audio|headset|headphone/.test(icon)) return "audio";
+        if (/camera|video/.test(icon)) return "camera";
+        return "device";
+    }
+
+    function typeLabel(kind) {
+        return ({controller: "Controller", keyboard: "Keyboard", mouse: "Mouse", tablet: "Tablet",
+            touchpad: "Touchpad", audio: "Audio", camera: "Camera", device: "Device"})[kind] || "Device";
+    }
+
+    function iconFor(kind) {
+        return ({controller: "󰊴", keyboard: "󰌌", mouse: "󰍽", tablet: "󰓶", touchpad: "󰟸",
+            audio: "󰋋", camera: "󰄀", device: "󰇄"})[kind] || "󰇄";
+    }
+
+    function batteryPercent(value) {
+        return typeof value === "number" && Number.isFinite(value) && value >= 0 && value <= 100 ? Math.round(value) : null;
+    }
+
+    function mergeDevices(hardware, bluetooth) {
+        const known = {};
+        const rows = {};
+        for (const device of bluetooth) {
+            if (device) known[device.address.toLowerCase()] = device;
+        }
+        for (const device of hardware) {
+            const address = (device.address || "").toLowerCase();
+            // BlueZ reports disconnects before the corresponding input node disappears.
+            if (device.transport === "Bluetooth" && known[address] && !known[address].connected)
+                continue;
+            rows[device.id] = Object.assign({}, device, {address: address, battery: batteryPercent(device.battery)});
+        }
+        for (const device of bluetooth) {
+            if (!device || !device.connected || /^(phone|computer|network)/.test(device.icon))
+                continue;
+            const address = device.address.toLowerCase();
+            const previous = Object.values(rows).find(d => d.transport === "Bluetooth" && d.address === address);
+            const id = previous ? previous.id : "bluetooth:" + address;
+            const kind = kindForIcon(device.icon);
+            rows[id] = {
+                id: id, address: address, name: device.name || device.deviceName || address,
+                kind: kind === "device" && previous ? previous.kind : kind,
+                transport: "Bluetooth",
+                battery: device.batteryAvailable ? batteryPercent(device.battery * 100) : previous ? previous.battery : null,
+                charging: previous ? previous.charging : false
+            };
+        }
+        const order = ["controller", "keyboard", "mouse", "touchpad", "tablet", "audio", "camera", "device"];
+        return Object.values(rows).sort((a, b) => order.indexOf(a.kind) - order.indexOf(b.kind)
+            || a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+    }
+
+    function acceptSnapshot(text, exitCode, exitStatus) {
+        try {
+            if (exitCode !== 0 || exitStatus !== 0) throw new Error("discovery failed");
+            const parsed = JSON.parse(text);
+            if (!Array.isArray(parsed) || !parsed.every(d => d && typeof d.id === "string"
+                && typeof d.name === "string" && typeof d.kind === "string"
+                && ["USB", "Bluetooth"].indexOf(d.transport) !== -1))
+                throw new Error("invalid snapshot");
+            hardwareDevices = parsed;
+            errorMessage = "";
+        } catch (error) {
+            hardwareDevices = [];
+            errorMessage = "USB device information unavailable";
+        }
+    }
+
+    function refresh() {
+        if (!isActive) return;
+        if (snapshotProcess.running) {
+            refreshPending = true;
+            return;
+        }
+        refreshPending = false;
+        snapshotProcess.running = true;
+    }
+
     onIsActiveChanged: {
         if (isActive) {
-            // Events during an inactive period were not observed; fetch a fresh snapshot.
-            controllerConnected = false;
-            controllerWired = false;
-            controllerBattery = 0;
-            controllerIcon = "󰖻";
-            initialFetchProcess.running = true;
+            refresh();
+            monitorProcess.running = true;
         } else {
-            initialFetchProcess.running = false;
-            lsusbProcess.running = false;
+            debounce.stop();
+            refreshPending = false;
+            snapshotProcess.running = false;
+            monitorProcess.running = false;
+            hardwareDevices = [];
         }
     }
 
-    // Fetch current BT state once on activation
-    initialFetchProcess: Process {
-        running: false
-        command: ["sh", "-c", "bluetoothctl info 2>/dev/null"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (/Xbox/i.test(text) && /Connected: yes/.test(text)) {
-                    let match = text.match(/Battery Percentage: 0x[0-9a-f]+ \((\d+)\)/);
-                    devicesData.controllerConnected = true;
-                    devicesData.controllerWired = false;
-                    devicesData.controllerBattery = match ? parseInt(match[1]) : 0;
-                    devicesData.controllerIcon = "󰖺";
-                }
-            }
+    property Process snapshotProcess: Process {
+        command: ["python3", Quickshell.shellPath("Providers/devices-snapshot.py")]
+        stdout: StdioCollector { id: snapshotOutput }
+        stderr: StdioCollector {}
+        onExited: (exitCode, exitStatus) => {
+            if (!root.isActive) return;
+            root.acceptSnapshot(snapshotOutput.text, exitCode, exitStatus);
+            if (root.refreshPending) root.refresh();
         }
     }
 
-    // Persistent bluetoothctl monitor — reacts to connect/disconnect/battery events
-    btMonitorProcess: Process {
-        running: devicesData.isActive
-        command: ["bluetoothctl", "monitor"]
-
+    property Process monitorProcess: Process {
+        command: ["udevadm", "monitor", "--udev", "--subsystem-match=input", "--subsystem-match=sound",
+            "--subsystem-match=video4linux", "--subsystem-match=power_supply"]
         stdout: SplitParser {
-            onRead: (line) => {
-                if (!/Xbox/i.test(line))
-                    return;
-
-                if (/\[CHG\].*Connected: yes/.test(line)) {
-                    devicesData.controllerConnected = true;
-                    devicesData.controllerWired = false;
-                    devicesData.controllerIcon = "󰖺";
-                } else if (/\[CHG\].*Connected: no/.test(line) || /\[DEL\]/.test(line)) {
-                    if (!devicesData.controllerWired) {
-                        devicesData.controllerConnected = false;
-                        devicesData.controllerBattery = 0;
-                        devicesData.controllerIcon = "󰖻";
-                    }
-                } else if (/Battery Percentage/.test(line)) {
-                    let match = line.match(/\((\d+)\)/);
-                    if (match)
-                        devicesData.controllerBattery = parseInt(match[1]);
-                }
-            }
+            onRead: line => { if (line.startsWith("UDEV") && root.isActive) root.debounce.restart(); }
         }
+        stderr: StdioCollector {}
     }
 
-    // lsusb polling for wired USB — no event system available for USB
-    lsusbTimer: Timer {
+    property Timer debounce: Timer { interval: 250; onTriggered: root.refresh() }
+    property Timer periodicRefresh: Timer {
         interval: 30000
-        running: devicesData.isActive
+        running: root.isActive
         repeat: true
-        triggeredOnStart: true
-        onTriggered: lsusbProcess.running = true;
+        onTriggered: root.refresh()
     }
-
-    lsusbProcess: Process {
-        running: false
-        command: ["sh", "-c", "lsusb | grep -qi Xbox && echo WIRED || echo NOTWIRED"]
-
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let wired = text.trim() === "WIRED";
-                devicesData.controllerWired = wired;
-                if (wired) {
-                    devicesData.controllerConnected = true;
-                    devicesData.controllerBattery = 100;
-                    devicesData.controllerIcon = "󰖺";
-                }
-            }
-        }
+    property Timer restartMonitor: Timer {
+        interval: 3000
+        running: root.isActive && !root.monitorProcess.running
+        repeat: true
+        onTriggered: { root.monitorProcess.running = true; root.refresh(); }
     }
-
 }
