@@ -35,6 +35,8 @@ PKGS=(
     qt6-5compat             # qt framework compat layer
     jq                      # json parser
     wl-clipboard            # clipboard
+    grim                    # Wayland screenshots (including Niri)
+    slurp                   # screenshot region selection
     tesseract               # base
     tesseract-data-eng      # eng pack
     tesseract-data-swe      # swe pack
@@ -135,9 +137,9 @@ if [[ ! -f "$SETTINGS_JSON" ]]; then
     {
       "name": "eDP-1",
       "isPrimary": true,
+      "wallpaper": "default.png",
       "modules": {
         "left": ["workspaces"],
-        "wallpaper": "default.png",
         "center": ["theme"],
         "right": ["battery", "cpu", "volume", "calendar", "clock"]
       }
@@ -186,7 +188,7 @@ if [[ ! -f "$BASHRC" ]]; then
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-source="$HOME/Dotfiles/bash/colors"
+source "$HOME/Dotfiles/bash/colors"
 PS1="\[${ACCENT}\]\u@\h \[${BLUE}\]\W\[${RESET}\]$ "
 
 export LS_COLORS="di=${LS_DIR}:ln=${LS_LINK}:ex=${LS_EXEC}"
@@ -205,16 +207,18 @@ else
 fi
 
 echo "==> Setting up config symlinks for $USER_NAME ($USER_HOME)"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/alacritty" "$USER_CONFIG/alacritty"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/rofi" "$USER_CONFIG/rofi"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/Kvantum" "$USER_CONFIG/Kvantum"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/$COMPFOLDER" "$USER_CONFIG/$COMPFOLDER"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/quickshell" "$USER_CONFIG/quickshell"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/nvim" "$USER_CONFIG/nvim"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/theme" "$USER_CONFIG/theme"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/wallpapers" "$USER_CONFIG/wallpapers"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/fastfetch" "$USER_CONFIG/fastfetch"
-sudo -u "$USER_NAME" ln -sfn "$USER_HOME/Dotfiles/matugen" "$USER_CONFIG/matugen"
+sudo -u "$USER_NAME" mkdir -p "$USER_CONFIG"
+link_config() {
+    local source="$1" target="$2"
+    if [[ -e "$target" && ! -L "$target" ]]; then
+        echo "  backing up $target to $target.backup"
+        sudo -u "$USER_NAME" mv -T --backup=numbered -- "$target" "$target.backup"
+    fi
+    sudo -u "$USER_NAME" ln -sfnT -- "$source" "$target"
+}
+for folder in alacritty rofi Kvantum "$COMPFOLDER" quickshell nvim theme wallpapers fastfetch matugen; do
+    link_config "$USER_HOME/Dotfiles/$folder" "$USER_CONFIG/$folder"
+done
 
 #generate default theme
 echo "==> Generating default theme (tissla)..."

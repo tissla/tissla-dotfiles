@@ -15,14 +15,13 @@ QtObject {
     property bool terminalBlur: false
     property bool _rebuildTerminal: false
     property string terminalSettingsError: ""
-    readonly property bool terminalSettingsBusy: settingsSaver.running || ThemeManager.generateProcess.running || ThemeManager.hyprctlProcess.running
+    readonly property bool terminalSettingsBusy: _rebuildTerminal || ThemeManager.generateProcess.running || ThemeManager.hyprctlProcess.running
     property bool border: true
     property var weatherCoords: []
     property string wallpapersPath: ""
     property var screenConfigs: ({})
     property string notificationPosition: ""
     property var settingsFile
-    property Process settingsSaver
     // caches the concatenated module list per screen so getScreenModules()
     // returns the same array reference when left/center/right haven't
     // actually changed — otherwise every screenConfigs reassignment (e.g.
@@ -180,7 +179,7 @@ QtObject {
                         "center": screen.modules.center || [],
                         "right": screen.modules.right || [],
                         "isPrimary": screen.isPrimary === true,
-                        "wallpaper": screen.wallpaper || []
+                        "wallpaper": screen.wallpaper || ""
                     };
                 }
                 settings.screenConfigs = configs;
@@ -193,6 +192,13 @@ QtObject {
                 return;
             settings._rebuildTerminal = false;
             ThemeManager.generateThemeFiles(settings.theme, true);
+        }
+
+        onSaveFailed: {
+            if (settings._rebuildTerminal) {
+                settings._rebuildTerminal = false;
+                settings.terminalSettingsError = "Couldn't save terminal settings";
+            }
         }
     }
 }

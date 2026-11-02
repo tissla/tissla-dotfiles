@@ -114,63 +114,48 @@ QtObject {
     }
 
     function parseWeatherData(data) {
-        let now = new Date();
-        // use weather data
-        // find the dataPoint closest to current time
-        let dataPoints = data.properties.timeseries;
-        let weatherPoints = null;
-        // within 31 minutes
+        const dataPoints = data?.properties?.timeseries;
+        let weatherPoints = [];
         let smallestDiff = 31 * 60 * 1000;
-        for (let i = 0; i < dataPoints.length; i++) {
-            let pointTime = new Date(dataPoints[i].time);
-            let diff = Math.abs(now - pointTime);
-            if (diff < smallestDiff) {
-                // current point (for big display)
-                weatherPoints = dataPoints.slice(i, i + 4);
-                // future points (for small displays)
-                break;
-            }
-        }
-        let wPoints = [];
-        for (const wPoint of weatherPoints) {
-            let temp = "";
-            let icon = "";
-            let wText = "No data";
-            let latestUpdate = null;
-            if (wPoint) {
-                if (wPoint.data.instant.details.air_temperature)
-                    temp = wPoint.data.instant.details.air_temperature;
-
-                if (wPoint.data.next_1_hours.summary.symbol_code) {
-                    icon = weatherIcons[wPoint.data.next_1_hours.summary.symbol_code].icon;
-                    wText = weatherIcons[wPoint.data.next_1_hours.summary.symbol_code].english;
+        if (Array.isArray(dataPoints)) {
+            for (let i = 0; i < dataPoints.length; i++) {
+                const diff = Math.abs(Date.now() - new Date(dataPoints[i]?.time).getTime());
+                if (diff < smallestDiff) {
+                    smallestDiff = diff;
+                    weatherPoints = dataPoints.slice(i, i + 4);
                 }
-                if (wPoint.time)
-                    latestUpdate = new Date(wPoint.time);
-
-            } else {
-                temp = "NULL";
-                icon = "󰼯";
-                wText = "No data";
             }
-            wPoints.push({
-                "temp": temp,
-                "icon": icon,
-                "wText": wText,
-                "latestUpdate": latestUpdate
-            });
         }
+        const wPoints = weatherPoints.map(point => {
+            const details = point?.data;
+            const temperature = details?.instant?.details?.air_temperature;
+            const symbol = details?.next_1_hours?.summary?.symbol_code
+                || details?.next_6_hours?.summary?.symbol_code
+                || details?.next_12_hours?.summary?.symbol_code || "";
+            const info = weatherIcons[symbol]
+                || weatherIcons[symbol.replace(/_(day|night|polartwilight)$/, "")];
+            return {
+                "temp": Number.isFinite(temperature) ? temperature : "",
+                "icon": info ? info.icon : "󰼯",
+                "wText": info ? info.english : "No data",
+                "latestUpdate": point?.time ? new Date(point.time) : null
+            };
+        });
         weatherData.weatherDataReady(wPoints);
     }
 
     getWeatherDataProcess: Process {
         running: false
-        command: ["curl", "-H", "User-Agent: quickshell-weather/1.0", "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=" + weatherData.lat + "&lon=" + weatherData.lon]
+        command: ["curl", "--fail", "--silent", "--show-error", "--connect-timeout", "5", "--max-time", "15", "-H", "User-Agent: quickshell-weather/1.0", "https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=" + weatherData.lat + "&lon=" + weatherData.lon]
 
         stdout: StdioCollector {
             onStreamFinished: {
-                let data = JSON.parse(text);
-                weatherData.parseWeatherData(data);
+                try {
+                    weatherData.parseWeatherData(JSON.parse(text));
+                } catch (error) {
+                    console.warn("[WeatherDataProvider] Invalid weather response:", error);
+                    weatherData.weatherDataReady([]);
+                }
             }
         }
 

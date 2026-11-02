@@ -17,7 +17,8 @@ BaseWidget {
     readonly property var deployments: provider.deploymentsFor(namespaceFilter)
     readonly property var events: provider.eventsFor(namespaceFilter)
     readonly property bool uncertain: !!provider.errorMessage || provider.stale
-    onVisibleChanged: if (visible) provider.fetch()
+    onVisibleChanged: if (visible)
+        provider.fetch()
     Connections {
         target: KubernetesDataProvider
         function onProblemPodCountChanged() {
@@ -31,7 +32,7 @@ BaseWidget {
                 kubernetesWidget.namespaceFilter = "";
         }
     }
-    signal revealDetails()
+    signal revealDetails
     function selectNamespace(name) {
         namespaceFilter = name;
         detailsOpen = true;
@@ -40,7 +41,8 @@ BaseWidget {
     function selectTab(tab) {
         detailsOpen = detailTab !== tab || !detailsOpen;
         detailTab = tab;
-        if (detailsOpen) revealDetails();
+        if (detailsOpen)
+            revealDetails();
     }
 
     widgetComponent: Rectangle {
@@ -54,28 +56,43 @@ BaseWidget {
             spacing: 12
             RowLayout {
                 Layout.fillWidth: true
-                Label { text: "Kubernetes"; font.pixelSize: Theme.fontSizeXl; font.bold: true; Layout.fillWidth: true }
-                Rectangle { implicitWidth: 7; implicitHeight: 7; radius: 4; color: KubernetesDataProvider.statusColor }
-                Label { text: KubernetesDataProvider.statusText; color: KubernetesDataProvider.statusColor }
+                Label {
+                    text: "Kubernetes"
+                    font.pixelSize: Theme.fontSizeXl
+                    font.bold: true
+                    Layout.fillWidth: true
+                }
+                Rectangle {
+                    implicitWidth: 7
+                    implicitHeight: 7
+                    radius: 4
+                    color: KubernetesDataProvider.statusColor
+                }
+                Label {
+                    text: KubernetesDataProvider.statusText
+                    color: KubernetesDataProvider.statusColor
+                }
             }
             RowLayout {
                 Layout.fillWidth: true
                 Label {
-                    text: KubernetesDataProvider.serverData ? KubernetesDataProvider.serverData.cluster.version
-                        + " · " + KubernetesDataProvider.namespaces.length + " namespaces" : ""
-                    font.pixelSize: Theme.fontSizeXxs; color: Theme.subtext1; Layout.fillWidth: true
+                    text: KubernetesDataProvider.serverData ? KubernetesDataProvider.serverData.cluster.version + " · " + KubernetesDataProvider.namespaces.length + " namespaces" : ""
+                    font.pixelSize: Theme.fontSizeXxs
+                    color: Theme.subtext1
+                    Layout.fillWidth: true
                 }
                 Label {
                     text: KubernetesDataProvider.serverData ? "Updated " + Qt.formatDateTime(new Date(KubernetesDataProvider.serverData.generatedAt), "HH:mm:ss") : ""
-                    font.pixelSize: Theme.fontSizeXxs; color: Theme.subtext1
+                    font.pixelSize: Theme.fontSizeXxs
+                    color: Theme.subtext1
                 }
             }
             Label {
                 visible: kubernetesWidget.uncertain
                 Layout.fillWidth: true
-                text: KubernetesDataProvider.errorMessage ? KubernetesDataProvider.errorMessage
-                    + (KubernetesDataProvider.serverData ? " · showing last response" : "") : "The endpoint is returning an old snapshot"
-                color: Theme.warning; wrapMode: Text.Wrap
+                text: KubernetesDataProvider.errorMessage ? KubernetesDataProvider.errorMessage + (KubernetesDataProvider.serverData ? " · showing last response" : "") : "The endpoint is returning an old snapshot"
+                color: Theme.warning
+                wrapMode: Text.Wrap
             }
             ScrollView {
                 id: scroll
@@ -108,17 +125,29 @@ BaseWidget {
                         visible: KubernetesDataProvider.currentProblems.length > 0
                         Layout.fillWidth: true
                         spacing: 4
-                        Section { text: "PROBLEMS · ALL NAMESPACES"; color: Theme.warning }
+                        Section {
+                            text: "PROBLEMS · ALL NAMESPACES"
+                            color: Theme.warning
+                        }
                         Repeater {
                             model: KubernetesDataProvider.currentProblems
-                            Label { required property string modelData; text: modelData; Layout.fillWidth: true; wrapMode: Text.Wrap; color: Theme.warning }
+                            Label {
+                                required property string modelData
+                                text: modelData
+                                Layout.fillWidth: true
+                                wrapMode: Text.Wrap
+                                color: Theme.warning
+                            }
                         }
                     }
-                    Section { text: "NODES" }
+                    Section {
+                        text: "NODES"
+                    }
                     GridLayout {
                         Layout.fillWidth: true
                         columns: scroll.availableWidth < 550 ? 1 : 2
-                        columnSpacing: 8; rowSpacing: 8
+                        columnSpacing: 8
+                        rowSpacing: 8
                         Repeater {
                             model: KubernetesDataProvider.nodes
                             Rectangle {
@@ -133,10 +162,17 @@ BaseWidget {
                                 radius: Theme.radiusAlt
                                 ColumnLayout {
                                     id: nodeContent
-                                    anchors.fill: parent; anchors.margins: 12; spacing: 5
+                                    anchors.fill: parent
+                                    anchors.margins: 12
+                                    spacing: 5
                                     RowLayout {
                                         Layout.fillWidth: true
-                                        Label { text: nodeCard.modelData.name; font.bold: true; Layout.fillWidth: true; elide: Text.ElideRight }
+                                        Label {
+                                            text: nodeCard.modelData.name
+                                            font.bold: true
+                                            Layout.fillWidth: true
+                                            elide: Text.ElideRight
+                                        }
                                         Label {
                                             text: !nodeCard.modelData.ready ? "Not ready" : nodeCard.modelData.pressure.length ? "Pressure" : "Ready"
                                             color: kubernetesWidget.uncertain ? Theme.muted : nodeCard.healthy ? Theme.success : Theme.warning
@@ -144,7 +180,8 @@ BaseWidget {
                                     }
                                     Label {
                                         text: (nodeCard.modelData.roles || []).join(", ") + " · " + (nodeCard.modelData.uptime || "—")
-                                        font.pixelSize: Theme.fontSizeXxs; color: Theme.subtext1
+                                        font.pixelSize: Theme.fontSizeXxs
+                                        color: Theme.subtext1
                                     }
                                     Label {
                                         text: nodeCard.pods.ready + "/" + nodeCard.pods.total + " active pods ready"
@@ -152,7 +189,8 @@ BaseWidget {
                                     }
                                     Label {
                                         text: "Capacity: " + (nodeCard.modelData.cpu || "—") + " CPU · " + KubernetesDataProvider.memoryCapacity(nodeCard.modelData.memory)
-                                        font.pixelSize: Theme.fontSizeXxs; color: Theme.subtext1
+                                        font.pixelSize: Theme.fontSizeXxs
+                                        color: Theme.subtext1
                                     }
                                 }
                             }
@@ -160,7 +198,10 @@ BaseWidget {
                     }
                     RowLayout {
                         Layout.fillWidth: true
-                        Section { text: "NAMESPACES"; Layout.fillWidth: true }
+                        Section {
+                            text: "NAMESPACES"
+                            Layout.fillWidth: true
+                        }
                         Choice {
                             objectName: "allNamespaces"
                             text: "All namespaces"
@@ -170,13 +211,33 @@ BaseWidget {
                     }
                     RowLayout {
                         Layout.fillWidth: true
-                        Layout.leftMargin: 10; Layout.rightMargin: 10
+                        Layout.leftMargin: 10
+                        Layout.rightMargin: 10
                         spacing: 8
-                        Section { text: "NAME"; Layout.fillWidth: true }
-                        Section { text: "PODS READY"; Layout.preferredWidth: 85; horizontalAlignment: Text.AlignRight }
-                        Section { text: "DONE"; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignRight }
-                        Section { text: "DEPLOYMENTS"; Layout.preferredWidth: 100; horizontalAlignment: Text.AlignRight }
-                        Section { text: "SERVICES"; Layout.preferredWidth: 65; horizontalAlignment: Text.AlignRight }
+                        Section {
+                            text: "NAME"
+                            Layout.fillWidth: true
+                        }
+                        Section {
+                            text: "PODS READY"
+                            Layout.preferredWidth: 85
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        Section {
+                            text: "DONE"
+                            Layout.preferredWidth: 45
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        Section {
+                            text: "DEPLOYMENTS"
+                            Layout.preferredWidth: 100
+                            horizontalAlignment: Text.AlignRight
+                        }
+                        Section {
+                            text: "SERVICES"
+                            Layout.preferredWidth: 65
+                            horizontalAlignment: Text.AlignRight
+                        }
                     }
                     ColumnLayout {
                         Layout.fillWidth: true
@@ -189,11 +250,11 @@ BaseWidget {
                                 objectName: "namespace-" + modelData.name
                                 Layout.fillWidth: true
                                 implicitHeight: 32
-                                leftPadding: 10; rightPadding: 10
+                                leftPadding: 10
+                                rightPadding: 10
                                 onClicked: kubernetesWidget.selectNamespace(modelData.name)
                                 background: Rectangle {
-                                    color: kubernetesWidget.namespaceFilter === namespaceRow.modelData.name ? Qt.alpha(Theme.accent, 0.2)
-                                        : namespaceRow.hovered ? Theme.surface1 : Theme.surface0
+                                    color: kubernetesWidget.namespaceFilter === namespaceRow.modelData.name ? Qt.alpha(Theme.accent, 0.2) : namespaceRow.hovered ? Theme.surface1 : Theme.surface0
                                     radius: Theme.radiusAlt
                                 }
                                 contentItem: RowLayout {
@@ -201,24 +262,45 @@ BaseWidget {
                                     Label {
                                         text: namespaceRow.modelData.name + (namespaceRow.modelData.issues ? "  !" : "")
                                         color: namespaceRow.modelData.issues ? Theme.warning : Theme.text
-                                        Layout.fillWidth: true; elide: Text.ElideRight
+                                        Layout.fillWidth: true
+                                        elide: Text.ElideRight
                                     }
                                     Label {
                                         text: namespaceRow.modelData.ready + "/" + namespaceRow.modelData.active
                                         color: kubernetesWidget.uncertain ? Theme.muted : namespaceRow.modelData.ready < namespaceRow.modelData.active ? Theme.warning : Theme.text
-                                        Layout.preferredWidth: 85; horizontalAlignment: Text.AlignRight
+                                        Layout.preferredWidth: 85
+                                        horizontalAlignment: Text.AlignRight
                                     }
-                                    Label { text: namespaceRow.modelData.completed; Layout.preferredWidth: 45; horizontalAlignment: Text.AlignRight; color: Theme.subtext1 }
-                                    Label { text: namespaceRow.modelData.available + "/" + namespaceRow.modelData.deployments; Layout.preferredWidth: 100; horizontalAlignment: Text.AlignRight }
-                                    Label { text: namespaceRow.modelData.services === null ? "—" : namespaceRow.modelData.services; Layout.preferredWidth: 65; horizontalAlignment: Text.AlignRight; color: Theme.subtext1 }
+                                    Label {
+                                        text: namespaceRow.modelData.completed
+                                        Layout.preferredWidth: 45
+                                        horizontalAlignment: Text.AlignRight
+                                        color: Theme.subtext1
+                                    }
+                                    Label {
+                                        text: namespaceRow.modelData.available + "/" + namespaceRow.modelData.deployments
+                                        Layout.preferredWidth: 100
+                                        horizontalAlignment: Text.AlignRight
+                                    }
+                                    Label {
+                                        text: namespaceRow.modelData.services === null ? "—" : namespaceRow.modelData.services
+                                        Layout.preferredWidth: 65
+                                        horizontalAlignment: Text.AlignRight
+                                        color: Theme.subtext1
+                                    }
                                 }
                             }
                         }
                     }
-                    Section { id: detailsHeading; visible: kubernetesWidget.detailsOpen; text: kubernetesWidget.namespaceFilter ? "NAMESPACE · " + kubernetesWidget.namespaceFilter : "ALL NAMESPACES" }
+                    Section {
+                        id: detailsHeading
+                        visible: kubernetesWidget.detailsOpen
+                        text: kubernetesWidget.namespaceFilter ? "NAMESPACE · " + kubernetesWidget.namespaceFilter : "ALL NAMESPACES"
+                    }
                     ColumnLayout {
                         visible: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "pods"
-                        Layout.fillWidth: true; spacing: 4
+                        Layout.fillWidth: true
+                        spacing: 4
                         Repeater {
                             model: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "pods" ? kubernetesWidget.pods : []
                             Rectangle {
@@ -227,42 +309,72 @@ BaseWidget {
                                 readonly property bool issue: KubernetesDataProvider.podHasProblem(modelData)
                                 Layout.fillWidth: true
                                 implicitHeight: podContent.implicitHeight + 16
-                                color: Theme.surface0; radius: Theme.radiusAlt
+                                color: Theme.surface0
+                                radius: Theme.radiusAlt
                                 ColumnLayout {
                                     id: podContent
-                                    anchors.fill: parent; anchors.margins: 8; spacing: 4
+                                    anchors.fill: parent
+                                    anchors.margins: 8
+                                    spacing: 4
                                     RowLayout {
                                         Layout.fillWidth: true
-                                        Label { text: podRow.modelData.name; Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; color: podRow.issue ? Theme.warning : Theme.text }
-                                        Label { text: KubernetesDataProvider.podStatus(podRow.modelData); color: kubernetesWidget.uncertain ? Theme.muted : podRow.issue ? Theme.warning : podRow.modelData.phase === "Succeeded" ? Theme.subtext1 : Theme.success }
+                                        Label {
+                                            text: podRow.modelData.name
+                                            Layout.fillWidth: true
+                                            wrapMode: Text.WrapAnywhere
+                                            color: podRow.issue ? Theme.warning : Theme.text
+                                        }
+                                        Label {
+                                            text: KubernetesDataProvider.podStatus(podRow.modelData)
+                                            color: kubernetesWidget.uncertain ? Theme.muted : podRow.issue ? Theme.warning : podRow.modelData.phase === "Succeeded" ? Theme.subtext1 : Theme.success
+                                        }
                                     }
                                     Label {
-                                        text: podRow.modelData.namespace + " · " + (podRow.modelData.node || "Unscheduled")
-                                            + " · " + podRow.modelData.ready + " ready · " + (podRow.modelData.restarts || 0) + " restarts"
-                                        Layout.fillWidth: true; wrapMode: Text.Wrap
-                                        font.pixelSize: Theme.fontSizeXxs; color: Theme.subtext1
+                                        text: podRow.modelData.namespace + " · " + (podRow.modelData.node || "Unscheduled") + " · " + podRow.modelData.ready + " ready · " + (podRow.modelData.restarts || 0) + " restarts"
+                                        Layout.fillWidth: true
+                                        wrapMode: Text.Wrap
+                                        font.pixelSize: Theme.fontSizeXxs
+                                        color: Theme.subtext1
                                     }
                                 }
                             }
                         }
-                        Label { visible: kubernetesWidget.pods.length === 0; text: "No pods"; color: Theme.muted }
+                        Label {
+                            visible: kubernetesWidget.pods.length === 0
+                            text: "No pods"
+                            color: Theme.muted
+                        }
                     }
                     ColumnLayout {
                         visible: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "deployments"
-                        Layout.fillWidth: true; spacing: 4
+                        Layout.fillWidth: true
+                        spacing: 4
                         Repeater {
                             model: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "deployments" ? kubernetesWidget.deployments : []
                             Rectangle {
                                 id: deploymentRow
                                 required property var modelData
-                                Layout.fillWidth: true; implicitHeight: 54
-                                color: Theme.surface0; radius: Theme.radiusAlt
+                                Layout.fillWidth: true
+                                implicitHeight: 54
+                                color: Theme.surface0
+                                radius: Theme.radiusAlt
                                 RowLayout {
-                                    anchors.fill: parent; anchors.margins: 8; spacing: 8
+                                    anchors.fill: parent
+                                    anchors.margins: 8
+                                    spacing: 8
                                     ColumnLayout {
-                                        Layout.fillWidth: true; spacing: 3
-                                        Label { text: deploymentRow.modelData.name; Layout.fillWidth: true; elide: Text.ElideRight }
-                                        Label { text: deploymentRow.modelData.namespace + " · " + (deploymentRow.modelData.uptime || "—"); color: Theme.subtext1; font.pixelSize: Theme.fontSizeXxs }
+                                        Layout.fillWidth: true
+                                        spacing: 3
+                                        Label {
+                                            text: deploymentRow.modelData.name
+                                            Layout.fillWidth: true
+                                            elide: Text.ElideRight
+                                        }
+                                        Label {
+                                            text: deploymentRow.modelData.namespace + " · " + (deploymentRow.modelData.uptime || "—")
+                                            color: Theme.subtext1
+                                            font.pixelSize: Theme.fontSizeXxs
+                                        }
                                     }
                                     Label {
                                         text: deploymentRow.modelData.ready + "/" + deploymentRow.modelData.desired + " ready · " + deploymentRow.modelData.available + " available"
@@ -271,45 +383,87 @@ BaseWidget {
                                 }
                             }
                         }
-                        Label { visible: kubernetesWidget.deployments.length === 0; text: "No deployments"; color: Theme.muted }
+                        Label {
+                            visible: kubernetesWidget.deployments.length === 0
+                            text: "No deployments"
+                            color: Theme.muted
+                        }
                     }
                     ColumnLayout {
                         visible: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "events"
-                        Layout.fillWidth: true; spacing: 10
+                        Layout.fillWidth: true
+                        spacing: 10
                         Repeater {
                             model: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "events" ? kubernetesWidget.events : []
                             ColumnLayout {
                                 id: eventRow
                                 required property var modelData
-                                Layout.fillWidth: true; spacing: 3
-                                Label { text: [eventRow.modelData.namespace, eventRow.modelData.name].filter(Boolean).join("/"); Layout.fillWidth: true; wrapMode: Text.WrapAnywhere; color: Theme.subtext1; font.pixelSize: Theme.fontSizeXxs }
-                                Label { text: eventRow.modelData.message; Layout.fillWidth: true; wrapMode: Text.Wrap }
-                                Label { text: (eventRow.modelData.lastSeen ? Qt.formatDateTime(new Date(eventRow.modelData.lastSeen), "dd MMM HH:mm") : "") + (eventRow.modelData.count > 1 ? " · ×" + eventRow.modelData.count : ""); color: Theme.subtext1; font.pixelSize: Theme.fontSizeXxs }
+                                Layout.fillWidth: true
+                                spacing: 3
+                                Label {
+                                    text: [eventRow.modelData.namespace, eventRow.modelData.name].filter(Boolean).join("/")
+                                    Layout.fillWidth: true
+                                    wrapMode: Text.WrapAnywhere
+                                    color: Theme.subtext1
+                                    font.pixelSize: Theme.fontSizeXxs
+                                }
+                                Label {
+                                    text: eventRow.modelData.message
+                                    Layout.fillWidth: true
+                                    wrapMode: Text.Wrap
+                                }
+                                Label {
+                                    text: (eventRow.modelData.lastSeen ? Qt.formatDateTime(new Date(eventRow.modelData.lastSeen), "dd MMM HH:mm") : "") + (eventRow.modelData.count > 1 ? " · ×" + eventRow.modelData.count : "")
+                                    color: Theme.subtext1
+                                    font.pixelSize: Theme.fontSizeXxs
+                                }
                             }
                         }
-                        Label { visible: kubernetesWidget.events.length === 0; text: "No recent warnings"; color: Theme.muted }
+                        Label {
+                            visible: kubernetesWidget.events.length === 0
+                            text: "No recent warnings"
+                            color: Theme.muted
+                        }
                     }
                 }
             }
             RowLayout {
                 Layout.fillWidth: true
-                Choice { objectName: "podsTab"; text: "Pods · " + kubernetesWidget.pods.length; selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "pods"; onClicked: kubernetesWidget.selectTab("pods") }
-                Choice { objectName: "deploymentsTab"; text: "Deployments · " + kubernetesWidget.deployments.length; selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "deployments"; onClicked: kubernetesWidget.selectTab("deployments") }
-                Choice { objectName: "eventsTab"; text: "Warnings · " + kubernetesWidget.events.length; selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "events"; onClicked: kubernetesWidget.selectTab("events") }
-                Item { Layout.fillWidth: true }
+                Choice {
+                    objectName: "podsTab"
+                    text: "Pods · " + kubernetesWidget.pods.length
+                    selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "pods"
+                    onClicked: kubernetesWidget.selectTab("pods")
+                }
+                Choice {
+                    objectName: "deploymentsTab"
+                    text: "Deployments · " + kubernetesWidget.deployments.length
+                    selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "deployments"
+                    onClicked: kubernetesWidget.selectTab("deployments")
+                }
+                Choice {
+                    objectName: "eventsTab"
+                    text: "Warnings · " + kubernetesWidget.events.length
+                    selected: kubernetesWidget.detailsOpen && kubernetesWidget.detailTab === "events"
+                    onClicked: kubernetesWidget.selectTab("events")
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
             }
         }
         Connections {
             target: kubernetesWidget
-            function onRevealDetails() { revealTimer.restart(); }
+            function onRevealDetails() {
+                revealTimer.restart();
+            }
         }
         Timer {
             id: revealTimer
             interval: 20
             onTriggered: {
                 if (kubernetesWidget.detailsOpen)
-                    scroll.contentItem.contentY = Math.min(detailsHeading.y,
-                        Math.max(0, scroll.contentHeight - scroll.availableHeight));
+                    scroll.contentItem.contentY = Math.min(detailsHeading.y, Math.max(0, scroll.contentHeight - scroll.availableHeight));
             }
         }
     }
@@ -319,14 +473,26 @@ BaseWidget {
         font.pixelSize: Theme.fontSizeSm
         textFormat: Text.PlainText
     }
-    component Section: Label { font.pixelSize: Theme.fontSizeTiny; color: Theme.subtext1 }
+    component Section: Label {
+        font.pixelSize: Theme.fontSizeTiny
+        color: Theme.subtext1
+    }
     component Choice: Button {
         id: choice
         property bool selected: false
         implicitHeight: 30
-        leftPadding: 10; rightPadding: 10
-        contentItem: Label { text: choice.text; color: choice.selected ? Theme.accent : Theme.subtext1; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
-        background: Rectangle { color: choice.selected ? Qt.alpha(Theme.accent, 0.15) : choice.hovered ? Theme.surface1 : Theme.surface0; radius: Theme.radiusAlt }
+        leftPadding: 10
+        rightPadding: 10
+        contentItem: Label {
+            text: choice.text
+            color: choice.selected ? Theme.accent : Theme.subtext1
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        background: Rectangle {
+            color: choice.selected ? Qt.alpha(Theme.accent, 0.15) : choice.hovered ? Theme.surface1 : Theme.surface0
+            radius: Theme.radiusAlt
+        }
     }
     component Metric: Rectangle {
         id: metric
@@ -339,10 +505,21 @@ BaseWidget {
         color: Theme.surface1
         radius: Theme.radiusAlt
         Column {
-            anchors.fill: parent; anchors.margins: 10; spacing: 3
-            Section { text: metric.title }
-            Label { text: metric.value; font.pixelSize: Theme.fontSizeXl; font.bold: true }
-            Section { text: metric.detail; visible: text.length > 0 }
+            anchors.fill: parent
+            anchors.margins: 10
+            spacing: 3
+            Section {
+                text: metric.title
+            }
+            Label {
+                text: metric.value
+                font.pixelSize: Theme.fontSizeXl
+                font.bold: true
+            }
+            Section {
+                text: metric.detail
+                visible: text.length > 0
+            }
         }
     }
 }

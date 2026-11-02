@@ -268,11 +268,9 @@ binds {
         screenshot
     }
 
-    // OCR screenshot: preserve your original grimblast/tesseract pipeline.
-    // If grimblast is Hyprland-only on your system, replace grimblast with
-    // grim+slurp or another Niri-compatible region capture tool.
+    // Select a region, then copy recognized text. Cancellation leaves the clipboard intact.
     Super+Shift+D {
-        spawn-sh "f=/tmp/ocr.png; grimblast save area \"$f\" && tesseract \"$f\" stdout -l eng+swe | wl-copy"
+        spawn "bash" "-o" "pipefail" "-c" "region=$(slurp) || exit; [ -n \"$region\" ] || exit; text=$(grim -g \"$region\" - | tesseract stdin stdout -l eng+swe) && printf '%s' \"$text\" | wl-copy"
     }
 
     // Workspaces.
